@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "test": "jest"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "context-eval": "^0.1.0",
+    "jest": "latest"
+  }
+}
