@@ -11,6 +11,8 @@ class Basic {
     this.variables = {};
     this.lineno = -1;
     this.program = [];
+    this.loops = {};
+    this.jumped = false;
   }
 
   run(program) {
@@ -29,17 +31,22 @@ class Basic {
   execute() {
     while (true) {
       this.step();
-      const next = this.program[this.program.indexOf(this.getCurLine()) + 1];
 
-      if (!next) {
-        if (this.debug) {
-          console.log('debug: program ended');
+      if (!this.jumped) {
+        const next = this.getNextLine();
+
+        if (!next) {
+          if (this.debug) {
+            console.log('debug: program ended');
+          }
+          this.end();
+          return;
         }
-        this.end();
-        return;
-      }
 
-      this.lineno = next.lineno;
+        this.lineno = next.lineno;
+      } else {
+        this.jumped = false;
+      }
 
       if (this.delay) {
         const delay = this.delay;
@@ -53,6 +60,10 @@ class Basic {
 
   getCurLine() {
     return this.program.find(({ lineno }) => lineno === this.lineno);
+  }
+
+  getNextLine() {
+    return this.program[this.program.indexOf(this.getCurLine()) + 1];
   }
 
   step() {
@@ -91,6 +102,39 @@ class Basic {
 
   goto(lineno) {
     this.lineno = lineno;
+    this.jumped = true;
+  }
+
+  loopStart({ variable, value, increment, max }) {
+    if (this.debug) {
+      console.log(`marking loop ${variable}`);
+    }
+
+    this.set(variable, value);
+    const next = this.getNextLine();
+    if (!next) return this.end();
+    
+    this.loops[variable] = {
+      variable,
+      value,
+      increment,
+      max,
+      lineno: next.lineno,
+    };
+  }
+
+  loopJump(name) {
+    if (this.debug) {
+      console.log(`jumping to loop ${name}`);
+    }
+
+    const loop = this.loops[name];
+    loop.value += loop.increment;
+    this.set(loop.variable, loop.value);
+
+    if (loop.value >= loop.max) return;
+
+    this.goto(loop.lineno);
   }
 }
 

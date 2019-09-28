@@ -145,20 +145,19 @@ class FOR extends Node {
   }
 
   run(context) {
-    let i = context.evaluate(this.left);
+    const value = context.evaluate(this.left);
     const max = context.evaluate(this.right);
-    const inc = this.step ? context.evaluate(this.step) : 1;
+    const increment = this.step ? context.evaluate(this.step) : 1;
 
     if (this.variable.array) {
       throw new Error('Cannot use variables in for');
     }
 
-    context.set(this.variable.name, from);
-    context.pushStack(() => {
-      i += inc;
-      if (i >= max) {
-        context.popStack();
-      }
+    context.loopStart({
+      variable: this.variable.name,
+      value,
+      max,
+      increment,      
     });
   }
 }
@@ -170,7 +169,7 @@ class NEXT extends Node {
   }
 
   run(context) {
-
+    context.loopJump(this.variable.name);
   }
 }
 
@@ -198,6 +197,6 @@ module.exports = {
   INPUT,
   FOR,
   NEXT,
-  PLOT,  
+  PLOT,
   Variable,
 };
