@@ -12,7 +12,7 @@ const Basic = require('./basic');
 
 const interp = new Basic({
   output: (s) => process.stdout.write(s),
-  //debug: 1,
+  debug: 1,
 });
 
 // interp.run(`
@@ -26,8 +26,14 @@ const interp = new Basic({
 // 700 GOTO 1
 // `)
 
+// interp.run(`
+// 100 FOR I = 1 TO 10
+// 110 PRINT I
+// 115 PRINT "LOL"
+// 120 NEXT I
+// `)
+
 interp.run(`
-100 FOR I = 1 TO 10
-110 PRINT I
-120 NEXT I
+100 LET X = 1
+110 IF X = 1 THEN PRINT "LOL"
 `)

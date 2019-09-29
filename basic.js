@@ -32,21 +32,20 @@ class Basic {
     while (true) {
       this.step();
 
+      if (this.ended) return;
+      
       if (!this.jumped) {
-        const next = this.getNextLine();
+          const next = this.getNextLine();
 
-        if (!next) {
-          if (this.debug) {
-            console.log('debug: program ended');
+          if (!next) {
+            this.end();
+            return;
           }
-          this.end();
-          return;
-        }
 
-        this.lineno = next.lineno;
-      } else {
-        this.jumped = false;
-      }
+          this.lineno = next.lineno;
+        } else {
+          this.jumped = false;
+        }
 
       if (this.delay) {
         const delay = this.delay;
@@ -81,7 +80,10 @@ class Basic {
   }
 
   end() {
-
+    this.ended = true;
+    if (this.debug) {
+      console.log('debug: program ended');
+    }
   }
 
   evaluate(code) {
@@ -113,7 +115,7 @@ class Basic {
     this.set(variable, value);
     const next = this.getNextLine();
     if (!next) return this.end();
-    
+
     this.loops[variable] = {
       variable,
       value,

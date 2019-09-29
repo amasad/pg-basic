@@ -157,7 +157,7 @@ class FOR extends Node {
       variable: this.variable.name,
       value,
       max,
-      increment,      
+      increment,
     });
   }
 }
@@ -186,6 +186,28 @@ class PLOT extends Node {
   }
 }
 
+class END extends Node {
+  run(context) {
+    context.end();
+  }
+}
+
+class IF extends Node {
+  constructor(lineno, condition, then, other) {
+    super(lineno);
+    this.condition = condition;
+    this.then = then;
+    this.other = other;
+  }
+
+  run(context) {        
+    if (context.evaluate(this.condition)) {
+      this.then.run(context);      
+    } else if (this.other) {
+      this.other.run(context);
+    }
+  }
+}
 
 module.exports = {
   Node,
@@ -198,5 +220,7 @@ module.exports = {
   FOR,
   NEXT,
   PLOT,
+  END,
+  IF,
   Variable,
 };

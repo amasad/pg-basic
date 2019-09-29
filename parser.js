@@ -8,6 +8,8 @@ const {
   FOR,
   NEXT,
   GOTO,
+  END,
+  IF,
   Variable
 } = require('./nodes');
 const exprToJS = require('./expr');
@@ -71,6 +73,20 @@ class Parser {
 
       case 'GOTO':
         return new GOTO(this.lineno, this.expectExpr());
+
+      case 'END':
+        return new END(this.lineno);
+
+      case 'IF':
+        const cond = this.expectExpr();
+        this.expectKeyword('THEN');
+        const then = this.parse();
+        let other = null;
+        if (this.acceptKeyword('else')) {
+          other = this.parse();
+        }
+
+        return new IF(this.lineno, cond, then, other);
     }
 
     throw new Error(`Unexpected token ${top.lexeme}`);
