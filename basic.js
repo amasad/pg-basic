@@ -106,6 +106,14 @@ class Basic {
     this.variables[name] = {};
   }
 
+  fun(name) {
+    if (!functions[name]) {
+      throw new Error(`Function ${name} does not exist`);      
+    }
+
+    return functions[name];
+  }
+
   get(vari) {
     return this.variables[vari];
   }
@@ -167,5 +175,15 @@ class Basic {
     this.goto(lineno);
   }
 }
+
+const functions = {
+  LEFT(str, n) {
+    return str.slice(0, n);
+  },
+
+  LEFT$(...args) {
+    return LEFT(...args);
+  },
+};
 
 module.exports = Basic;

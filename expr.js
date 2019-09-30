@@ -9,6 +9,11 @@ function exprToJS(expr) {
       continue;
     }
 
+    if (t.type === 'function') {
+      jsExpr += '__pgb.fun("' + t.lexeme + '")';
+      continue;
+    }
+
     if (t.type === 'logic') {
       if (t.lexeme === 'AND') {
         jsExpr += '&&';
