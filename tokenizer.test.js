@@ -48,7 +48,7 @@ test('function', () => {
   expect(t.next().toJSON()).toEqual({
     type: 'number',
     lexeme: -3,
-  });  
+  });
 
   expect(t.next().toJSON()).toEqual({
     type: 'operation',
@@ -87,4 +87,4 @@ test('var', () => {
     type: 'number',
     lexeme: 1,
   });
-})
+});

@@ -45,11 +45,38 @@ const KEYWORDS = [
   'STOP',
 ];
 
+const FUNS = [
+  'ABS',
+  'ASC',
+  'ATN',
+  'CHR$',
+  'CHR',
+  'COS',
+  'EXP',
+  'INT',
+  'LEFT$',
+  'LEFT',
+  'LEN',
+  'LOG',
+  'MID$',
+  'MID',
+  'RIGHT$',
+  'RIGHT',
+  'SGN',
+  'SIN',
+  'SPC',
+  'SQR',
+  'STR',
+  'TAB',
+  'TAN',
+  'VAL',
+]
+
 const LINE = /^\s*(\d+)\s*/;
 const QUOTE = /^"((\\.|[^"\\])*)"\s*/;
 const KEY = new RegExp('^(' + KEYWORDS.join('|') + ')\\s*', 'i');
+const FUN = new RegExp('^(' + FUNS.join('|') + ')\\s*', 'i');
 const VAR = /^([a-z][0-9]*)\$?\s*/i;
-const FUN = /^([a-z][a-z]+)\$?\s*/i;
 const NUM = /^([\+\-]?(\d+\.?|\.)\d*(E[\+\-]\d+)?)\s*/i;
 const OP = /^(<>|>=|<=|[,\+\-\*\/%=<>\(\)\]\[])\s*/i;
 const LOGIC = /^(AND|OR)\s*/i;
@@ -137,8 +164,8 @@ class Tokenizer {
       const eaten = this.eatKeyword() ||
         this.eatQuote() ||
         this.eatLogic() ||
-        this.eatVariable() ||
         this.eatFunction() ||
+        this.eatVariable() ||
         this.eatNumber() ||
         this.eatOperation() ||
         this.eatLineMod();
