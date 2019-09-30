@@ -12,7 +12,7 @@ const Basic = require('./basic');
 
 const interp = new Basic({
   output: (s) => process.stdout.write(s),
-  debugLevel: 1,
+  //debugLevel: 1,
 });
 
 // interp.run(`
@@ -26,12 +26,12 @@ const interp = new Basic({
 // 700 GOTO 1
 // `)
 
-interp.run(`
-100 FOR I = 1 TO 10 STEP 2
-110 PRINT I
-115 PRINT "LOL"
-120 NEXT I
-`)
+// interp.run(`
+// 100 FOR I = 1 TO 10 STEP 2
+// 110 PRINT I
+// 115 PRINT "LOL"
+// 120 NEXT I
+// `)
 
 // interp.run(`
 // 100 LET X = 1
@@ -39,3 +39,16 @@ interp.run(`
 // 120 IF X = 2 THEN PRINT "WOW" ELSE PRINT "HAHA"
 // 130 IF 7 * 8 = 56 THEN PRINT "Yes"
 // `)
+
+interp.run(`
+100 LET A = 17
+110 GOSUB 1000
+120 LET A = 50
+130 GOSUB 1000
+140 END
+1000 PRINT A;
+1010 PRINT " is an ";
+1020 IF A % 2 = 0 THEN PRINT "even"; ELSE PRINT "odd";
+1030 PRINT " number."
+1040 RETURN
+`)

@@ -12,6 +12,7 @@ class Basic {
     this.lineno = -1;
     this.program = [];
     this.loops = {};
+    this.stack = [];
     this.jumped = false;
   }
 
@@ -130,7 +131,7 @@ class Basic {
 
   loopJump(name) {
     this.debug(`jumping to loop ${name}`);
-    
+
     const loop = this.loops[name];
     loop.value += loop.increment;
     this.set(loop.variable, loop.value);
@@ -140,8 +141,22 @@ class Basic {
     this.goto(loop.lineno);
   }
 
-  gosub(name) {
+  gosub(lineno) {
+    const next = this.getNextLine();
+    if (next) {
+      this.stack.push(next.lineno);
+    } else {
+      this.stack.push(this.lineno + 1);
+    }
+    this.goto(lineno);
+  }
 
+  return() {
+    if (this.stack.length === 0) {
+      throw new Error('No function calls to return from');
+    }
+    const lineno = this.stack.pop();    
+    this.goto(lineno);
   }
 }
 

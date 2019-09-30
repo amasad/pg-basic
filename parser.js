@@ -10,6 +10,8 @@ const {
   GOTO,
   END,
   IF,
+  GOSUB,
+  RETURN,
   Variable
 } = require('./nodes');
 const exprToJS = require('./expr');
@@ -87,6 +89,12 @@ class Parser {
         }
 
         return new IF(this.lineno, cond, then, other);
+
+      case 'GOSUB':
+        return new GOSUB(this.lineno, this.expectExpr());
+
+      case 'RETURN':
+        return new RETURN(this.lineno);
     }
 
     throw new Error(`Unexpected token ${top.lexeme}`);

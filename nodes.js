@@ -200,12 +200,34 @@ class IF extends Node {
     this.other = other;
   }
 
-  run(context) {        
+  run(context) {
     if (context.evaluate(this.condition)) {
-      this.then.run(context);      
+      this.then.run(context);
     } else if (this.other) {
       this.other.run(context);
     }
+  }
+}
+
+class GOSUB extends Node {
+  constructor(lineno, expr) {
+    super(lineno);
+    this.expr = expr;
+  }
+
+  run(context) {
+    const lineno = context.evaluate(this.expr);
+    if (typeof lineno !== 'number') {
+      throw new Error('Expected GOSUB argument to be a number');
+    }
+
+    context.gosub(lineno);
+  }
+}
+
+class RETURN extends Node {
+  run(context) {
+    context.return();
   }
 }
 
@@ -222,5 +244,7 @@ module.exports = {
   PLOT,
   END,
   IF,
+  GOSUB,
+  RETURN,
   Variable,
 };
