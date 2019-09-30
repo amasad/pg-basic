@@ -3,11 +3,11 @@
 // console.log(Tokenizer.tokenizeLine('100 PRINT "hello" + " world";'));
 // console.log(Tokenizer.tokenizeLine('100 PRINT ABS(1) AND 1'));
 
-// const { spawnSync } = require('child_process');
+const { spawnSync } = require('child_process');
 
-// spawnSync('jest',  ['tokenizer'], {
-//   stdio: 'inherit',
-// });
+spawnSync('jest',  ['functions'], {
+  stdio: 'inherit',
+});
 
 const Basic = require('./basic');
 
@@ -60,7 +60,7 @@ const interp = new Basic({
 // 120 PRINT A[4711]
 // `)
 
-interp.run(`
-100 LET A = "ABC123"
-200 PRINT LEFT(A, 3)
-`);
+// interp.run(`
+// 100 LET A = "ABC123"
+// 200 PRINT LEFT(A, 3)
+// `);

@@ -1,5 +1,6 @@
 const Context = require('context-eval');
 const Parser = require('./parser');
+const Functions = require('./functions');
 
 class Basic {
   constructor({ output, debugLevel }) {
@@ -107,11 +108,11 @@ class Basic {
   }
 
   fun(name) {
-    if (!functions[name]) {
-      throw new Error(`Function ${name} does not exist`);      
+    if (!Functions[name]) {
+      throw new Error(`Function ${name} does not exist`);
     }
 
-    return functions[name];
+    return Functions[name];
   }
 
   get(vari) {
@@ -175,15 +176,4 @@ class Basic {
     this.goto(lineno);
   }
 }
-
-const functions = {
-  LEFT(str, n) {
-    return str.slice(0, n);
-  },
-
-  LEFT$(...args) {
-    return LEFT(...args);
-  },
-};
-
 module.exports = Basic;
