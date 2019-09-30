@@ -2,9 +2,9 @@ const Context = require('context-eval');
 const Parser = require('./parser');
 
 class Basic {
-  constructor({ output, debug }) {
-    this.debug = debug;
-    this.print = (s) => output(s.toString())
+  constructor({ output, debugLevel }) {
+    this.debugLevel = debugLevel;
+    this.print = (s) => output(s.toString());
     this.context = new Context({
       __pgb: this,
     });
@@ -13,6 +13,12 @@ class Basic {
     this.program = [];
     this.loops = {};
     this.jumped = false;
+  }
+
+  debug(str, level = 1) {
+    if (this.debugLevel >= level) {
+      console.log(`Debug ${this.lineno}: ${str}`);
+    }
   }
 
   run(program) {
@@ -33,19 +39,19 @@ class Basic {
       this.step();
 
       if (this.ended) return;
-      
+
       if (!this.jumped) {
-          const next = this.getNextLine();
+        const next = this.getNextLine();
 
-          if (!next) {
-            this.end();
-            return;
-          }
-
-          this.lineno = next.lineno;
-        } else {
-          this.jumped = false;
+        if (!next) {
+          this.end();
+          return;
         }
+
+        this.lineno = next.lineno;
+      } else {
+        this.jumped = false;
+      }
 
       if (this.delay) {
         const delay = this.delay;
@@ -71,19 +77,16 @@ class Basic {
     if (!node) {
       throw new Error(`Cannot find line with number ${this.lineno}`);
     }
-    if (this.debug) {
-      console.log(`debug: executing line ${this.lineno}`);
-      if (this.debug > 1) console.log(node.toJSON());
-    }
+
+    this.debug('step', 1);
+    this.debug(node.toJSON, 2);
 
     node.run(this);
   }
 
   end() {
     this.ended = true;
-    if (this.debug) {
-      console.log('debug: program ended');
-    }
+    this.debug('program ended');
   }
 
   evaluate(code) {
@@ -99,18 +102,18 @@ class Basic {
   }
 
   pause(seconds) {
+    this.debug(`pause ${seconds}`)
     this.delay = seconds;
   }
 
   goto(lineno) {
+    this.debug(`goto ${lineno}`)
     this.lineno = lineno;
     this.jumped = true;
   }
 
   loopStart({ variable, value, increment, max }) {
-    if (this.debug) {
-      console.log(`marking loop ${variable}`);
-    }
+    this.debug(`marking loop ${variable}`)
 
     this.set(variable, value);
     const next = this.getNextLine();
@@ -126,10 +129,8 @@ class Basic {
   }
 
   loopJump(name) {
-    if (this.debug) {
-      console.log(`jumping to loop ${name}`);
-    }
-
+    this.debug(`jumping to loop ${name}`);
+    
     const loop = this.loops[name];
     loop.value += loop.increment;
     this.set(loop.variable, loop.value);
@@ -137,6 +138,10 @@ class Basic {
     if (loop.value >= loop.max) return;
 
     this.goto(loop.lineno);
+  }
+
+  gosub(name) {
+
   }
 }
 
