@@ -5,7 +5,7 @@
 
 const { spawnSync } = require('child_process');
 
-spawnSync('jest',  ['expr'], {
+spawnSync('jest',  ['tokenizer'], {
   stdio: 'inherit',
 });
 

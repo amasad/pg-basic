@@ -1,3 +1,5 @@
+const Functions = require('./functions');
+
 class Token {
   constructor(type, lexeme) {
     this.type = type;
@@ -45,37 +47,10 @@ const KEYWORDS = [
   'STOP',
 ];
 
-const FUNS = [
-  'ABS',
-  'ASC',
-  'ATN',
-  'CHR$',
-  'CHR',
-  'COS',
-  'EXP',
-  'INT',
-  'LEFT$',
-  'LEFT',
-  'LEN',
-  'LOG',
-  'MID$',
-  'MID',
-  'RIGHT$',
-  'RIGHT',
-  'SGN',
-  'SIN',
-  'SPC',
-  'SQR',
-  'STR',
-  'TAB',
-  'TAN',
-  'VAL',
-]
-
 const LINE = /^\s*(\d+)\s*/;
 const QUOTE = /^"((\\.|[^"\\])*)"\s*/;
 const KEY = new RegExp('^(' + KEYWORDS.join('|') + ')\\s*', 'i');
-const FUN = new RegExp('^(' + FUNS.join('|') + ')\\s*', 'i');
+const FUN = new RegExp('^(' + Object.keys(Functions).join('|') + ')\\s*', 'i');
 const VAR = /^([a-z][0-9]*)\$?\s*/i;
 const NUM = /^([\+\-]?(\d+\.?|\.)\d*(E[\+\-]\d+)?)\s*/i;
 const OP = /^(<>|>=|<=|[,\+\-\*\/%=<>\(\)\]\[])\s*/i;
