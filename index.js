@@ -5,7 +5,7 @@
 
 const { spawnSync } = require('child_process');
 
-spawnSync('jest',  ['functions'], {
+spawnSync('jest',  ['expr'], {
   stdio: 'inherit',
 });
 
@@ -60,7 +60,8 @@ const interp = new Basic({
 // 120 PRINT A[4711]
 // `)
 
-// interp.run(`
-// 100 LET A = "ABC123"
-// 200 PRINT LEFT(A, 3)
-// `);
+interp.run(`
+100 LET A = "ABC123"
+200 PRINT LEFT(A, 3)
+300 PRINT RIGHT(A, 3)
+`);
