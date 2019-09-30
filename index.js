@@ -40,15 +40,21 @@ const interp = new Basic({
 // 130 IF 7 * 8 = 56 THEN PRINT "Yes"
 // `)
 
+// interp.run(`
+// 100 LET A = 17
+// 110 GOSUB 1000
+// 120 LET A = 50
+// 130 GOSUB 1000
+// 140 END
+// 1000 PRINT A;
+// 1010 PRINT " is an ";
+// 1020 IF A % 2 = 0 THEN PRINT "even"; ELSE PRINT "odd";
+// 1030 PRINT " number."
+// 1040 RETURN
+// `)
+
 interp.run(`
-100 LET A = 17
-110 GOSUB 1000
-120 LET A = 50
-130 GOSUB 1000
-140 END
-1000 PRINT A;
-1010 PRINT " is an ";
-1020 IF A % 2 = 0 THEN PRINT "even"; ELSE PRINT "odd";
-1030 PRINT " number."
-1040 RETURN
+100 ARRAY A
+110 LET A[4711] = "Hi!"
+120 PRINT A[4711]
 `)

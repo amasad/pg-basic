@@ -231,6 +231,17 @@ class RETURN extends Node {
   }
 }
 
+class ARRAY extends Node {
+  constructor(lineno, variable) {
+    super(lineno);
+    this.variable = variable;
+  }
+
+  run(context) {
+    context.array(this.variable.name);
+  }
+}
+
 module.exports = {
   Node,
   PRINT,
@@ -246,5 +257,6 @@ module.exports = {
   IF,
   GOSUB,
   RETURN,
+  ARRAY,
   Variable,
 };

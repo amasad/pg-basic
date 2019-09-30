@@ -12,6 +12,7 @@ const {
   IF,
   GOSUB,
   RETURN,
+  ARRAY,
   Variable
 } = require('./nodes');
 const exprToJS = require('./expr');
@@ -95,6 +96,9 @@ class Parser {
 
       case 'RETURN':
         return new RETURN(this.lineno);
+
+      case 'ARRAY':
+        return new ARRAY(this.lineno, this.expectVariable());
     }
 
     throw new Error(`Unexpected token ${top.lexeme}`);
@@ -146,7 +150,7 @@ class Parser {
 
   expectExpr() {
     const expr = [];
-    const brackets = 0;
+    let brackets = 0;
     while (this.tokenizer.peek() != Tokenizer.eof) {
       if (!Tokenizer.expressionTypes.includes(this.tokenizer.peek().type)) {
         break;

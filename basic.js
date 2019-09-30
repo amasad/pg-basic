@@ -98,6 +98,14 @@ class Basic {
     this.variables[vari] = value;
   }
 
+  setArray(vari, sub, value) {
+    this.variables[vari][sub] = value;
+  }
+
+  array(name) {
+    this.variables[name] = {};
+  }
+
   get(vari) {
     return this.variables[vari];
   }
@@ -155,7 +163,7 @@ class Basic {
     if (this.stack.length === 0) {
       throw new Error('No function calls to return from');
     }
-    const lineno = this.stack.pop();    
+    const lineno = this.stack.pop();
     this.goto(lineno);
   }
 }
