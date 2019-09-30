@@ -46,8 +46,13 @@ test('function', () => {
   });
 
   expect(t.next().toJSON()).toEqual({
+    type: 'operation',
+    lexeme: '-'
+  });
+
+  expect(t.next().toJSON()).toEqual({
     type: 'number',
-    lexeme: -3,
+    lexeme: 3,
   });
 
   expect(t.next().toJSON()).toEqual({
@@ -76,6 +81,64 @@ test('var', () => {
   expect(t.next().toJSON()).toEqual({
     type: 'variable',
     lexeme: 'X',
+  });
+
+  expect(t.next().toJSON()).toEqual({
+    type: 'operation',
+    lexeme: '=',
+  });
+
+  expect(t.next().toJSON()).toEqual({
+    type: 'number',
+    lexeme: 1,
+  });
+});
+
+test('ARR', () => {
+  const t = new Tokenizer('100 LET X[N+1] = 1', {
+    debug: true,
+  })
+
+  t.tokenize();
+
+  expect(t.next().toJSON()).toEqual({
+    type: 'lineno',
+    lexeme: 100,
+  });
+
+  expect(t.next().toJSON()).toEqual({
+    type: 'keyword',
+    lexeme: 'LET',
+  });
+
+  expect(t.next().toJSON()).toEqual({
+    type: 'variable',
+    lexeme: 'X',
+  });
+
+  expect(t.next().toJSON()).toEqual({
+    type: 'operation',
+    lexeme: '[',
+  });
+
+  expect(t.next().toJSON()).toEqual({
+    type: 'variable',
+    lexeme: 'N',
+  });
+
+  expect(t.next().toJSON()).toEqual({
+    type: 'operation',
+    lexeme: '+',
+  });
+
+  expect(t.next().toJSON()).toEqual({
+    type: 'number',
+    lexeme: 1,
+  });
+
+  expect(t.next().toJSON()).toEqual({
+    type: 'operation',
+    lexeme: ']',
   });
 
   expect(t.next().toJSON()).toEqual({

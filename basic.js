@@ -19,7 +19,7 @@ class Basic {
 
   debug(str, level = 1) {
     if (this.debugLevel >= level) {
-      console.log(`Debug ${this.lineno}: ${str}`);
+      console.log(`Debug ${this.lineno}:`, str);
     }
   }
 
@@ -81,7 +81,7 @@ class Basic {
     }
 
     this.debug('step', 1);
-    this.debug(node.toJSON, 2);
+    this.debug(node.toJSON(), 2);
 
     node.run(this);
   }

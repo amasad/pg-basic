@@ -1,22 +1,37 @@
-// const Tokenizer = require('./tokenizer');
-
-// console.log(Tokenizer.tokenizeLine('100 PRINT "hello" + " world";'));
-// console.log(Tokenizer.tokenizeLine('100 PRINT ABS(1) AND 1'));
-
+// Run tests:
 const { spawnSync } = require('child_process');
 
-spawnSync('jest',  ['tokenizer'], {
-  stdio: 'inherit',
-});
+// const res = spawnSync('jest',  ['tokenizer'], {
+//   stdio: 'inherit',
+// });
+// process.exit(res.status);
 
 const Basic = require('./basic');
 
 const interp = new Basic({
   output: (s) => process.stdout.write(s),
-  //debugLevel: 1,
+  //debugLevel: 4,
 });
 
-// interp.run(`
+interp.run(`
+1000 REM Fibonacci Sequence Project
+1010 REM Quite BASIC Math Project
+1020 REM ------------------------ 
+2020 REM The array F holds the Fibonacci numbers
+2030 ARRAY F
+2040 LET F[0] = 0
+2050 LET F[1] = 1
+2060 LET N = 1
+2070 REM Compute the next Fibbonacci number
+2080 LET F[N+1] = F[N] + F[N-1]
+2090 LET N = N + 1
+2100 PRINT F[N];
+2105 PRINT ", ";
+2110 REM Stop after printing  50 numbers
+2120 IF N < 50 THEN GOTO 2080
+`);
+
+ // interp.run(`
 // 100 PRINT "hello world"
 // 200 PRINT "hello" + "world"
 // 300 PRINT 2 + 2
@@ -60,8 +75,8 @@ const interp = new Basic({
 // 120 PRINT A[4711]
 // `)
 
-interp.run(`
-100 LET A = "ABC123"
-200 PRINT LEFT(A, 3)
-300 PRINT RIGHT(A, 3)
-`);
+// interp.run(`
+// 100 LET A = "ABC123"
+// 200 PRINT LEFT(A, 3)
+// 300 PRINT RIGHT(A, 3)
+// `);

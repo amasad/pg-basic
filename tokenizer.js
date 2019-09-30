@@ -52,7 +52,7 @@ const QUOTE = /^"((\\.|[^"\\])*)"\s*/;
 const KEY = new RegExp('^(' + KEYWORDS.join('|') + ')\\s*', 'i');
 const FUN = new RegExp('^(' + Object.keys(Functions).join('|') + ')\\s*', 'i');
 const VAR = /^([a-z][0-9]*)\$?\s*/i;
-const NUM = /^([\+\-]?(\d+\.?|\.)\d*(E[\+\-]\d+)?)\s*/i;
+const NUM = /^(\d+(\.\d+)?)\s*/i;
 const OP = /^(<>|>=|<=|[,\+\-\*\/%=<>\(\)\]\[])\s*/i;
 const LOGIC = /^(AND|OR)\s*/i;
 const LINEMOD = /^(;)\s*/i;
@@ -211,6 +211,9 @@ class Tokenizer {
     const m = this.stmnt.match(NUM);
     if (m && m[0]) {
       const num = parseFloat(m[1], 10);
+      if (isNaN(num)) {
+        throw new Error('Error parsing number:' + m[1]);
+      }
       this.tokens.push(new Token('number', num));
       return m[0];
     }
