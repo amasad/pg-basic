@@ -218,7 +218,7 @@ class GOSUB extends Node {
   run(context) {
     const lineno = context.evaluate(this.expr);
     if (typeof lineno !== 'number') {
-      throw new Error('Expected GOSUB argument to be a number');
+      throw new Error(`Expected GOSUB argument to be a number but got ${lineno}`);
     }
 
     context.gosub(lineno);
