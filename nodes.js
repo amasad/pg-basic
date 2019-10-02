@@ -14,8 +14,8 @@ class Node {
 
   assert(truth, message) {
     if (!truth) {
-      // Todo custom error type
-      throw new Error(`Line ${this.lineno}: ${message}`);
+      
+      throw new RunTimeError(`Line ${this.lineno}: ${message}`);
     }
   }
 }
