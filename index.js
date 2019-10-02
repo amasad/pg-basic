@@ -15,7 +15,7 @@ const interp = new Basic({
 
 interp.run(`
 1000 REM Fibonacci Sequence Project
-1010 REM Quite BASIC Math Project
+1010 REM BASIC Math Project
 1020 REM ------------------------ 
 2020 REM The array F holds the Fibonacci numbers
 2030 ARRAY F
@@ -31,7 +31,7 @@ interp.run(`
 2120 IF N < 50 THEN GOTO 2080
 `);
 
- // interp.run(`
+// interp.run(`
 // 100 PRINT "hello world"
 // 200 PRINT "hello" + "world"
 // 300 PRINT 2 + 2
@@ -39,7 +39,7 @@ interp.run(`
 // 450 REM this shit is good
 // 500 PRINT X * 2
 // 600 PAUSE 1
-// 700 GOTO 1
+// 700 GOTO 100
 // `)
 
 // interp.run(`
