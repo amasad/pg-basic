@@ -1,35 +1,51 @@
 // Run tests:
 const { spawnSync } = require('child_process');
 
-// const res = spawnSync('jest',  ['tokenizer'], {
+// const res = spawnSync('jest',  [''], {
 //   stdio: 'inherit',
 // });
 // process.exit(res.status);
 
 const Basic = require('./basic');
+const colors = {};
+const display = {
+  plot(x, y, color) {    
+    console.log('plotting', x, y, color);
+    colors[`${x}${y}`] = color;
+  },
+  color(x,y) {
+    return colors[`${x}${y}`];
+  }
+};
 
 const interp = new Basic({
   output: (s) => process.stdout.write(s),
+  display,
   //debugLevel: 4,
 });
 
 interp.run(`
-1000 REM Fibonacci Sequence Project
-1010 REM BASIC Math Project
-1020 REM ------------------------ 
-2020 REM The array F holds the Fibonacci numbers
-2030 ARRAY F
-2040 LET F[0] = 0
-2050 LET F[1] = 1
-2060 LET N = 1
-2070 REM Compute the next Fibbonacci number
-2080 LET F[N+1] = F[N] + F[N-1]
-2090 LET N = N + 1
-2100 PRINT F[N];
-2105 PRINT ", ";
-2110 REM Stop after printing  50 numbers
-2120 IF N < 50 THEN GOTO 2080
+100 PLOT 1, 2, "RED"
+200 PRINT COLOR(1, 2)
 `);
+
+// interp.run(`
+// 1000 REM Fibonacci Sequence Project
+// 1010 REM BASIC Math Project
+// 1020 REM ------------------------ 
+// 2020 REM The array F holds the Fibonacci numbers
+// 2030 ARRAY F
+// 2040 LET F[0] = 0
+// 2050 LET F[1] = 1
+// 2060 LET N = 1
+// 2070 REM Compute the next Fibbonacci number
+// 2080 LET F[N+1] = F[N] + F[N-1]
+// 2090 LET N = N + 1
+// 2100 PRINT F[N];
+// 2105 PRINT ", ";
+// 2110 REM Stop after printing  50 numbers
+// 2120 IF N < 50 THEN GOTO 2080
+// `);
 
 // interp.run(`
 // 100 PRINT "hello world"

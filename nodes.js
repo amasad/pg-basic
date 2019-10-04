@@ -14,8 +14,8 @@ class Node {
 
   assert(truth, message) {
     if (!truth) {
-      
-      throw new RunTimeError(`Line ${this.lineno}: ${message}`);
+      // Todo custom error type
+      throw new Error(`Line ${this.lineno}: ${message}`);
     }
   }
 }
@@ -181,8 +181,8 @@ class PLOT extends Node {
     this.color = color;
   }
 
-  run(context) {
-    context.plot(this.x, this.y, this.color);
+  run(context) {    
+    context.plot(context.evaluate(this.x), context.evaluate(this.y), this.color);
   }
 }
 

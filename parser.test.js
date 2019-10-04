@@ -249,6 +249,28 @@ t('100 NEXT I', {
   },
 });
 
+t('100 PRINT COS(10)', {
+  type: 'PRINT',
+  lineno: 100,
+  expr: '__pgb.fun("COS")(10)',
+  newline: true,
+});
+
+t('100 PRINT COLOR(1, 1)', {
+  type: 'PRINT',
+  lineno: 100,
+  expr: '__pgb.fun("COLOR")(1,1)',
+  newline: true,
+});
+
+t('100 PLOT 1, 2, "RED"', {
+  type: 'PLOT',
+  lineno: 100,
+  x: '1',
+  y: '2',
+  color: '"RED"'
+});
+
 // t('100 PLOT A, A + 10', {
 //   type: 'PLOT',
 //   xexpr: {

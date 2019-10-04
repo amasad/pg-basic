@@ -13,6 +13,7 @@ const {
   GOSUB,
   RETURN,
   ARRAY,
+  PLOT,
   Variable
 } = require('./nodes');
 const exprToJS = require('./expr');
@@ -99,6 +100,15 @@ class Parser {
 
       case 'ARRAY':
         return new ARRAY(this.lineno, this.expectVariable());
+
+      case 'PLOT':
+        const x = this.expectExpr(true);        
+        this.expectOperation(',');
+        const y = this.expectExpr(true);
+        this.expectOperation(',');
+        const color = this.expectExpr(true);
+
+        return new PLOT(this.lineno, x, y, color);
     }
 
     throw new Error(`Unexpected token ${top.lexeme}`);
@@ -148,10 +158,14 @@ class Parser {
     return new Variable(this.lineno, t.lexeme, this.acceptSubscript());
   }
 
-  expectExpr() {
+  expectExpr(stopOnComma = false) {
     const expr = [];
     let brackets = 0;
     while (this.tokenizer.peek() != Tokenizer.eof) {
+      if (stopOnComma && this.tokenizer.peek().lexeme === ',') {
+        break;
+      }      
+      
       if (!Tokenizer.expressionTypes.includes(this.tokenizer.peek().type)) {
         break;
       }

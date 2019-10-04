@@ -81,6 +81,10 @@ const Functions = {
   SPC(n) {
     return ' '.repeat(n);
   },
+
+  COLOR() {
+    // This is just a stub. This gets injected.
+  }
 };
 
 const aliases = {

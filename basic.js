@@ -3,7 +3,7 @@ const Parser = require('./parser');
 const Functions = require('./functions');
 
 class Basic {
-  constructor({ output, debugLevel }) {
+  constructor({ output, debugLevel, display }) {
     this.debugLevel = debugLevel;
     this.print = (s) => output(s.toString());
     this.context = new Context({
@@ -15,6 +15,7 @@ class Basic {
     this.loops = {};
     this.stack = [];
     this.jumped = false;
+    this.display = display;
   }
 
   debug(str, level = 1) {
@@ -107,9 +108,13 @@ class Basic {
     this.variables[name] = {};
   }
 
-  fun(name) {
+  fun(name) {    
     if (!Functions[name]) {
       throw new Error(`Function ${name} does not exist`);
+    }
+
+    if (name.toLowerCase() === 'color') {
+      return this.color.bind(this);
     }
 
     return Functions[name];
@@ -174,6 +179,22 @@ class Basic {
     }
     const lineno = this.stack.pop();
     this.goto(lineno);
+  }
+
+  assertDisplay() {
+    if (!this.display) {
+      throw new Error('No display found');
+    }
+  }
+
+  plot(x, y, color) {
+    this.assertDisplay();
+    this.display.plot(x, y, color);
+  }
+
+  color(x, y) {
+    this.assertDisplay();
+    return this.display.color(x, y);
   }
 }
 module.exports = Basic;
