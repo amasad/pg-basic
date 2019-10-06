@@ -47,10 +47,16 @@ const KEYWORDS = [
   'STOP',
 ];
 
+const CONSTANTS = [
+  'LEVEL',
+  'PI',
+];
+
 const LINE = /^\s*(\d+)\s*/;
 const QUOTE = /^"((\\.|[^"\\])*)"\s*/;
 const KEY = new RegExp('^(' + KEYWORDS.join('|') + ')\\s*', 'i');
 const FUN = new RegExp('^(' + Object.keys(Functions).join('|') + ')\\s*', 'i');
+const CONST = new RegExp('^(' + CONSTANTS.join('|') + ')\\s*', 'i');
 const VAR = /^([a-z][0-9]*)\$?\s*/i;
 const NUM = /^(\d+(\.\d+)?)\s*/i;
 const OP = /^(<>|>=|<=|[,\+\-\*\/%=<>\(\)\]\[])\s*/i;
@@ -141,6 +147,7 @@ class Tokenizer {
         this.eatQuote() ||
         this.eatLogic() ||
         this.eatFunction() ||
+        this.eatConstant() ||
         this.eatVariable() ||
         this.eatNumber() ||
         this.eatOperation() ||
@@ -193,6 +200,16 @@ class Tokenizer {
     if (m && m[0]) {
       const fun = m[1].toUpperCase();
       this.tokens.push(new Token('function', fun));
+      return m[0];
+    }
+    return null;
+  }
+
+  eatConstant() {
+    const m = this.stmnt.match(CONST);
+    if (m && m[0]) {
+      const fun = m[1].toUpperCase();
+      this.tokens.push(new Token('constant', fun));
       return m[0];
     }
     return null;

@@ -97,7 +97,12 @@ class Basic {
   }
 
   evaluate(code) {
-    return this.context.evaluate(code);
+    try {
+      return this.context.evaluate(code);
+    } catch (e) {
+      console.error('Error evaluating code:', code);
+      throw e;
+    }
   }
 
   set(vari, value) {

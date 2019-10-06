@@ -151,3 +151,26 @@ test('ARR', () => {
     lexeme: 1,
   });
 });
+
+test('CONSTANT', () => {
+  const t = new Tokenizer('100 PRINT PI', {
+    debug: true,
+  })
+
+  t.tokenize();
+
+  expect(t.next().toJSON()).toEqual({
+    type: 'lineno',
+    lexeme: 100,
+  });
+
+  expect(t.next().toJSON()).toEqual({
+    type: 'keyword',
+    lexeme: 'PRINT',
+  });
+
+  expect(t.next().toJSON()).toEqual({
+    type: 'constant',
+    lexeme: 'PI',
+  });
+});

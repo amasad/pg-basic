@@ -1,7 +1,7 @@
 // Run tests:
 const { spawnSync } = require('child_process');
 
-const res = spawnSync('jest',  ['parser'], {
+const res = spawnSync('jest',  ['tokenizer'], {
   stdio: 'inherit',
 });
 process.exit(res.status);

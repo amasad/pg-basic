@@ -92,6 +92,14 @@ const Functions = {
     // This is just a stub. This gets injected.
     throw new Error('Unimplemented');
   },
+
+  UPPERCASE(str) {
+    return str.toUpperCase();
+  },
+
+  LOWERCASE(str) {
+    return str.toLowerCase();
+  },
 };
 
 const aliases = {
