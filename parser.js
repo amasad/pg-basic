@@ -87,14 +87,26 @@ class Parser {
       case 'IF':
         const cond = this.expectExpr();
         this.expectKeyword('THEN');
-        const then = this.parse();
-        let other = null;
-        if (this.acceptKeyword('else')) {
-          other = this.parse();
+
+        let then;
+        // Shortcut: number is interpreted as goto statement.
+        if (this.tokenizer.peek().type === 'number') {
+          then = new GOTO(this.lineno, this.expectExpr());
+        } else {
+          then = this.parse();
         }
 
-        return new IF(this.lineno, cond, then, other);
+        let elze = null;
+        if (this.acceptKeyword('else')) {
+          if (this.tokenizer.peek().type === 'number') {
+            elze = new GOTO(this.lineno, this.expectExpr());
+          } else {
+            elze = this.parse();
+          }
+        }
 
+        return new IF(this.lineno, cond, then, elze);
+        
       case 'GOSUB':
         return new GOSUB(this.lineno, this.expectExpr());
 

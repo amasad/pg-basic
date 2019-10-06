@@ -1,10 +1,10 @@
 // Run tests:
 const { spawnSync } = require('child_process');
 
-// const res = spawnSync('jest',  [''], {
-//   stdio: 'inherit',
-// });
-// process.exit(res.status);
+const res = spawnSync('jest',  ['parser'], {
+  stdio: 'inherit',
+});
+process.exit(res.status);
 
 const Basic = require('./basic');
 const colors = {};
@@ -41,9 +41,7 @@ const interp = new Basic({
 });
 
 interp.run(`
-100 INPUT "your name"; A
-300 PRINT A
-400 GOTO 100
+2550 IF P > 24 OR P < 0 OR Q > 24 OR Q < 0 THEN GOTO 7000
 `);
 
 // interp.run(`

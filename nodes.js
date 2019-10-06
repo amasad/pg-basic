@@ -198,25 +198,25 @@ class END extends Node {
 }
 
 class IF extends Node {
-  constructor(lineno, condition, then, other) {
-    super(lineno);
+  constructor(lineno, condition, then, elze) {
+    super(lineno, 'IF');
     this.condition = condition;
     this.then = then;
-    this.other = other;
+    this.elze = elze;
   }
 
   run(context) {
     if (context.evaluate(this.condition)) {
       this.then.run(context);
     } else if (this.other) {
-      this.other.run(context);
+      this.elze.run(context);
     }
   }
 }
 
 class GOSUB extends Node {
   constructor(lineno, expr) {
-    super(lineno);
+    super(lineno, 'GOSUB');
     this.expr = expr;
   }
 
@@ -238,7 +238,7 @@ class RETURN extends Node {
 
 class ARRAY extends Node {
   constructor(lineno, variable) {
-    super(lineno);
+    super(lineno, 'ARRAY');
     this.variable = variable;
   }
 

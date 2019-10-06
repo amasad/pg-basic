@@ -109,58 +109,74 @@ t('100 INPUT "what up"; X', {
 });
 
 
-// t('100 IF X = Y THEN GOTO 100', {
-//   type: 'IF',
-//   conditional: {
-//     type: 'operation',
-//     operator: '=',
-//     left: {
-//       type: 'variable',
-//       name: 'X',
-//       array: false,
-//     },
-//     right: {
-//       type: 'variable',
-//       name: 'Y',
-//       array: false,
-//     },
-//   },
-//   thener: {
-//     type: 'GOTO',
-//     expr: {
-//       type: 'literal',
-//       value: 100,
-//     }
-//   },
-//   elser: null,
-// });
+t('100 IF X = Y THEN GOTO 100', {
+  type: 'IF',
+  condition: '__pgb.get("X")==__pgb.get("Y")',
+  lineno: 100,
+  elze: null,
+  then: {
+    type: 'GOTO',
+    expr: '100',
+    lineno: 100,    
+  }
+});  
 
+t('100 IF X = Y THEN GOTO 100 ELSE GOTO 200', {
+  type: 'IF',
+  condition: '__pgb.get("X")==__pgb.get("Y")',
+  lineno: 100,
+  elze: null,
+  then: {
+    type: 'GOTO',
+    expr: '100',
+    lineno: 100,    
+  },
+  elze: {
+    type: 'GOTO',
+    expr: '200',
+    lineno: 100,
+  }
+});  
 
-// // Shortcut goto
-// t('100 IF X = Y THEN 100', {
+// Shortcut goto
+t('100 IF X = Y THEN 100', {
+  type: 'IF',
+  condition: '__pgb.get("X")==__pgb.get("Y")',
+  elze: null,
+  lineno: 100,
+  then: {
+    type: 'GOTO',
+    expr: '100',
+    lineno: 100,
+  },
+});
+
+t('100 IF X = Y THEN 100 ELSE 200', {
+  type: 'IF',
+  condition: '__pgb.get("X")==__pgb.get("Y")',
+  elze: null,
+  lineno: 100,
+  then: {
+    type: 'GOTO',
+    expr: '100',
+    lineno: 100,
+  },
+  elze: {
+    type: 'GOTO',
+    expr: '200',
+    lineno: 100,
+  },
+});
+
+// t('100 IF X = Y THEN 100 else 100', {
 //   type: 'IF',
-//   conditional: {
-//     type: 'operation',
-//     operator: '=',
-//     left: {
-//       type: 'variable',
-//       name: 'X',
-//       array: false,
-//     },
-//     right: {
-//       type: 'variable',
-//       name: 'Y',
-//       array: false,
-//     },
-//   },
-//   thener: {
+//   condition: '__pgb.get("X")==__pgb.get("Y")',
+//   elze: null,
+//   then: {
 //     type: 'GOTO',
-//     expr: {
-//       type: 'literal',
-//       value: 100,
-//     }
+//     expr: '100',
+//     lineno: 100,
 //   },
-//   elser: null,
 // });
 
 // // ELSE
