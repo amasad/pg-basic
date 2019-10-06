@@ -56,6 +56,13 @@ const Functions = {
     return n;
   },
 
+  RND(f = 0) {
+    if (f === 0) {
+      return Math.random();
+    }
+    return Math.ceil(Math.random() * f);    
+  },
+
   // Strings:
   ASC(str) {
     return str.charCodeAt(0);
@@ -116,6 +123,7 @@ const aliases = {
   CHR$: 'CHR',
   MID$: 'MID',
   RIGHT$: 'RIGHT',
+  RAND: 'RND',
 
   // Technically TAB should be relative to the current cursor position
   // but that's too hard to implement now.
