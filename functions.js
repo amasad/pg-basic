@@ -24,6 +24,14 @@ const Functions = {
     return Math.floor(n);
   },
 
+  FLOOR(n) {
+    return Math.floor(n);
+  },
+
+  ROUND(n) {
+    return Math.round(n);
+  },
+
   ATN(n) {
     return Math.atan(n);
   },

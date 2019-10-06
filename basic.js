@@ -6,7 +6,7 @@ class Basic {
   constructor({ console, debugLevel, display, constants = {
     PI: Math.PI,
     LEVEL: 1,
-  }}) {
+  } }) {
     this.debugLevel = debugLevel;
     this.console = console;
     this.context = new Context({
@@ -29,10 +29,19 @@ class Basic {
   }
 
   run(program) {
+    const seen = {};
     this.program = program.split('\n')
       .filter(l => l.trim() !== '')
       .map((l) => Parser.parseLine(l))
       .sort((a, b) => a.lineno - b.lineno);
+
+    this.program.forEach(({ lineno }) => {
+      if (seen[lineno]) {
+        throw new Error(`Line with number ${lineno} repeated`);
+      }
+      seen[lineno] = true;
+    });
+
 
     if (!this.program.length) return this.end();
 
@@ -65,7 +74,7 @@ class Basic {
         this.delay = null;
         return setTimeout(() => {
           this.execute();
-        }, delay * 1000)
+        }, delay)
       }
 
       if (this.halted) {
@@ -149,9 +158,9 @@ class Basic {
     throw new Error(`Constant ${constant} undefined`);
   }
 
-  pause(seconds) {
-    this.debug(`pause ${seconds}`)
-    this.delay = seconds;
+  pause(millis) {
+    this.debug(`pause ${millis}`)
+    this.delay = millis;
   }
 
   goto(lineno) {
