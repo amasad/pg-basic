@@ -113,10 +113,15 @@ class Basic {
       throw new Error(`Function ${name} does not exist`);
     }
 
-    if (name.toLowerCase() === 'color') {
-      return this.color.bind(this);
+    // External functions
+    switch (name.toLowerCase()) {
+      case 'color':
+        return this.color.bind(this);
+      case 'getchar':
+        return this.getChar.bind(this);
     }
 
+    // Internal utils
     return Functions[name];
   }
 
@@ -213,6 +218,11 @@ class Basic {
   clearGraphics() {
     this.assertDisplay();
     this.display.clear();
+  }
+
+  getChar() {
+    this.assertDisplay();
+    return this.display.getChar() || '';
   }
 }
 
