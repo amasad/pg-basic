@@ -64,7 +64,8 @@ class Tokenizer {
       'function',
       'operation',
       'number',
-      'variable'
+      'variable',
+      'logic',
     ];
   }
 

@@ -154,7 +154,6 @@ t('100 IF X = Y THEN 100', {
 t('100 IF X = Y THEN 100 ELSE 200', {
   type: 'IF',
   condition: '__pgb.get("X")==__pgb.get("Y")',
-  elze: null,
   lineno: 100,
   then: {
     type: 'GOTO',
@@ -168,49 +167,30 @@ t('100 IF X = Y THEN 100 ELSE 200', {
   },
 });
 
-// t('100 IF X = Y THEN 100 else 100', {
-//   type: 'IF',
-//   condition: '__pgb.get("X")==__pgb.get("Y")',
-//   elze: null,
-//   then: {
-//     type: 'GOTO',
-//     expr: '100',
-//     lineno: 100,
-//   },
-// });
+t('100 IF P > 24 OR P < 0 AND Q < 0 THEN GOTO 7000', {
+  type: 'IF',
+  condition: '__pgb.get("P")>24||__pgb.get("P")<0&&__pgb.get("Q")<0',
+  elze: null,
+  lineno: 100,
+  then: {
+    type: 'GOTO',
+    expr: '7000',
+    lineno: 100,
+  },
+});
 
-// // ELSE
-// t('100 IF X = Y THEN 100 ELSE 200', {
-//   type: 'IF',
-//   conditional: {
-//     type: 'operation',
-//     operator: '=',
-//     left: {
-//       type: 'variable',
-//       name: 'X',
-//       array: false,
-//     },
-//     right: {
-//       type: 'variable',
-//       name: 'Y',
-//       array: false,
-//     },
-//   },
-//   thener: {
-//     type: 'GOTO',
-//     expr: {
-//       type: 'literal',
-//       value: 100,
-//     }
-//   },
-//   elser: {
-//     type: 'GOTO',
-//     expr: {
-//       type: 'literal',
-//       value: 200,
-//     }
-//   },
-// });
+t('100 IF (P > 24 OR P < 0) AND Q < 0 THEN GOTO 7000', {
+  type: 'IF',
+  condition: '(__pgb.get("P")>24||__pgb.get("P")<0)&&__pgb.get("Q")<0',
+  elze: null,
+  lineno: 100,
+  then: {
+    type: 'GOTO',
+    expr: '7000',
+    lineno: 100,
+  },
+});
+
 
 t('100 FOR I = 0 to 10', {
   type: 'FOR',

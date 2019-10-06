@@ -106,7 +106,7 @@ class Parser {
         }
 
         return new IF(this.lineno, cond, then, elze);
-        
+
       case 'GOSUB':
         return new GOSUB(this.lineno, this.expectExpr());
 
