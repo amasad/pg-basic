@@ -182,7 +182,7 @@ class PLOT extends Node {
   }
 
   run(context) {    
-    context.plot(context.evaluate(this.x), context.evaluate(this.y), this.color);
+    context.plot(context.evaluate(this.x), context.evaluate(this.y), context.evaluate(this.color));
   }
 }
 
@@ -242,6 +242,24 @@ class ARRAY extends Node {
   }
 }
 
+class CLS extends Node {
+  run(context) {
+    context.clearAll();
+  }
+}
+
+class CLT extends Node {
+  run(context) {
+    context.clearConsole();
+  }
+}
+
+class CLC extends Node {
+  run(context) {
+    context.clearGraphics();
+  }
+}
+
 module.exports = {
   Node,
   PRINT,
@@ -258,5 +276,8 @@ module.exports = {
   GOSUB,
   RETURN,
   ARRAY,
+  CLS,
+  CLT,
+  CLC,
   Variable,
 };

@@ -3,9 +3,9 @@ const Parser = require('./parser');
 const Functions = require('./functions');
 
 class Basic {
-  constructor({ output, debugLevel, display }) {
+  constructor({ console, debugLevel, display }) {
     this.debugLevel = debugLevel;
-    this.print = (s) => output(s.toString());
+    this.console = console;
     this.context = new Context({
       __pgb: this,
     });
@@ -108,7 +108,7 @@ class Basic {
     this.variables[name] = {};
   }
 
-  fun(name) {    
+  fun(name) {
     if (!Functions[name]) {
       throw new Error(`Function ${name} does not exist`);
     }
@@ -196,5 +196,24 @@ class Basic {
     this.assertDisplay();
     return this.display.color(x, y);
   }
+
+  clearAll() {
+    this.clearConsole();
+    this.clearGraphics();
+  }
+
+  print(s) {
+    this.console.write(s.toString());
+  }
+
+  clearConsole() {
+    this.console.clear();
+  }
+
+  clearGraphics() {
+    this.assertDisplay();
+    this.display.clear();
+  }
 }
+
 module.exports = Basic;

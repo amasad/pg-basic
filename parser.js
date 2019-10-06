@@ -14,6 +14,9 @@ const {
   RETURN,
   ARRAY,
   PLOT,
+  CLS,
+  CLC,
+  CLT,
   Variable
 } = require('./nodes');
 const exprToJS = require('./expr');
@@ -102,13 +105,20 @@ class Parser {
         return new ARRAY(this.lineno, this.expectVariable());
 
       case 'PLOT':
-        const x = this.expectExpr(true);        
+        const x = this.expectExpr(true);
         this.expectOperation(',');
         const y = this.expectExpr(true);
         this.expectOperation(',');
         const color = this.expectExpr(true);
 
         return new PLOT(this.lineno, x, y, color);
+
+      case 'CLS':
+        return new CLS(this.lineno);
+      case 'CLC':
+        return new CLC(this.lineno);
+      case 'CLT':
+        return new CLT(this.lineno);
     }
 
     throw new Error(`Unexpected token ${top.lexeme}`);
@@ -164,8 +174,8 @@ class Parser {
     while (this.tokenizer.peek() != Tokenizer.eof) {
       if (stopOnComma && this.tokenizer.peek().lexeme === ',') {
         break;
-      }      
-      
+      }
+
       if (!Tokenizer.expressionTypes.includes(this.tokenizer.peek().type)) {
         break;
       }

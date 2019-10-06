@@ -47,7 +47,7 @@ const Functions = {
     if (isNaN(n)) return 0;
     return n;
   },
-  
+
   // Strings:
   ASC(str) {
     return str.charCodeAt(0);
@@ -82,9 +82,16 @@ const Functions = {
     return ' '.repeat(n);
   },
 
+  // Display stubs
   COLOR() {
     // This is just a stub. This gets injected.
-  }
+    throw new Error('Unimplemented');
+  },
+
+  GETCHAR() {
+    // This is just a stub. This gets injected.
+    throw new Error('Unimplemented');
+  },
 };
 
 const aliases = {

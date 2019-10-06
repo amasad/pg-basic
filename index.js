@@ -8,25 +8,39 @@ const { spawnSync } = require('child_process');
 
 const Basic = require('./basic');
 const colors = {};
+const keyQueue = ['a', 'b', 'c'];
 const display = {
-  plot(x, y, color) {    
+  plot(x, y, color) {
     console.log('plotting', x, y, color);
     colors[`${x}${y}`] = color;
   },
-  color(x,y) {
+  color(x, y) {
     return colors[`${x}${y}`];
+  },
+
+  clear() {
+    console.log('display cleared');
+  },
+
+  getChar() {
+    return keyQueue.pop();
   }
 };
 
+const cnsle = {
+  write: (s) => process.stdout.write(s),
+  clear: () => console.log('console cleared'),
+}
 const interp = new Basic({
-  output: (s) => process.stdout.write(s),
+  console: cnsle,
   display,
   //debugLevel: 4,
 });
 
 interp.run(`
-100 PLOT 1, 2, "RED"
-200 PRINT COLOR(1, 2)
+100 PRINT GETCHAR()
+300 PAUSE 1
+400 GOTO 100
 `);
 
 // interp.run(`
