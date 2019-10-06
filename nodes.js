@@ -123,6 +123,8 @@ class INPUT extends Node {
 
     context.print(prompt);
 
+    // Yield.
+    context.halt();
     context.input((value) => {
       if (this.variable.array) {
         const sub = context.evaluate(this.variable.subscript);
@@ -130,6 +132,9 @@ class INPUT extends Node {
       } else {
         context.set(this.variable.name, value);
       }
+      
+      // Resume.
+      context.execute();
     });
   }
 }

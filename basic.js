@@ -63,6 +63,10 @@ class Basic {
           this.execute();
         }, delay * 1000)
       }
+
+      if (this.halted) {
+        return;
+      }
     }
   }
 
@@ -223,6 +227,14 @@ class Basic {
   getChar() {
     this.assertDisplay();
     return this.display.getChar() || '';
+  }
+
+  input(callback) {
+    this.console.input(callback);
+  }
+
+  halt() {
+    this.halted = true;
   }
 }
 

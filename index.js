@@ -24,12 +24,15 @@ const display = {
 
   getChar() {
     return keyQueue.pop();
-  }
+  },
 };
 
 const cnsle = {
   write: (s) => process.stdout.write(s),
   clear: () => console.log('console cleared'),
+  input: (callback) => {
+    setTimeout(() => callback('foo'));
+  }
 }
 const interp = new Basic({
   console: cnsle,
@@ -38,8 +41,8 @@ const interp = new Basic({
 });
 
 interp.run(`
-100 PRINT GETCHAR()
-300 PAUSE 1
+100 INPUT "your name"; A
+300 PRINT A
 400 GOTO 100
 `);
 
