@@ -192,6 +192,18 @@ t('100 IF (P > 24 OR P < 0) AND Q < 0 THEN GOTO 7000', {
 });
 
 
+t('100 IF X = PI GOTO 7000', {
+  type: 'IF',
+  condition: '__pgb.get("X")==__pgb.getConst("PI")',
+  elze: null,
+  lineno: 100,
+  then: {
+    type: 'GOTO',
+    expr: '7000',
+    lineno: 100,
+  },
+});
+
 t('100 FOR I = 0 to 10', {
   type: 'FOR',
   lineno: 100,

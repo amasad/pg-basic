@@ -14,6 +14,11 @@ function exprToJS(expr) {
       continue;
     }
 
+    if (t.type === 'constant') {
+      jsExpr += '__pgb.getConst("' + t.lexeme + '")';
+      continue;
+    }
+
     if (t.type === 'logic') {
       if (t.lexeme === 'AND') {
         jsExpr += '&&';

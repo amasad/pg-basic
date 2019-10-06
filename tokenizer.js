@@ -72,6 +72,7 @@ class Tokenizer {
       'number',
       'variable',
       'logic',
+      'constant',
     ];
   }
 

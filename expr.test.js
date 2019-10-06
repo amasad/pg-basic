@@ -28,3 +28,8 @@ test('functions', () => {
   expect(toJs('LEFT(A, 3)')).toBe(`__pgb.fun("LEFT")(__pgb.get("A"),3)`);
   expect(toJs('RIGHT(A, 3)')).toBe(`__pgb.fun("RIGHT")(__pgb.get("A"),3)`);
 });
+
+test('constants', () => {
+  expect(toJs('PI')).toBe('__pgb.getConst("PI")');
+  expect(toJs('LEVEL')).toBe('__pgb.getConst("LEVEL")');
+});

@@ -3,7 +3,10 @@ const Parser = require('./parser');
 const Functions = require('./functions');
 
 class Basic {
-  constructor({ console, debugLevel, display }) {
+  constructor({ console, debugLevel, display, constants = {
+    PI: Math.PI,
+    LEVEL: 1,
+  }}) {
     this.debugLevel = debugLevel;
     this.console = console;
     this.context = new Context({
@@ -16,6 +19,7 @@ class Basic {
     this.stack = [];
     this.jumped = false;
     this.display = display;
+    this.constants = constants;
   }
 
   debug(str, level = 1) {
@@ -136,6 +140,13 @@ class Basic {
 
   get(vari) {
     return this.variables[vari];
+  }
+
+  getConst(constant) {
+    if (this.constants.hasOwnProperty(constant)) {
+      return this.constants[constant]
+    }
+    throw new Error(`Constant ${constant} undefined`);
   }
 
   pause(seconds) {

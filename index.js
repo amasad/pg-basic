@@ -1,7 +1,7 @@
 // Run tests:
 const { spawnSync } = require('child_process');
 
-const res = spawnSync('jest',  ['tokenizer'], {
+const res = spawnSync('jest',  ['expr'], {
   stdio: 'inherit',
 });
 process.exit(res.status);
@@ -41,7 +41,8 @@ const interp = new Basic({
 });
 
 interp.run(`
-2550 IF P > 24 OR P < 0 OR Q > 24 OR Q < 0 THEN GOTO 7000
+100 PRINT PI
+200 PRINT LEVEL
 `);
 
 // interp.run(`
