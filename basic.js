@@ -148,7 +148,7 @@ class Basic {
   }
 
   get(vari) {
-    return this.variables[vari];
+    return this.variables[vari] || 0;
   }
 
   getConst(constant) {
