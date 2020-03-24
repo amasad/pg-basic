@@ -24,9 +24,9 @@ const { ParseError } = require('./errors');
 
 class Parser {
   static parseLine(line) {
-    const t = new Tokenizer(line, { debug: true });
+    const t = new Tokenizer(line);
     t.tokenize();
-
+    
     const p = new Parser(t);
 
     return p.parse();
@@ -34,11 +34,11 @@ class Parser {
 
   constructor(tokenizer) {
     this.tokenizer = tokenizer;
+    this.lineno = this.getLineNo(this.tokenizer.next());
   }
 
   parse() {
-    this.lineno = this.getLineNo(this.tokenizer.next());
-    const top = this.tokenizer.next();    
+    const top = this.tokenizer.next();
     this.assertType(top, 'keyword');
 
     switch (top.lexeme) {
@@ -250,11 +250,11 @@ class Parser {
 
   assertType(token, expected, value = null) {
     if (token.type !== expected) {
-      throw new ParseError(this.lineno, `Expect token of type ${expected} but got ${token.type}`);
+      throw new ParseError(this.lineno, `Expected a ${expected} but got a ${token.type} instead 😕`);
     }
 
     if (value != null && token.lexeme !== value) {
-      throw new ParseError(this.lineno, `Expected token value to be ${value} but got ${token.lexeme}`);
+      throw new ParseError(this.lineno, `Expected a ${value} but got a ${token.lexeme}`);
     }
   }
 
@@ -262,7 +262,7 @@ class Parser {
     this.assertType(token, 'lineno');
 
     if (typeof token.lexeme !== 'number') {
-      throw new ParseError(this.lineno, 'lineno should be a number');
+      throw new ParseError(this.lineno, 'Lines should start with line numbers');
     }
 
     return token.lexeme;

@@ -80,18 +80,17 @@ class Tokenizer {
     return eof;
   }
 
-  static tokenizeLine(line, debug) {
-    const t = new Tokenizer(line, { debug: debug });
+  static tokenizeLine(line) {
+    const t = new Tokenizer(line);
     t.tokenize();
     return t.tokens;
   }
 
-  constructor(stmnt, options = {}) {
+  constructor(stmnt) {
     this.stmnt = stmnt;
     this.tokens = [];
     this.index = 0;
     this.tokenized = false;
-    this.debug = options.debug || false;
   }
 
   assertTokenized() {
@@ -156,10 +155,6 @@ class Tokenizer {
 
 
       if (!eaten) {
-        if (this.debug) {
-          console.log("tokens", this.tokense);
-        }
-
         throw new Error('Invalid syntax near: `' + this.stmnt + `'`);
       }
 

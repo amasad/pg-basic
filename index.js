@@ -1,3 +1,5 @@
+// To build hit up https://bundle-repl.amasad.repl.co/bundle/@amasad/pg-basic
+
 const Basic = require('./basic');
 const colors = {};
 const keyQueue = ['a', 'b', 'c'];
@@ -29,12 +31,11 @@ const cnsle = {
 const interp = new Basic({
   console: cnsle,
   display,
-  debugLevel: 1,
+  debugLevel: 99,
 });
 
 interp.run(`
 1000 REM Snake and Dots
-1000
 1010 REM Quite BASIC Game Project
 1020 REM ------------------------ 
 1030 CLS
