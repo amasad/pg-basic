@@ -20,27 +20,26 @@ const {
   Variable
 } = require('./nodes');
 const exprToJS = require('./expr');
+const { ParseError } = require('./errors');
 
 class Parser {
   static parseLine(line) {
     const t = new Tokenizer(line, { debug: true });
     t.tokenize();
 
-    const lineno = getLineNo(t.next());
-
-    const p = new Parser(t, lineno);
+    const p = new Parser(t);
 
     return p.parse();
   }
 
-  constructor(tokenizer, lineno) {
+  constructor(tokenizer) {
     this.tokenizer = tokenizer;
-    this.lineno = lineno;
   }
 
   parse() {
-    const top = this.tokenizer.next();
-    assertType(top, 'keyword');
+    this.lineno = this.getLineNo(this.tokenizer.next());
+    const top = this.tokenizer.next();    
+    this.assertType(top, 'keyword');
 
     switch (top.lexeme) {
       case 'PRINT':
@@ -133,7 +132,7 @@ class Parser {
         return new CLT(this.lineno);
     }
 
-    throw new Error(`Unexpected token ${top.lexeme}`);
+    throw new ParseError(this.lineno, `Unexpected token ${top.lexeme}`);
   }
 
   acceptKeyword(keyword) {
@@ -147,7 +146,7 @@ class Parser {
   expectKeyword(keyword) {
     const t = this.acceptKeyword(keyword);
     if (t == null) {
-      throw new Error(`Expected ${keyword} but got ${this.tokenizer.peek().lexeme}`);
+      throw new ParseError(this.lineno, `Expected ${keyword} but got ${this.tokenizer.peek().lexeme}`);
     }
 
     return t.lexeme;
@@ -157,26 +156,26 @@ class Parser {
     const t = this.tokenizer.next();
 
     if (t.type === 'comment') {
-      assertType(this.tokenizer.next(), 'eof');
+      this.assertType(this.tokenizer.next(), 'eof');
       return t.lexeme;
     }
 
-    assertType(t, 'eof');
+    this.assertType(t, 'eof');
     return '';
   }
 
   expectOperation(op) {
     const t = this.tokenizer.next();
-    assertType(t, 'operation');
+    this.assertType(t, 'operation');
     if (t.lexeme !== op) {
-      throw new Error('Expected operation ' + op)
+      throw new ParseError(this.lineno, 'Expected operation ' + op)
     }
     return t.lexeme;
   }
 
   expectVariable() {
     const t = this.tokenizer.next();
-    assertType(t, 'variable');
+    this.assertType(t, 'variable');
     return new Variable(this.lineno, t.lexeme, this.acceptSubscript());
   }
 
@@ -214,7 +213,7 @@ class Parser {
     }
 
     if (expr.length === 0) {
-      throw new Error('Expected expression');
+      throw new ParseError(this.lineno, 'Expected expression');
     }
 
     return exprToJS(expr);
@@ -222,7 +221,7 @@ class Parser {
 
   expectLineMod() {
     if (!this.acceptLineMod()) {
-      throw new Error('Expected ;');
+      throw new ParseError(this.lineno, 'Expected ;');
     }
 
     return true;
@@ -240,34 +239,35 @@ class Parser {
   acceptSubscript() {
     if (this.tokenizer.peek().lexeme !== '[') return null;
 
-    assertType(this.tokenizer.next(), 'operation', '[');
+    this.assertType(this.tokenizer.next(), 'operation', '[');
 
     const expr = this.expectExpr();
 
-    assertType(this.tokenizer.next(), 'operation', ']');
+    this.assertType(this.tokenizer.next(), 'operation', ']');
 
     return expr;
   }
-}
 
-function assertType(token, expected, value = null) {
-  if (token.type !== expected) {
-    throw new Error(`Expect token of type ${expected} but got ${token.type}`);
+  assertType(token, expected, value = null) {
+    if (token.type !== expected) {
+      throw new ParseError(this.lineno, `Expect token of type ${expected} but got ${token.type}`);
+    }
+
+    if (value != null && token.lexeme !== value) {
+      throw new ParseError(this.lineno, `Expected token value to be ${value} but got ${token.lexeme}`);
+    }
   }
 
-  if (value != null && token.lexeme !== value) {
-    throw new Error(`Expected token value to be ${value} but got ${token.lexeme}`);
+  getLineNo(token) {
+    this.assertType(token, 'lineno');
+
+    if (typeof token.lexeme !== 'number') {
+      throw new ParseError(this.lineno, 'lineno should be a number');
+    }
+
+    return token.lexeme;
   }
 }
 
-function getLineNo(token) {
-  assertType(token, 'lineno');
-
-  if (typeof token.lexeme !== 'number') {
-    throw new Error('lineno should be a number');
-  }
-
-  return token.lexeme;
-}
 
 module.exports = Parser;

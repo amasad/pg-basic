@@ -1,11 +1,3 @@
-// Run tests:
-const { spawnSync } = require('child_process');
-
-// const res = spawnSync('jest',  ['expr'], {
-//   stdio: 'inherit',
-// });
-// process.exit(res.status);
-
 const Basic = require('./basic');
 const colors = {};
 const keyQueue = ['a', 'b', 'c'];
@@ -42,6 +34,7 @@ const interp = new Basic({
 
 interp.run(`
 1000 REM Snake and Dots
+1000
 1010 REM Quite BASIC Game Project
 1020 REM ------------------------ 
 1030 CLS
@@ -132,7 +125,11 @@ interp.run(`
 9400 LET U = 1
 9410 LET V = 0
 9420 RETURN
-`);
+`).then(() => {
+  console.log('done')
+}, error => {
+  console.error(error.stack);
+});
 
 // interp.run(`
 // 1000 REM Fibonacci Sequence Project

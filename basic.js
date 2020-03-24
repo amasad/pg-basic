@@ -1,6 +1,7 @@
 const Context = require('context-eval');
 const Parser = require('./parser');
 const Functions = require('./functions');
+const { ParseError, RuntimeError } = require('./errors');
 
 class Basic {
   constructor({ console, debugLevel, display, constants = {
@@ -29,25 +30,35 @@ class Basic {
   }
 
   run(program) {
-    const seen = {};
-    this.program = program.split('\n')
-      .filter(l => l.trim() !== '')
-      .map((l) => Parser.parseLine(l))
-      .sort((a, b) => a.lineno - b.lineno);
+    return new Promise((resolve, reject) => {
+      this.onEnd = { resolve, reject };
+      this.ended = false;
 
-    this.program.forEach(({ lineno }) => {
-      if (seen[lineno]) {
-        throw new Error(`Line with number ${lineno} repeated`);
-      }
-      seen[lineno] = true;
+      const seen = {};
+      this.program = program.split('\n')
+        .filter(l => l.trim() !== '')
+        .map((l) => {
+          try {
+            return Parser.parseLine(l);
+          } catch (e) {
+            this.end(e);
+          }
+        })
+        .sort((a, b) => a.lineno - b.lineno);
+
+      this.program.forEach(({ lineno }) => {
+        if (seen[lineno]) {
+          this.end(new ParseError(lineno, `Line with number ${lineno} repeated`));
+        }
+        seen[lineno] = true;
+      });
+
+      if (!this.program.length) return this.end();
+
+      this.lineno = this.program[0].lineno;
+
+      this.execute();
     });
-
-
-    if (!this.program.length) return this.end();
-
-    this.lineno = this.program[0].lineno;
-
-    this.execute();
   }
 
   execute() {
@@ -95,7 +106,7 @@ class Basic {
     const node = this.getCurLine();
 
     if (!node) {
-      throw new Error(`Cannot find line with number ${this.lineno}`);
+      this.end(new Error(`Cannot find line with number ${this.lineno}`));
     }
 
     this.debug('step', 1);
@@ -104,9 +115,17 @@ class Basic {
     node.run(this);
   }
 
-  end() {
+  end(error) {
     this.ended = true;
-    this.debug('program ended');
+
+    if (error) {
+      this.debug(`program ended with error: ${error.message}`);
+      this.onEnd.reject(error);
+      throw error;
+    } else {
+      this.debug('program ended');
+      this.onEnd.resolve();
+    }
   }
 
   evaluate(code) {
@@ -132,7 +151,7 @@ class Basic {
 
   fun(name) {
     if (!Functions[name]) {
-      throw new Error(`Function ${name} does not exist`);
+      this.end(new Error(`Function ${name} does not exist`));
     }
 
     // External functions
@@ -155,7 +174,7 @@ class Basic {
     if (this.constants.hasOwnProperty(constant)) {
       return this.constants[constant]
     }
-    throw new Error(`Constant ${constant} undefined`);
+    this.end(new Error(`Constant ${constant} undefined`));
   }
 
   pause(millis) {
@@ -209,7 +228,7 @@ class Basic {
 
   return() {
     if (this.stack.length === 0) {
-      throw new Error('No function calls to return from');
+      this.end(new Error('No function calls to return from'));
     }
     const lineno = this.stack.pop();
     this.goto(lineno);
@@ -217,7 +236,7 @@ class Basic {
 
   assertDisplay() {
     if (!this.display) {
-      throw new Error('No display found');
+      this.end(new Error('No display found'));
     }
   }
 
