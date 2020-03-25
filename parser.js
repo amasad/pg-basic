@@ -96,7 +96,7 @@ class Parser {
         }
 
         let elze = null;
-        if (this.acceptKeyword('else')) {
+        if (this.acceptKeyword('ELSE')) {
           if (this.tokenizer.peek().type === 'number') {
             elze = new GOTO(this.lineno, this.expectExpr());
           } else {
