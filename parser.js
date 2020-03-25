@@ -136,7 +136,11 @@ class Parser {
   }
 
   acceptKeyword(keyword) {
-    if (this.tokenizer.peek().type === 'keyword') {
+    const t = this.tokenizer.peek();
+    if (t.type === 'keyword') {
+      if (t.lexeme !== keyword) {
+        throw new ParseError(this.lineno, `Expected ${keyword} got ${t.lexeme}`);
+      }
       return this.tokenizer.next();
     }
 
