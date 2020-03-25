@@ -22,23 +22,22 @@ const display = {
 };
 
 const cnsle = {
-  write: (s) => process.stdout.write(s),
+  write: s => process.stdout.write(s),
   clear: () => console.log('console cleared'),
-  input: (callback) => {
+  input: callback => {
     setTimeout(() => callback('foo'));
-  }
-}
+  },
+};
 const interp = new Basic({
   console: cnsle,
   display,
   debugLevel: 99,
 });
 
-interp.run(`
-10 10
+interp
+  .run(
+    `
 10 PAUSE 0.1
-11 RETURN
-15 GOSUB "S"
 20 ARRAY I
 92 LET I[0] =5
 95 LET I[1] = 10
@@ -47,16 +46,22 @@ interp.run(`
 110 PRINT I
 120 NEXT I
 
-`).then(() => {
- console.log('dohne') ;
-}, (err) => {
-  console.error('error')
-});
+`,
+  )
+  .then(
+    () => {
+      console.log('dohne');
+    },
+    err => {
+      console.error('error:');
+      console.error(err);
+    },
+  );
 
 // interp.run(`
 // 1000 REM Snake and Dots
 // 1010 REM Quite BASIC Game Project
-// 1020 REM ------------------------ 
+// 1020 REM ------------------------
 // 1030 CLS
 // 1040 PRINT  "=== Snake and Dots ==="
 // 1050 PRINT "UP: W"
@@ -106,7 +111,7 @@ interp.run(`
 // 2650 PAUSE (5 - LEVEL) * 75 + 50
 // 2660 GOTO 2300
 // 3000 REM Collision detection
-// 3010 IF G[P + Q *25] <= 4 THEN GOTO 7000 
+// 3010 IF G[P + Q *25] <= 4 THEN GOTO 7000
 // 3020 LET F = F + 1
 // 3030 CLT
 // 3040 PRINT "=== Snake and Dots ==="
@@ -154,7 +159,7 @@ interp.run(`
 // interp.run(`
 // 1000 REM Fibonacci Sequence Project
 // 1010 REM BASIC Math Project
-// 1020 REM ------------------------ 
+// 1020 REM ------------------------
 // 2020 REM The array F holds the Fibonacci numbers
 // 2030 ARRAY F
 // 2040 LET F[0] = 0
