@@ -1,4 +1,5 @@
 const Functions = require('./functions');
+const { ParseError } = require('./errors');
 
 class Token {
   constructor(type, lexeme) {
@@ -91,11 +92,12 @@ class Tokenizer {
     this.tokens = [];
     this.index = 0;
     this.tokenized = false;
+    this.lineno = -1;
   }
 
   assertTokenized() {
     if (!this.tokenized) {
-      throw new Error('call tokenize first');
+      throw new ParseError(this.lineno, 'Call tokenize() first');
     }
   }
 
@@ -134,11 +136,13 @@ class Tokenizer {
     const linem = this.stmnt.match(LINE);
 
     if (!linem) {
-      throw new Error("Expected line number");
+      throw new ParseError(this.lineno, 'Every line must start with a line number');
     }
 
+    this.lineno = parseInt(linem[1]);
+
     // First token is always line number.
-    this.tokens.push(new Token('lineno', parseInt(linem[1])));
+    this.tokens.push(new Token('lineno', this.lineno));
 
     this.stmnt = this.stmnt.slice(linem[0].length);
 
@@ -153,9 +157,8 @@ class Tokenizer {
         this.eatOperation() ||
         this.eatLineMod();
 
-
       if (!eaten) {
-        throw new Error('Invalid syntax near: `' + this.stmnt + `'`);
+        throw new ParseError(this.lineno, `Invalid syntax near: '${this.stmnt}'`);
       }
 
       this.stmnt = this.stmnt.slice(eaten.length);
@@ -226,7 +229,7 @@ class Tokenizer {
     if (m && m[0]) {
       const num = parseFloat(m[1], 10);
       if (isNaN(num)) {
-        throw new Error('Error parsing number:' + m[1]);
+        throw new ParseError(this.lineno, `Error parsing number: ${m[1]}`);
       }
       this.tokens.push(new Token('number', num));
       return m[0];

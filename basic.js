@@ -46,9 +46,13 @@ class Basic {
         })
         .sort((a, b) => a.lineno - b.lineno);
 
+      if (this.ended) {
+        return;
+      }
+
       this.program.forEach(({ lineno }) => {
         if (seen[lineno]) {
-          this.end(new ParseError(lineno, `Line with number ${lineno} repeated`));
+          return this.end(new ParseError(lineno, `Line with number ${lineno} repeated`));
         }
         seen[lineno] = true;
       });
@@ -71,8 +75,7 @@ class Basic {
         const next = this.getNextLine();
 
         if (!next) {
-          this.end();
-          return;
+          return this.end();
         }
 
         this.lineno = next.lineno;
@@ -106,13 +109,17 @@ class Basic {
     const node = this.getCurLine();
 
     if (!node) {
-      this.end(new Error(`Cannot find line with number ${this.lineno}`));
+      return this.end(new RuntimeError(this.lineno, `Cannot find line ${this.lineno} 🤦‍♂️`));
     }
 
     this.debug('step', 1);
     this.debug(node.toJSON(), 2);
 
-    node.run(this);
+    try {
+      node.run(this);
+    } catch (e) {
+      this.end(e);
+    }
   }
 
   end(error) {
@@ -121,7 +128,6 @@ class Basic {
     if (error) {
       this.debug(`program ended with error: ${error.message}`);
       this.onEnd.reject(error);
-      throw error;
     } else {
       this.debug('program ended');
       this.onEnd.resolve();
@@ -142,16 +148,19 @@ class Basic {
   }
 
   setArray(vari, sub, value) {
+    if (!(this.variables[vari] instanceof BasicArray)) {
+      return this.end(new RuntimeError(this.lineno, `${vari} is not an array, did you call ARRAY?`));
+    }
     this.variables[vari][sub] = value;
   }
 
   array(name) {
-    this.variables[name] = {};
+    this.variables[name] = new BasicArray();
   }
 
   fun(name) {
     if (!Functions[name]) {
-      this.end(new Error(`Function ${name} does not exist`));
+      return this.end(new RuntimeError(this.lineno, `Function ${name} does not exist ☹️`));
     }
 
     // External functions
@@ -174,7 +183,7 @@ class Basic {
     if (this.constants.hasOwnProperty(constant)) {
       return this.constants[constant]
     }
-    this.end(new Error(`Constant ${constant} undefined`));
+    this.end(new RuntimeError(this.lineno, `Constant ${constant} is undefined`));
   }
 
   pause(millis) {
@@ -228,7 +237,7 @@ class Basic {
 
   return() {
     if (this.stack.length === 0) {
-      this.end(new Error('No function calls to return from'));
+      return this.end(new RuntimeError(this.lineno, `There are no function calls to return from 🤷`));
     }
     const lineno = this.stack.pop();
     this.goto(lineno);
@@ -236,7 +245,7 @@ class Basic {
 
   assertDisplay() {
     if (!this.display) {
-      this.end(new Error('No display found'));
+      return this.end(new RuntimeError(this.lineno, 'No display found'));
     }
   }
 
@@ -279,6 +288,18 @@ class Basic {
 
   halt() {
     this.halted = true;
+  }
+}
+
+class BasicArray {
+  toString() {
+    let s = '';
+    for (let prop in this) {
+      if (this.hasOwnProperty(prop)) {
+        s += `${prop}, `
+      }
+    }
+    return s.replace(/,\s$/, '');
   }
 }
 

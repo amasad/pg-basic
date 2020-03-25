@@ -1,3 +1,5 @@
+const { RuntimeError } = require('./errors');
+
 class Node {
   constructor(lineno, type) {
     this.lineno = lineno;
@@ -14,8 +16,7 @@ class Node {
 
   assert(truth, message) {
     if (!truth) {
-      // Todo custom error type
-      throw new Error(`Line ${this.lineno}: ${message}`);
+      throw new RuntimeError(this.lineno, message);
     }
   }
 }
@@ -103,9 +104,7 @@ class PAUSE extends Node {
   run(context) {
     const value = context.evaluate(this.expr);
 
-    if (typeof value !== 'number') {
-      throw new Error('Expected pause value to be a number');
-    }
+    this.assert(typeof value === 'number', 'PAUSE value should be a number or should evaluate to one');
 
     context.pause(value);
   }
@@ -132,7 +131,7 @@ class INPUT extends Node {
       } else {
         context.set(this.variable.name, value);
       }
-      
+
       // Resume.
       context.execute();
     });
@@ -154,9 +153,7 @@ class FOR extends Node {
     const max = context.evaluate(this.right);
     const increment = this.step ? context.evaluate(this.step) : 1;
 
-    if (this.variable.array) {
-      throw new Error('Cannot use variables in for');
-    }
+    this.assert(!this.variable.array, 'FOR loops variables cannot be arrays');
 
     context.loopStart({
       variable: this.variable.name,
@@ -186,7 +183,7 @@ class PLOT extends Node {
     this.color = color;
   }
 
-  run(context) {    
+  run(context) {
     context.plot(context.evaluate(this.x), context.evaluate(this.y), context.evaluate(this.color));
   }
 }
@@ -222,9 +219,8 @@ class GOSUB extends Node {
 
   run(context) {
     const lineno = context.evaluate(this.expr);
-    if (typeof lineno !== 'number') {
-      throw new Error('Expected GOSUB argument to be a number');
-    }
+
+    this.assert(typeof lineno === 'number', 'GOSUB argument should be a number');          
 
     context.gosub(lineno);
   }

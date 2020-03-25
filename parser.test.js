@@ -117,9 +117,9 @@ t('100 IF X = Y THEN GOTO 100', {
   then: {
     type: 'GOTO',
     expr: '100',
-    lineno: 100,    
+    lineno: 100,
   }
-});  
+});
 
 t('100 IF X = Y THEN GOTO 100 ELSE GOTO 200', {
   type: 'IF',
@@ -129,14 +129,14 @@ t('100 IF X = Y THEN GOTO 100 ELSE GOTO 200', {
   then: {
     type: 'GOTO',
     expr: '100',
-    lineno: 100,    
+    lineno: 100,
   },
   elze: {
     type: 'GOTO',
     expr: '200',
     lineno: 100,
   }
-});  
+});
 
 // Shortcut goto
 t('100 IF X = Y THEN 100', {
@@ -225,11 +225,11 @@ t('99 FOR J = 0 to 10 STEP 2', {
     array: false,
     type: 'variable',
     lineno: 99,
-    name: 'J',    
+    name: 'J',
   },
   left: '0',
   right: '10',
-  step: '2',    
+  step: '2',
 });
 
 t('99 FOR J = X to 10 * 10 STEP 20 * X', {
@@ -239,11 +239,11 @@ t('99 FOR J = X to 10 * 10 STEP 20 * X', {
     type: 'variable',
     lineno: 99,
     name: 'J',
-    array: false,    
+    array: false,
   },
   left: '__pgb.get("X")',
   right: '10*10',
-  step: '20*__pgb.get("X")',    
+  step: '20*__pgb.get("X")',
 });
 
 t('100 NEXT I', {
@@ -279,24 +279,11 @@ t('100 PLOT 1, 2, "RED"', {
   color: '"RED"'
 });
 
-// t('100 PLOT A, A + 10', {
-//   type: 'PLOT',
-//   xexpr: {
-//     type: 'variable',
-//     name: 'A',
-//     array: false,
-//   },
-//   yexpr: {
-//     type: 'operation',
-//     operator: '+',
-//     left: {
-//       type: 'variable',
-//       name: 'A',
-//       array: false,
-//     },
-//     right: {
-//       type: 'literal',
-//       value: 10,
-//     },
-//   },
-// });
+test('errors', () => {
+  try {
+    Parser.parseLine(`1000 PRINT XXX`);
+    expect('').toBe('should not get here');
+  } catch (e) {
+    expect(e.name).toBe('ParseError');
+  }
+})

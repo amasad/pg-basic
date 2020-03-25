@@ -26,7 +26,7 @@ class Parser {
   static parseLine(line) {
     const t = new Tokenizer(line);
     t.tokenize();
-    
+
     const p = new Parser(t);
 
     return p.parse();
@@ -207,6 +207,13 @@ class Parser {
 
       if (t.lexeme === ']' || t.lexeme === ']') {
         brackets--;
+      }
+
+      // Multiple variables in a row usually means users are trying
+      // to use multi-letter variables
+      if (expr[expr.length - 1] && t.type === 'variable' &&
+        expr[expr.length - 1].type === 'variable') {
+        throw new ParseError(this.lineno, 'Variables should be single letter');
       }
 
       expr.push(t);

@@ -2,7 +2,7 @@ const exprToJs = require('./expr');
 const Tokenizer = require('./tokenizer');
 
 function toJs(str) {
-  const t = Tokenizer.tokenizeLine('100 PRINT ' + str);  
+  const t = Tokenizer.tokenizeLine('100 PRINT ' + str);
   const ret = exprToJs(t.slice(2));
   return ret;
 }
@@ -21,7 +21,7 @@ test('arithmetic', () => {
 
 test('var', () => {
   expect(toJs('A')).toBe(`__pgb.get("A")`);
-  expect(toJs('A$')).toBe(`__pgb.get("A")`);  
+  expect(toJs('A$')).toBe(`__pgb.get("A")`);
 });
 
 test('functions', () => {

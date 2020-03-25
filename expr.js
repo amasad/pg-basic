@@ -1,6 +1,6 @@
 function exprToJS(expr) {
-  let jsExpr = '';
-
+  let jsExpr = '';  
+  
   while (expr.length) {
     const t = expr.shift();
 
