@@ -1,2 +1,2 @@
 language="nodejs"
-run="jest"
+run="npm run test"
