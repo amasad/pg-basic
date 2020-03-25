@@ -33,31 +33,31 @@ class Basic {
     return new Promise((resolve, reject) => {
       this.onEnd = { resolve, reject };
       this.ended = false;
+      this.program = [];
 
       const seen = {};
-      this.program = program.split('\n')
-        .filter(l => l.trim() !== '')
-        .map((l) => {
-          try {
-            return Parser.parseLine(l);
-          } catch (e) {
-            this.end(e);
-          }
-        })
-        .sort((a, b) => a.lineno - b.lineno);
-
-      if (this.ended) {
-        return;
+      const lines = program.split('\n').filter(l => l.trim() !== '');
+      if (lines.length === 0) {
+        return this.end();
       }
 
-      this.program.forEach(({ lineno }) => {
-        if (seen[lineno]) {
+      for (let line of programLines) {
+        let parsedLine;
+        try {
+          parsedLine = Parser.parseLine(l);
+        } catch (e) {
+          return this.end(e);
+        }
+
+        if (seen[parsedLine.lineno]) {
           return this.end(new ParseError(lineno, `Line with number ${lineno} repeated`));
         }
-        seen[lineno] = true;
-      });
 
-      if (!this.program.length) return this.end();
+        seen[parsedLine.lineno] = true;
+        this.program.push(parsedLine);
+      }
+
+      this.program.sort((a, b) => a.lineno - b.lineno);
 
       this.lineno = this.program[0].lineno;
 
