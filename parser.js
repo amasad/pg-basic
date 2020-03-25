@@ -209,7 +209,7 @@ class Parser {
         brackets++;
       }
 
-      if (t.lexeme === ']' || t.lexeme === ']') {
+      if (t.lexeme === ']' || t.lexeme === ')') {
         brackets--;
       }
 
