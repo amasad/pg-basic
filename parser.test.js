@@ -1,7 +1,6 @@
 const Parser = require('./parser');
 
 const t = (line, ast) => {
-
   test(line, () => {
     const root = Parser.parseLine(line);
     expect(root.toJSON()).toEqual(ast);
@@ -192,7 +191,7 @@ t('100 IF (P > 24 OR P < 0) AND Q < 0 THEN GOTO 7000', {
 });
 
 
-t('100 IF X = PI GOTO 7000', {
+t('100 IF X = PI THEN GOTO 7000', {
   type: 'IF',
   condition: '__pgb.get("X")==__pgb.getConst("PI")',
   elze: null,
@@ -279,11 +278,83 @@ t('100 PLOT 1, 2, "RED"', {
   color: '"RED"'
 });
 
-test('errors', () => {
-  try {
-    Parser.parseLine(`1000 PRINT XXX`);
+const tErr = (line, errorString) => {
+  test('err: ' + line, () => {
+    try {
+      Parser.parseLine(line);
+    } catch (e) {
+      expect(e.message).toBe(errorString)
+      expect(e.name).toBe('ParseError');
+      return;
+    }
+
     expect('').toBe('should not get here');
-  } catch (e) {
-    expect(e.name).toBe('ParseError');
-  }
-})
+  });
+};
+const lerr = (errorString) => `Parse error on line 1: ${errorString}`
+
+describe('Parse errors', () => {
+  describe('lineno', () => {
+    tErr('PRINT "HI"', 'Parse error on line -1: Every line must start with a line number');
+  });
+
+  describe('PRINT', () => {
+    tErr('1 PRINT', lerr('Expected value after PRINT'));
+    tErr('1 PRINT XXX', lerr('Variables should be single letter'));
+  });
+
+  describe('LET', () => {
+    tErr('1 LET', lerr('Expected a variable after LET but got a end of line instead 😕'));
+    tErr('1 LET ""', lerr('Expected a variable after LET but got a string instead 😕'));
+    tErr('1 LET X', lerr('Expected a = after X but got a end of line'));
+    tErr('1 LET X =', lerr('Expected value after LET statement'));
+  });
+
+  describe('PAUSE', () => {
+    tErr('1 PAUSE ', lerr('Expected value after PAUSE'));
+  });
+
+  describe('INPUT', () => {
+    tErr('1 INPUT', lerr('Expected prompt value after INPUT'));
+    tErr('1 INPUT "prompt text"', lerr('Expected ; after INPUT'));
+    tErr('1 INPUT "got mod";', lerr('Expected a variable after ";" but got a end of line instead 😕'));
+  });
+
+  describe('FOR', () => {
+    tErr('1 FOR "NOPE" X', lerr('Expected a variable after FOR but got a string instead 😕'));
+    tErr('1 FOR I', lerr('Expected a = after I but got a end of line'));
+    tErr('1 FOR I =', lerr('Expected value assigned to FOR variable'));
+    tErr('1 FOR I = 1', lerr('Expected TO but got end of line'));
+    tErr('1 FOR I = 1 TO ', lerr('Expected value after TO'));
+    tErr('1 FOR I = 1 TO 10 STEP', lerr('Expected value after STEP'));
+  });
+
+  describe('NEXT', () => {
+    tErr('1 NEXT', lerr('Expected a variable after NEXT but got a end of line instead 😕'));
+  });
+
+  describe('GOTO', () => {
+    tErr('1 GOTO', lerr('Expected a value after GOTO'))
+  });
+
+  describe('END', () => {});
+
+  describe('IF..ELSE', () => {
+    tErr('1 IF', lerr('Expected a condition after IF'));
+    tErr('1 IF 1<>2', lerr('Expected THEN but got end of line'));
+    tErr('1 IF 1<>2 THEN', lerr('Expected a keyword after THEN but got a end of line instead 😕'));
+    tErr('1 IF 1<>2 THEN PRINT 100 PRINT', lerr('Expected ELSE got PRINT'));
+    tErr('1 IF 1<>2 THEN PRINT 100 ELSE', lerr('Expected a keyword after ELSE but got a end of line instead 😕'));
+  });
+
+  describe('ARRAY', () => {
+    tErr('1 ARRAY 1', lerr('Expected a variable after ARRAY but got a number instead 😕'));
+  });
+
+  describe('PLOT', () => {
+    tErr('1 PLOT', lerr('Expected a value for the X axis after PLOT'));
+    tErr('1 PLOT 1', lerr('Expected a , after 1 but got a end of line'));
+    tErr('1 PLOT 1, 2', lerr('Expected a , after 2 but got a end of line'));
+    tErr('1 PLOT 1, 2,', lerr('Expected a value for color after PLOT X, Y,'));
+  })
+});

@@ -4,10 +4,7 @@ const Functions = require('./functions');
 const { ParseError, RuntimeError } = require('./errors');
 
 class Basic {
-  constructor({ console, debugLevel, display, constants = {
-    PI: Math.PI,
-    LEVEL: 1,
-  } }) {
+  constructor({ console, debugLevel, display }) {
     this.debugLevel = debugLevel;
     this.console = console;
     this.context = new Context({
@@ -20,7 +17,10 @@ class Basic {
     this.stack = [];
     this.jumped = false;
     this.display = display;
-    this.constants = constants;
+    this.constants = {
+      PI: Math.PI,
+      LEVEL: 1,
+    };
   }
 
   debug(str, level = 1) {
@@ -33,31 +33,31 @@ class Basic {
     return new Promise((resolve, reject) => {
       this.onEnd = { resolve, reject };
       this.ended = false;
+      this.program = [];
 
       const seen = {};
-      this.program = program.split('\n')
-        .filter(l => l.trim() !== '')
-        .map((l) => {
-          try {
-            return Parser.parseLine(l);
-          } catch (e) {
-            this.end(e);
-          }
-        })
-        .sort((a, b) => a.lineno - b.lineno);
-
-      if (this.ended) {
-        return;
+      const lines = program.split('\n').filter(l => l.trim() !== '');
+      if (lines.length === 0) {
+        return this.end();
       }
 
-      this.program.forEach(({ lineno }) => {
-        if (seen[lineno]) {
+      for (let l of lines) {
+        let line;
+        try {
+          line = Parser.parseLine(l);
+        } catch (e) {
+          return this.end(e);
+        }
+
+        if (seen[line.lineno]) {
           return this.end(new ParseError(lineno, `Line with number ${lineno} repeated`));
         }
-        seen[lineno] = true;
-      });
 
-      if (!this.program.length) return this.end();
+        seen[line.lineno] = true;
+        this.program.push(line);
+      }
+
+      this.program.sort((a, b) => a.lineno - b.lineno);
 
       this.lineno = this.program[0].lineno;
 
@@ -66,6 +66,7 @@ class Basic {
   }
 
   execute() {
+    this.halted = false;
     while (true) {
       this.step();
 
@@ -88,7 +89,7 @@ class Basic {
         this.delay = null;
         return setTimeout(() => {
           this.execute();
-        }, delay)
+        }, delay);
       }
 
       if (this.halted) {
@@ -109,7 +110,9 @@ class Basic {
     const node = this.getCurLine();
 
     if (!node) {
-      return this.end(new RuntimeError(this.lineno, `Cannot find line ${this.lineno} 🤦‍♂️`));
+      return this.end(
+        new RuntimeError(this.lineno, `Cannot find line ${this.lineno} 🤦‍♂️`),
+      );
     }
 
     this.debug('step', 1);
@@ -149,7 +152,9 @@ class Basic {
 
   setArray(vari, sub, value) {
     if (!(this.variables[vari] instanceof BasicArray)) {
-      return this.end(new RuntimeError(this.lineno, `${vari} is not an array, did you call ARRAY?`));
+      return this.end(
+        new RuntimeError(this.lineno, `${vari} is not an array, did you call ARRAY?`),
+      );
     }
     this.variables[vari][sub] = value;
   }
@@ -160,7 +165,9 @@ class Basic {
 
   fun(name) {
     if (!Functions[name]) {
-      return this.end(new RuntimeError(this.lineno, `Function ${name} does not exist ☹️`));
+      return this.end(
+        new RuntimeError(this.lineno, `Function ${name} does not exist ☹️`),
+      );
     }
 
     // External functions
@@ -181,24 +188,24 @@ class Basic {
 
   getConst(constant) {
     if (this.constants.hasOwnProperty(constant)) {
-      return this.constants[constant]
+      return this.constants[constant];
     }
     this.end(new RuntimeError(this.lineno, `Constant ${constant} is undefined`));
   }
 
   pause(millis) {
-    this.debug(`pause ${millis}`)
+    this.debug(`pause ${millis}`);
     this.delay = millis;
   }
 
   goto(lineno) {
-    this.debug(`goto ${lineno}`)
+    this.debug(`goto ${lineno}`);
     this.lineno = lineno;
     this.jumped = true;
   }
 
   loopStart({ variable, value, increment, max }) {
-    this.debug(`marking loop ${variable}`)
+    this.debug(`marking loop ${variable}`);
 
     this.set(variable, value);
     const next = this.getNextLine();
@@ -237,7 +244,9 @@ class Basic {
 
   return() {
     if (this.stack.length === 0) {
-      return this.end(new RuntimeError(this.lineno, `There are no function calls to return from 🤷`));
+      return this.end(
+        new RuntimeError(this.lineno, `There are no function calls to return from 🤷`),
+      );
     }
     const lineno = this.stack.pop();
     this.goto(lineno);
@@ -296,7 +305,7 @@ class BasicArray {
     let s = '';
     for (let prop in this) {
       if (this.hasOwnProperty(prop)) {
-        s += `${prop}, `
+        s += `${prop}, `;
       }
     }
     return s.replace(/,\s$/, '');

@@ -17,7 +17,7 @@ const {
   CLS,
   CLC,
   CLT,
-  Variable
+  Variable,
 } = require('./nodes');
 const exprToJS = require('./expr');
 const { ParseError } = require('./errors');
@@ -43,22 +43,35 @@ class Parser {
 
     switch (top.lexeme) {
       case 'PRINT':
-        return new PRINT(this.lineno, this.expectExpr(), this.acceptLineMod());
+        return new PRINT(
+          this.lineno,
+          this.expectExpr({ errStr: 'Expected value after PRINT' }),
+          !!this.acceptLineMod()
+        );
 
       case 'LET': {
         const variable = this.expectVariable();
         this.expectOperation('=');
-        return new LET(this.lineno, variable, this.expectExpr());
+        return new LET(
+          this.lineno,
+          variable,
+          this.expectExpr({ errStr: 'Expected value after LET statement' })
+        );
       }
 
       case 'REM':
         return new REM(this.lineno, this.expectComment());
 
       case 'PAUSE':
-        return new PAUSE(this.lineno, this.expectExpr());
+        return new PAUSE(
+          this.lineno,
+          this.expectExpr({ errStr: 'Expected value after PAUSE' })
+        );
 
       case 'INPUT': {
-        const expr = this.expectExpr();
+        const expr = this.expectExpr({
+          errStr: 'Expected prompt value after INPUT',
+        });
         this.expectLineMod();
         return new INPUT(this.lineno, expr, this.expectVariable());
       }
@@ -66,10 +79,14 @@ class Parser {
       case 'FOR': {
         const variable = this.expectVariable();
         this.expectOperation('=');
-        const frm = this.expectExpr();
+        const frm = this.expectExpr({
+          errStr: 'Expected value assigned to FOR variable',
+        });
         this.expectKeyword('TO');
-        const to = this.expectExpr();
-        const step = this.acceptKeyword('STEP') ? this.expectExpr() : null;
+        const to = this.expectExpr({ errStr: 'Expected value after TO' });
+        const step = this.acceptKeyword('STEP')
+          ? this.expectExpr({ errStr: 'Expected value after STEP' })
+          : null;
 
         return new FOR(this.lineno, variable, frm, to, step);
       }
@@ -78,13 +95,18 @@ class Parser {
         return new NEXT(this.lineno, this.expectVariable());
 
       case 'GOTO':
-        return new GOTO(this.lineno, this.expectExpr());
+        return new GOTO(
+          this.lineno,
+          this.expectExpr({ errStr: 'Expected a value after GOTO' })
+        );
 
       case 'END':
         return new END(this.lineno);
 
       case 'IF':
-        const cond = this.expectExpr();
+        const cond = this.expectExpr({
+          errStr: 'Expected a condition after IF',
+        });
         this.expectKeyword('THEN');
 
         let then;
@@ -96,7 +118,7 @@ class Parser {
         }
 
         let elze = null;
-        if (this.acceptKeyword('else')) {
+        if (this.acceptKeyword('ELSE')) {
           if (this.tokenizer.peek().type === 'number') {
             elze = new GOTO(this.lineno, this.expectExpr());
           } else {
@@ -107,7 +129,10 @@ class Parser {
         return new IF(this.lineno, cond, then, elze);
 
       case 'GOSUB':
-        return new GOSUB(this.lineno, this.expectExpr());
+        return new GOSUB(
+          this.lineno,
+          this.expectExpr({ errStr: 'Expected an expression after GOSUB' })
+        );
 
       case 'RETURN':
         return new RETURN(this.lineno);
@@ -116,11 +141,17 @@ class Parser {
         return new ARRAY(this.lineno, this.expectVariable());
 
       case 'PLOT':
-        const x = this.expectExpr(true);
+        const x = this.expectExpr({
+          stopOnComma: true,
+          errStr: 'Expected a value for the X axis after PLOT',
+        });
         this.expectOperation(',');
-        const y = this.expectExpr(true);
+        const y = this.expectExpr({ stopOnComma: true });
         this.expectOperation(',');
-        const color = this.expectExpr(true);
+        const color = this.expectExpr({
+          stopOnComma: true,
+          errStr: 'Expected a value for color after PLOT X, Y,',
+        });
 
         return new PLOT(this.lineno, x, y, color);
 
@@ -136,7 +167,12 @@ class Parser {
   }
 
   acceptKeyword(keyword) {
-    if (this.tokenizer.peek().type === 'keyword') {
+    const t = this.tokenizer.peek();
+    if (t.type === 'keyword') {
+      if (t.lexeme !== keyword) {
+        throw new ParseError(this.lineno, `Expected ${keyword} got ${t.lexeme}`);
+      }
+
       return this.tokenizer.next();
     }
 
@@ -146,7 +182,9 @@ class Parser {
   expectKeyword(keyword) {
     const t = this.acceptKeyword(keyword);
     if (t == null) {
-      throw new ParseError(this.lineno, `Expected ${keyword} but got ${this.tokenizer.peek().lexeme}`);
+      const token = this.tokenizer.peek();
+      const butGot = token.type === 'eof' ? 'end of line' : token.lexeme || token.type;
+      throw new ParseError(this.lineno, `Expected ${keyword} but got ${butGot}`);
     }
 
     return t.lexeme;
@@ -166,9 +204,9 @@ class Parser {
 
   expectOperation(op) {
     const t = this.tokenizer.next();
-    this.assertType(t, 'operation');
+    this.assertType(t, 'operation', op);
     if (t.lexeme !== op) {
-      throw new ParseError(this.lineno, 'Expected operation ' + op)
+      throw new ParseError(this.lineno, 'Expected operation ' + op);
     }
     return t.lexeme;
   }
@@ -179,7 +217,7 @@ class Parser {
     return new Variable(this.lineno, t.lexeme, this.acceptSubscript());
   }
 
-  expectExpr(stopOnComma = false) {
+  expectExpr({ stopOnComma = false, errStr = 'Expected expression' } = {}) {
     const expr = [];
     let brackets = 0;
     while (this.tokenizer.peek() != Tokenizer.eof) {
@@ -205,14 +243,17 @@ class Parser {
         brackets++;
       }
 
-      if (t.lexeme === ']' || t.lexeme === ']') {
+      if (t.lexeme === ']' || t.lexeme === ')') {
         brackets--;
       }
 
       // Multiple variables in a row usually means users are trying
       // to use multi-letter variables
-      if (expr[expr.length - 1] && t.type === 'variable' &&
-        expr[expr.length - 1].type === 'variable') {
+      if (
+        expr[expr.length - 1] &&
+        t.type === 'variable' &&
+        expr[expr.length - 1].type === 'variable'
+      ) {
         throw new ParseError(this.lineno, 'Variables should be single letter');
       }
 
@@ -220,27 +261,25 @@ class Parser {
     }
 
     if (expr.length === 0) {
-      throw new ParseError(this.lineno, 'Expected expression');
+      throw new ParseError(this.lineno, errStr);
     }
 
     return exprToJS(expr);
   }
 
   expectLineMod() {
-    if (!this.acceptLineMod()) {
-      throw new ParseError(this.lineno, 'Expected ;');
-    }
+    const linemod = this.acceptLineMod();
+    this.assertType(linemod || this.tokenizer.peek(), 'linemod');
 
     return true;
   }
 
   acceptLineMod() {
     if (this.tokenizer.peek().type === 'linemod') {
-      this.tokenizer.next();
-      return true;
+      return this.tokenizer.next();
     }
 
-    return false;
+    return null;
   }
 
   acceptSubscript() {
@@ -248,7 +287,7 @@ class Parser {
 
     this.assertType(this.tokenizer.next(), 'operation', '[');
 
-    const expr = this.expectExpr();
+    const expr = this.expectExpr({ errStr: 'Expected expression after [' });
 
     this.assertType(this.tokenizer.next(), 'operation', ']');
 
@@ -256,12 +295,40 @@ class Parser {
   }
 
   assertType(token, expected, value = null) {
-    if (token.type !== expected) {
-      throw new ParseError(this.lineno, `Expected a ${expected} but got a ${token.type} instead 😕`);
-    }
+    const getAfter = () => {
+      const tokenIndex =
+        token.type === 'eof'
+          ? this.tokenizer.tokens.length
+          : this.tokenizer.tokens.findIndex((t) => t === token);
+      const prevIndex = tokenIndex - 1;
+      if (prevIndex < 0) {
+        return '';
+      }
+
+      const prevToken = this.tokenizer.tokens[prevIndex];
+      if (!prevToken.lexeme) {
+        return '';
+      }
+
+      return ` after ${prevToken.lexeme}`;
+    };
 
     if (value != null && token.lexeme !== value) {
-      throw new ParseError(this.lineno, `Expected a ${value} but got a ${token.lexeme}`);
+      // make eof errors nicer
+      const butGot = token.type === 'eof' ? 'end of line' : token.lexeme || token.type;
+      throw new ParseError(
+        this.lineno,
+        `Expected a ${value}${getAfter()} but got a ${butGot}`
+      );
+    }
+
+    if (token.type !== expected) {
+      // make eof errors nicer
+      const butGot = token.type === 'eof' ? 'end of line' : token.type;
+      throw new ParseError(
+        this.lineno,
+        `Expected a ${expected}${getAfter()} but got a ${butGot} instead 😕`
+      );
     }
   }
 
@@ -275,6 +342,5 @@ class Parser {
     return token.lexeme;
   }
 }
-
 
 module.exports = Parser;

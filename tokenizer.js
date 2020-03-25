@@ -104,7 +104,7 @@ class Tokenizer {
   peek(n = 0) {
     this.assertTokenized();
 
-    if (this.index >= this.tokens.length) return eof;
+    if (this.index + n >= this.tokens.length) return eof;
 
     return this.tokens[this.index + n];
   }
