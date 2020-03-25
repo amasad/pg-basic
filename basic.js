@@ -66,6 +66,7 @@ class Basic {
   }
 
   execute() {
+    this.halted = false;
     while (true) {
       this.step();
 
