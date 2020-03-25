@@ -4,15 +4,7 @@ const Functions = require('./functions');
 const { ParseError, RuntimeError } = require('./errors');
 
 class Basic {
-  constructor({
-    console,
-    debugLevel,
-    display,
-    constants = {
-      PI: Math.PI,
-      LEVEL: 1,
-    },
-  }) {
+  constructor({ console, debugLevel, display }) {
     this.debugLevel = debugLevel;
     this.console = console;
     this.context = new Context({
@@ -25,7 +17,10 @@ class Basic {
     this.stack = [];
     this.jumped = false;
     this.display = display;
-    this.constants = constants;
+    this.constants = {
+      PI: Math.PI,
+      LEVEL: 1,
+    };
   }
 
   debug(str, level = 1) {
