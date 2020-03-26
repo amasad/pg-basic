@@ -22,7 +22,66 @@ const {
 const exprToJS = require('./expr');
 const { ParseError } = require('./errors');
 
+
+const bracketMatchers = {
+  closers: {
+    ')': '(',
+    ']': '['
+  },
+  openers: {
+    '(': ')',
+    '[': ']'
+  }
+}
+
 class Parser {
+  static checkBrackets(tokenizer, lineno) {
+    // Checks if brackets are matching properly
+    // this is used as a pre-parse step to keep 
+    // the parser simple and stateless.
+    const bracketStack = [];
+    let token;
+    let index = tokenizer.index;
+    while ((token = tokenizer.peek(index)) !== Tokenizer.eof) {
+      index++;
+
+      if (token.type !== 'operation') {
+        continue;
+      }
+
+      const bracket = token.lexeme;
+
+      if (bracketMatchers.openers[bracket]) {
+        // we found an opener, push it on top of the stack
+        bracketStack.push(bracket);
+        continue;
+      }
+
+      const expectedOpener = bracketMatchers.closers[bracket];
+      if (!expectedOpener) {
+        // not a bracket
+        continue;
+      }
+
+      const opener = bracketStack.pop();
+      if (expectedOpener === opener) {
+        // we got a legit match!
+        continue;
+      }
+
+
+      if (!opener) {
+        throw new ParseError(lineno, `Found extra closing bracket ${bracket}`);
+      }
+
+      throw new ParseError(lineno, `Unexpected bracket ${bracket}. There is an unmatched ${opener} so it is expected to see ${bracketMatchers.openers[opener]} before ${bracket}`);
+    }
+
+    if (bracketStack.length > 0) {
+      throw new ParseError(lineno, `You have unmatched brackets. Make sure your brackets are balanced`);
+    }
+  }
+
   static parseLine(line) {
     const t = new Tokenizer(line);
     t.tokenize();
@@ -35,6 +94,7 @@ class Parser {
   constructor(tokenizer) {
     this.tokenizer = tokenizer;
     this.lineno = this.getLineNo(this.tokenizer.next());
+    Parser.checkBrackets(tokenizer, this.lineno);
   }
 
   parse() {
@@ -70,7 +130,7 @@ class Parser {
 
       case 'INPUT': {
         const expr = this.expectExpr({
-          errStr: 'Expected prompt value after INPUT',
+          errStr: 'Expected prompt text after INPUT',
         });
         this.expectLineMod();
         return new INPUT(this.lineno, expr, this.expectVariable());
@@ -269,7 +329,7 @@ class Parser {
 
   expectLineMod() {
     const linemod = this.acceptLineMod();
-    this.assertType(linemod || this.tokenizer.peek(), 'linemod');
+    this.assertType(linemod || this.tokenizer.peek(), 'linemod', '";"');
 
     return true;
   }

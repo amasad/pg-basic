@@ -117,21 +117,6 @@ class Tokenizer {
     return this.tokens[this.index++];
   }
 
-  nextExpr() {
-    this.assertTokenized();
-
-    const expr = [];
-    while (this.index !== this.tokens.length) {
-      if (!Tokenizer.expressionTypes.includes(this.peek().type)) {
-        break;
-      }
-
-      expr.push(this.next());
-    }
-
-    return expr;
-  }
-
   tokenize() {
     const linem = this.stmnt.match(LINE);
 
