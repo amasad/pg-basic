@@ -108,7 +108,7 @@ class PAUSE extends Node {
 
     context.debug(`pause ${value}`);
 
-    const resume = context.halt();
+    const resume = context.haltStep();
     setTimeout(() => {
       resume();
     }, value);
@@ -128,7 +128,7 @@ class INPUT extends Node {
     context.print(prompt);
 
     // Yield.
-    const resume = context.halt();
+    const resume = context.haltStep();
     context.input((value) => {
       if (this.variable.array) {
         const sub = context.evaluate(this.variable.subscript);

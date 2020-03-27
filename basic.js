@@ -61,9 +61,7 @@ class Basic {
         }
 
         if (seen[line.lineno]) {
-          return this.end(
-            new ParseError(lineno, `Line with number ${lineno} repeated`)
-          );
+          return this.end(new ParseError(lineno, `Line with number ${lineno} repeated`));
         }
 
         seen[line.lineno] = true;
@@ -106,7 +104,7 @@ class Basic {
         // we don't block the main thread for too long.
         // Things like keyboard inputs to the display are flushed
         // and we're able to read them. Ideally we'd explicitly yeild before GETCHAR
-        this.yeild(() => this.execute());
+        return this.yieldStep();
       }
     }
   }
@@ -166,10 +164,7 @@ class Basic {
   setArray(vari, sub, value) {
     if (!(this.variables[vari] instanceof BasicArray)) {
       return this.end(
-        new RuntimeError(
-          this.lineno,
-          `${vari} is not an array, did you call ARRAY?`
-        )
+        new RuntimeError(this.lineno, `${vari} is not an array, did you call ARRAY?`)
       );
     }
     this.variables[vari][sub] = value;
@@ -206,9 +201,7 @@ class Basic {
     if (this.constants.hasOwnProperty(constant)) {
       return this.constants[constant];
     }
-    this.end(
-      new RuntimeError(this.lineno, `Constant ${constant} is undefined`)
-    );
+    this.end(new RuntimeError(this.lineno, `Constant ${constant} is undefined`));
   }
 
   goto(lineno) {
@@ -258,10 +251,7 @@ class Basic {
   return() {
     if (this.stack.length === 0) {
       return this.end(
-        new RuntimeError(
-          this.lineno,
-          `There are no function calls to return from 🤷`
-        )
+        new RuntimeError(this.lineno, `There are no function calls to return from 🤷`)
       );
     }
     const lineno = this.stack.pop();
@@ -274,19 +264,10 @@ class Basic {
     }
   }
 
-  yeild(outputCb) {
-    const resume = this.halt();
-    raf(() => {
-      outputCb();
-      raf(resume);
-    });
-  }
-
   plot(x, y, color) {
-    this.yeild(() => {
-      this.assertDisplay();
-      this.display.plot(x, y, color);
-    });
+    this.assertDisplay();
+    this.display.plot(x, y, color);
+    this.yieldStep();
   }
 
   color(x, y) {
@@ -300,16 +281,19 @@ class Basic {
   }
 
   print(s) {
-    this.yeild(() => this.console.write(s.toString()));
+    this.console.write(s.toString());
+    this.yieldStep();
   }
 
   clearConsole() {
     this.console.clear();
+    this.yieldStep();
   }
 
   clearGraphics() {
     this.assertDisplay();
-    this.yeild(() => this.display.clear());
+    this.display.clear();
+    this.yieldStep();
   }
 
   getChar() {
@@ -321,7 +305,12 @@ class Basic {
     this.console.input(callback);
   }
 
-  halt() {
+  yieldStep() {
+    const resume = this.haltStep();
+    raf(() => raf(resume));
+  }
+
+  haltStep() {
     this.halted++;
     return () => {
       this.halts--;
