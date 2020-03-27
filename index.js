@@ -37,14 +37,7 @@ const interp = new Basic({
 interp
   .run(
     `
-10 PAUSE 0.1
-20 ARRAY I
-92 LET I[0] =5
-95 LET I[1] = 10
-98 PRINT I
-100 FOR I = 1 TO 9 STEP 2
-110 PRINT I
-120 NEXT I
+10 PRINT ("1)\" + "4")
 
 `,
   )
