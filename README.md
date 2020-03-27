@@ -1,32 +1,15 @@
+## Goals
+
+* Based on Vintage/Classic Basic
+* Creative programming primitives: Drawing & Sound
+* Inspiration: [Vintage Basic](http://www.vintage-basic.net/downloads/Vintage_BASIC_Users_Guide.html), [Atari Microsoft Basic](http://www.atarimania.com/utility-atari-400-800-xl-xe-microsoft-basic_28097.html), and [Quite Basic](http://www.quitebasic.com/)
+* Line-based interpreter: i.e. every line is a syntactally complete statement
+
 ## Architecture
 
-CODE => LEX => [] Tokens => AST => Run the AST
+- Line (string) => Lexer => [] Tokens => Parser => AST
+- Expressions are precompiled to JavaScript expressions
+- Runtime library `basic.js` handles execution, debugging, and context
+- AST nodes run themsleves
 
-Abstract Syntax Tree
-           +
-          /  \
-          1  2
-
-Basic is line-based.
-
-AST is actually an array.
-
-A line is an AST but a program is an array of line ASTs
-
-1000 PRINT 100
-1100 RETURN
-
-2000 GOSUB 1000
-
-100 PRINT "hello " + " world"
-
-Parser will go through the tokens linearily big switch statement to consume the tokens
-
-10  FOR I = 0 to 10
-100 PRINT I
-200 FOR J = 0 to 10
-300 PRINT J
-400 NEXT I
-500 NEXT J
-
-
+## Syntax
