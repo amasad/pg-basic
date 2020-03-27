@@ -294,6 +294,18 @@ const tErr = (line, errorString) => {
 const lerr = (errorString) => `Parse error on line 1: ${errorString}`
 
 describe('Parse errors', () => {
+  describe('Bracket matching', () => {
+    // extra closing
+    tErr('1 PRINT (1+1', lerr('You have unmatched brackets. Make sure your brackets are balanced'));
+    // umatched
+    tErr('1 PRINT 1+1)', lerr('Found extra closing bracket )'));
+    // out of order
+    tErr('1 PRINT A[(1+1])', lerr('Unexpected bracket ]. There is an unmatched ( so it is expected to see ) before ]'));
+    test('1 Ignores brackets in strings', () => {
+      expect(() => Parser.parseLine('1 PRINT ("a" + ")")')).not.toThrow()
+    });
+  });
+
   describe('lineno', () => {
     tErr('PRINT "HI"', 'Parse error on line -1: Every line must start with a line number');
   });
@@ -315,8 +327,8 @@ describe('Parse errors', () => {
   });
 
   describe('INPUT', () => {
-    tErr('1 INPUT', lerr('Expected prompt value after INPUT'));
-    tErr('1 INPUT "prompt text"', lerr('Expected ; after INPUT'));
+    tErr('1 INPUT', lerr('Expected prompt text after INPUT'));
+    tErr('1 INPUT "prompt text"', lerr('Expected a ";" after "prompt text" but got a end of line'));
     tErr('1 INPUT "got mod";', lerr('Expected a variable after ";" but got a end of line instead 😕'));
   });
 
