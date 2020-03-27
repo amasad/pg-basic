@@ -50,7 +50,7 @@ class Basic {
         }
 
         if (seen[line.lineno]) {
-          return this.end(new ParseError(lineno, `Line with number ${lineno} repeated`));
+          return this.end(new ParseError(line.lineno, `Line with number ${line.lineno} repeated`));
         }
 
         seen[line.lineno] = true;
@@ -67,7 +67,7 @@ class Basic {
 
   execute() {
     this.halted = false;
-    while (true) {
+    for (let i = 0; i < 20; i++) {
       this.step();
 
       if (this.ended) return;
@@ -95,6 +95,11 @@ class Basic {
       if (this.halted) {
         return;
       }
+    }
+
+    if (!this.ended) {
+      this.halt();
+      setTimeout(() => this.execute());
     }
   }
 
@@ -296,6 +301,7 @@ class Basic {
   }
 
   halt() {
+    this.debug('halted');
     this.halted = true;
   }
 }

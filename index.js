@@ -37,13 +37,14 @@ const interp = new Basic({
 interp
   .run(
     `
-10 PRINT ("1)\" + "4")
-
+100 for i = 0 to 10000
+200 print "hello"
+300 next i
 `,
   )
   .then(
     () => {
-      console.log('dohne');
+      console.log('done');
     },
     err => {
       console.error('error:');
