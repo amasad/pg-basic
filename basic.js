@@ -3,6 +3,16 @@ const Parser = require('./parser');
 const Functions = require('./functions');
 const { ParseError, RuntimeError } = require('./errors');
 
+let raf;
+if (typeof window !== 'undefined') {
+  raf = window.requestAnimationFrame;
+} else {
+  raf = (fn) => {
+    const time = Date.now();
+    setImmediate(() => fn(time));
+  };
+}
+
 class Basic {
   constructor({ console, debugLevel, display }) {
     this.debugLevel = debugLevel;
@@ -21,6 +31,7 @@ class Basic {
       PI: Math.PI,
       LEVEL: 1,
     };
+    this.halts = 0;
   }
 
   debug(str, level = 1) {
@@ -36,7 +47,7 @@ class Basic {
       this.program = [];
 
       const seen = {};
-      const lines = program.split('\n').filter(l => l.trim() !== '');
+      const lines = program.split('\n').filter((l) => l.trim() !== '');
       if (lines.length === 0) {
         return this.end();
       }
@@ -50,7 +61,9 @@ class Basic {
         }
 
         if (seen[line.lineno]) {
-          return this.end(new ParseError(lineno, `Line with number ${lineno} repeated`));
+          return this.end(
+            new ParseError(lineno, `Line with number ${lineno} repeated`)
+          );
         }
 
         seen[line.lineno] = true;
@@ -58,7 +71,6 @@ class Basic {
       }
 
       this.program.sort((a, b) => a.lineno - b.lineno);
-
       this.lineno = this.program[0].lineno;
 
       this.execute();
@@ -66,8 +78,9 @@ class Basic {
   }
 
   execute() {
-    this.halted = false;
+    let stepsRan = 0;
     while (true) {
+      stepsRan++;
       this.step();
 
       if (this.ended) return;
@@ -84,16 +97,16 @@ class Basic {
         this.jumped = false;
       }
 
-      if (this.delay) {
-        const delay = this.delay;
-        this.delay = null;
-        return setTimeout(() => {
-          this.execute();
-        }, delay);
+      if (this.halts > 0) {
+        return;
       }
 
-      if (this.halted) {
-        return;
+      if (stepsRan === 20) {
+        // After 20 steps, yield so that
+        // we don't block the main thread for too long.
+        // Things like keyboard inputs to the display are flushed
+        // and we're able to read them. Ideally we'd explicitly yeild before GETCHAR
+        this.yeild(() => this.execute());
       }
     }
   }
@@ -111,7 +124,7 @@ class Basic {
 
     if (!node) {
       return this.end(
-        new RuntimeError(this.lineno, `Cannot find line ${this.lineno} 🤦‍♂️`),
+        new RuntimeError(this.lineno, `Cannot find line ${this.lineno} 🤦‍♂️`)
       );
     }
 
@@ -153,7 +166,10 @@ class Basic {
   setArray(vari, sub, value) {
     if (!(this.variables[vari] instanceof BasicArray)) {
       return this.end(
-        new RuntimeError(this.lineno, `${vari} is not an array, did you call ARRAY?`),
+        new RuntimeError(
+          this.lineno,
+          `${vari} is not an array, did you call ARRAY?`
+        )
       );
     }
     this.variables[vari][sub] = value;
@@ -166,7 +182,7 @@ class Basic {
   fun(name) {
     if (!Functions[name]) {
       return this.end(
-        new RuntimeError(this.lineno, `Function ${name} does not exist ☹️`),
+        new RuntimeError(this.lineno, `Function ${name} does not exist ☹️`)
       );
     }
 
@@ -190,12 +206,9 @@ class Basic {
     if (this.constants.hasOwnProperty(constant)) {
       return this.constants[constant];
     }
-    this.end(new RuntimeError(this.lineno, `Constant ${constant} is undefined`));
-  }
-
-  pause(millis) {
-    this.debug(`pause ${millis}`);
-    this.delay = millis;
+    this.end(
+      new RuntimeError(this.lineno, `Constant ${constant} is undefined`)
+    );
   }
 
   goto(lineno) {
@@ -245,7 +258,10 @@ class Basic {
   return() {
     if (this.stack.length === 0) {
       return this.end(
-        new RuntimeError(this.lineno, `There are no function calls to return from 🤷`),
+        new RuntimeError(
+          this.lineno,
+          `There are no function calls to return from 🤷`
+        )
       );
     }
     const lineno = this.stack.pop();
@@ -258,9 +274,19 @@ class Basic {
     }
   }
 
+  yeild(outputCb) {
+    const resume = this.halt();
+    raf(() => {
+      outputCb();
+      raf(resume);
+    });
+  }
+
   plot(x, y, color) {
-    this.assertDisplay();
-    this.display.plot(x, y, color);
+    this.yeild(() => {
+      this.assertDisplay();
+      this.display.plot(x, y, color);
+    });
   }
 
   color(x, y) {
@@ -274,7 +300,7 @@ class Basic {
   }
 
   print(s) {
-    this.console.write(s.toString());
+    this.yeild(() => this.console.write(s.toString()));
   }
 
   clearConsole() {
@@ -283,7 +309,7 @@ class Basic {
 
   clearGraphics() {
     this.assertDisplay();
-    this.display.clear();
+    this.yeild(() => this.display.clear());
   }
 
   getChar() {
@@ -296,7 +322,18 @@ class Basic {
   }
 
   halt() {
-    this.halted = true;
+    this.halted++;
+    return () => {
+      this.halts--;
+
+      if (this.halts === 0) {
+        this.execute();
+      }
+
+      if (this.halted < 0) {
+        throw new Error('Halts went below 0');
+      }
+    };
   }
 }
 

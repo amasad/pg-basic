@@ -94,6 +94,7 @@ class Parser {
   constructor(tokenizer) {
     this.tokenizer = tokenizer;
     this.lineno = this.getLineNo(this.tokenizer.next());
+    console.log(this.tokenizer.tokens)
     Parser.checkBrackets(tokenizer, this.lineno);
   }
 

@@ -106,7 +106,12 @@ class PAUSE extends Node {
 
     this.assert(typeof value === 'number', 'PAUSE value should be a number or should evaluate to one');
 
-    context.pause(value);
+    context.debug(`pause ${value}`);
+
+    const resume = context.halt();
+    setTimeout(() => {
+      resume();
+    }, value);
   }
 }
 
@@ -123,7 +128,7 @@ class INPUT extends Node {
     context.print(prompt);
 
     // Yield.
-    context.halt();
+    const resume = context.halt();
     context.input((value) => {
       if (this.variable.array) {
         const sub = context.evaluate(this.variable.subscript);
@@ -133,7 +138,7 @@ class INPUT extends Node {
       }
 
       // Resume.
-      context.execute();
+      resume();
     });
   }
 }
