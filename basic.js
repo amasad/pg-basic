@@ -31,7 +31,7 @@ class Basic {
       PI: Math.PI,
       LEVEL: 1,
     };
-    this.halts = 0;
+    this.halted = false;
   }
 
   debug(str, level = 1) {
@@ -95,7 +95,7 @@ class Basic {
         this.jumped = false;
       }
 
-      if (this.halts > 0) {
+      if (this.halted) {
         return;
       }
 
@@ -311,17 +311,14 @@ class Basic {
   }
 
   haltStep() {
-    this.halted++;
+    if (this.halted) {
+      throw new Error('Already halted, was resume called?');
+    }
+
+    this.halted = true;
     return () => {
-      this.halts--;
-
-      if (this.halts === 0) {
-        this.execute();
-      }
-
-      if (this.halted < 0) {
-        throw new Error('Halts went below 0');
-      }
+      this.halted = false;
+      this.execute();
     };
   }
 }
