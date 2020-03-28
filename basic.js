@@ -83,15 +83,7 @@ class Basic {
       } else {
         this.jumped = false;
       }
-
-      if (this.delay) {
-        const delay = this.delay;
-        this.delay = null;
-        return setTimeout(() => {
-          this.execute();
-        }, delay);
-      }
-
+      
       if (this.halted) {
         return;
       }
@@ -200,7 +192,8 @@ class Basic {
 
   pause(millis) {
     this.debug(`pause ${millis}`);
-    this.delay = millis;
+    this.halt();
+    setTimeout(() => this.execute(), millis);    
   }
 
   goto(lineno) {
@@ -266,44 +259,49 @@ class Basic {
   plot(x, y, color) {
     this.assertDisplay();
     this.display.plot(x, y, color);
+    
+    if (typeof window !== 'undefined') {
+      this.halt();
+      requestAnimationFrame(() => this.execute());      
+    }
   }
 
-  color(x, y) {
-    this.assertDisplay();
-    return this.display.color(x, y);
-  }
+color(x, y) {
+  this.assertDisplay();
+  return this.display.color(x, y);
+}
 
-  clearAll() {
-    this.clearConsole();
-    this.clearGraphics();
-  }
+clearAll() {
+  this.clearConsole();
+  this.clearGraphics();
+}
 
-  print(s) {
-    this.console.write(s.toString());
-  }
+print(s) {
+  this.console.write(s.toString());
+}
 
-  clearConsole() {
-    this.console.clear();
-  }
+clearConsole() {
+  this.console.clear();
+}
 
-  clearGraphics() {
-    this.assertDisplay();
-    this.display.clear();
-  }
+clearGraphics() {
+  this.assertDisplay();
+  this.display.clear();
+}
 
-  getChar() {
-    this.assertDisplay();
-    return this.display.getChar() || '';
-  }
+getChar() {
+  this.assertDisplay();
+  return this.display.getChar() || '';
+}
 
-  input(callback) {
-    this.console.input(callback);
-  }
+input(callback) {
+  this.console.input(callback);
+}
 
-  halt() {
-    this.debug('halted');
-    this.halted = true;
-  }
+halt() {
+  this.debug('halted');
+  this.halted = true;
+}
 }
 
 class BasicArray {
