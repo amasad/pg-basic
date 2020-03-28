@@ -50,7 +50,7 @@ class Basic {
         }
 
         if (seen[line.lineno]) {
-          return this.end(new ParseError(lineno, `Line with number ${lineno} repeated`));
+          return this.end(new ParseError(line.lineno, `Line with number ${line.lineno} repeated`));
         }
 
         seen[line.lineno] = true;
@@ -67,7 +67,7 @@ class Basic {
 
   execute() {
     this.halted = false;
-    while (true) {
+    for (let i = 0; i < 20; i++) {
       this.step();
 
       if (this.ended) return;
@@ -84,17 +84,14 @@ class Basic {
         this.jumped = false;
       }
 
-      if (this.delay) {
-        const delay = this.delay;
-        this.delay = null;
-        return setTimeout(() => {
-          this.execute();
-        }, delay);
-      }
-
       if (this.halted) {
         return;
       }
+    }
+
+    if (!this.ended) {
+      this.halt();
+      setTimeout(() => this.execute());
     }
   }
 
@@ -195,7 +192,8 @@ class Basic {
 
   pause(millis) {
     this.debug(`pause ${millis}`);
-    this.delay = millis;
+    this.halt();
+    setTimeout(() => this.execute(), millis);
   }
 
   goto(lineno) {
@@ -261,6 +259,11 @@ class Basic {
   plot(x, y, color) {
     this.assertDisplay();
     this.display.plot(x, y, color);
+
+    if (typeof window !== 'undefined') {
+      this.halt();
+      requestAnimationFrame(() => this.execute());
+    }
   }
 
   color(x, y) {
@@ -296,6 +299,7 @@ class Basic {
   }
 
   halt() {
+    this.debug('halted');
     this.halted = true;
   }
 }
