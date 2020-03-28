@@ -37,8 +37,8 @@ const interp = new Basic({
 interp
   .run(
     `
-100 for i = 0 to 10000
-200 print "hello"
+100 for i = 1 to 1 step -1
+200 print i
 300 next i
 `,
   )
