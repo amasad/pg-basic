@@ -37,9 +37,11 @@ const interp = new Basic({
 interp
   .run(
     `
-100 for i = 0 to 10000
-200 print "hello"
-300 next i
+10 print "henlo"
+20 gosub 30
+25 print "skipped"
+30 print "ok"
+40 return
 `,
   )
   .then(
