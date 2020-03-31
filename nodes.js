@@ -205,7 +205,7 @@ class IF extends Node {
   run(context) {
     if (context.evaluate(this.condition)) {
       this.then.run(context);
-    } else if (this.other) {
+    } else if (this.elze) {
       this.elze.run(context);
     }
   }

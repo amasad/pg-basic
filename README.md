@@ -12,6 +12,10 @@
 - Runtime library `basic.js` handles execution, debugging, and context
 - AST nodes run themsleves
 
+## Known Issues
+
+- lack of booleans
+- runtime error line numbers
 
 ## Syntax
 
@@ -485,6 +489,7 @@ Example:
 ```
 
 Output:
+```
 red
 ```
 

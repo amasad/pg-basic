@@ -37,11 +37,10 @@ const interp = new Basic({
 interp
   .run(
     `
-10 print "henlo"
-20 gosub 30
-25 print "skipped"
-30 print "ok"
-40 return
+10 if 0 then goto 20 else goto 30
+15 print 15
+20 print 20
+30 print 30
 `,
   )
   .then(
@@ -53,6 +52,8 @@ interp
       console.error(err);
     },
   );
+
+  interp.end();
 
 // interp.run(`
 // 1000 REM Snake and Dots
