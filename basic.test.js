@@ -30,7 +30,7 @@ const createBasic = () => {
   };
   const interp = new Basic({
     console: cnsle,
-    display,    
+    display,
   });
 
   return {
@@ -68,4 +68,19 @@ test('if else', (done) => {
   20 print "never"
   30 print "1"  
   `);
+});
+
+test('js runtime errors w/ line numbers', async () => {
+  const { interp, output } = createBasic();
+  let i = 0;
+
+  let error;
+  try {
+    await interp.run(`
+  10 let a = a()
+  `)
+  } catch (e) {
+    error = e;
+  }
+  expect(error.message).toMatch(/Error on line/);
 });

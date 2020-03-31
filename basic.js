@@ -138,7 +138,9 @@ class Basic {
     try {
       return this.context.evaluate(code);
     } catch (e) {
-      console.error('Error evaluating code:', code);
+      // This is a terrible experience and should basically never
+      // happen.
+      this.end(new RuntimeError(this.lineno, `Error evaluating ${code}`))
       throw e;
     }
   }

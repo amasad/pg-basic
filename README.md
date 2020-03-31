@@ -15,7 +15,6 @@
 ## Known Issues
 
 - lack of booleans
-- runtime error line numbers
 
 ## Syntax
 
