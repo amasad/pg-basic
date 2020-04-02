@@ -1,3 +1,5 @@
+[![Run on Repl.it](https://repl.it/badge/github/amasad/pg-basic)](https://repl.it/github/amasad/pg-basic)
+
 ## Goals
 
 * Based on Vintage/Classic Basic
