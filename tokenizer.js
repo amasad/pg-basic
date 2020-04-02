@@ -117,6 +117,10 @@ class Tokenizer {
     return this.tokens[this.index++];
   }
 
+  reverse() {
+    if (this.index === 0) return 0;
+    return --this.index;    
+  }
   tokenize() {
     const linem = this.stmnt.match(LINE);
 
@@ -250,4 +254,5 @@ class Tokenizer {
   }
 }
 
+Tokenizer.Token = Token;
 module.exports = Tokenizer;

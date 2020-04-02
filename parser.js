@@ -98,7 +98,14 @@ class Parser {
   }
 
   parse() {
-    const top = this.tokenizer.next();
+    let top = this.tokenizer.next();
+
+    // If top is a variable we assume it's an assignment shorthand `x = 1`
+    if (top.type !== 'keyword' && top.type === 'variable') {
+      this.tokenizer.reverse();
+      top = new Tokenizer.Token('keyword', 'LET');
+    }
+
     this.assertType(top, 'keyword');
 
     switch (top.lexeme) {

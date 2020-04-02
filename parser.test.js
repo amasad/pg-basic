@@ -40,6 +40,18 @@ t('100 LET x = 1', {
   expr: '1',
 });
 
+// infer let
+t('100 x = 1', {
+  type: 'LET',
+  lineno: 100,
+  variable: {
+    lineno: 100,
+    type: 'variable',
+    name: 'X',
+    array: false,
+  },
+  expr: '1',
+});
 
 t('100 LET x[10] = 1', {
   type: 'LET',
@@ -54,21 +66,19 @@ t('100 LET x[10] = 1', {
   expr: "1",
 });
 
-// t('100 GOTO 200', {
-//   type: 'GOTO',
-//   expr: {
-//     type: 'literal',
-//     value: 200,
-//   }
-// });
-
-// t('100 GOSUB 200', {
-//   type: 'GOSUB',
-//   expr: {
-//     type: 'literal',
-//     value: 200,
-//   }
-// });
+// infer let
+t('100 x[10] = 1', {
+  type: 'LET',
+  lineno: 100,
+  variable: {
+    lineno: 100,
+    type: 'variable',
+    name: 'X',
+    array: true,
+    subscript: "10",
+  },
+  expr: "1",
+});
 
 
 t('100 REM lol lawl', {
