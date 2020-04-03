@@ -224,6 +224,13 @@ class Basic {
     this.debug(`jumping to loop ${name}`);
 
     const loop = this.loops[name];
+    if (!loop) {
+      return this.end(new RuntimeError(
+        this.lineno,
+        'No loop to return from. Did you forget to write a for?'
+      ));
+    }
+
     loop.value += loop.increment;
     this.set(loop.variable, loop.value);
 

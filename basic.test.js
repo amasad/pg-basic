@@ -84,3 +84,18 @@ test('js runtime errors w/ line numbers', async () => {
   }
   expect(error.message).toMatch(/Error on line/);
 });
+
+
+test('next without for should give a good error', async () => {
+  const { interp } = createBasic();
+
+  let error;
+  try {
+    await interp.run(`
+      10 next i
+  `)
+  } catch (e) {
+    error = e;
+  }
+  expect(error.message).toMatch(/did you forget to write a for/i);  
+});
