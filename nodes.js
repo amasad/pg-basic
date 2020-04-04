@@ -209,6 +209,21 @@ class TEXT extends Node {
   }
 }
 
+class UNTEXT extends Node {
+  constructor(lineno, x, y) {    
+    super(lineno, 'UNTEXT');
+    this.x = x;
+    this.y = y;
+  }
+
+  run(context) {
+    context.text(
+      context.evaluate(this.x),
+      context.evaluate(this.y),
+    );
+  }
+}
+
 class END extends Node {
   run(context) {
     context.end();
@@ -302,5 +317,6 @@ module.exports = {
   CLT,
   CLC,
   TEXT,
+  UNTEXT,
   Variable,
 };

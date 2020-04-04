@@ -21,7 +21,7 @@ test('arithmetic', () => {
 
 test('var', () => {
   expect(toJs('A')).toBe(`__pgb.get("A")`);
-  expect(toJs('A$')).toBe(`__pgb.get("A")`);
+  expect(toJs('A$')).toBe(`__pgb.get("A$")`);
 });
 
 test('functions', () => {

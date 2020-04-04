@@ -38,6 +38,7 @@ const KEYWORDS = [
   'PRINT',
   'PLOT',
   'TEXT',
+  'UNTEXT',
   'DRAW',
   'UNDRAW',
   'ARRAY',

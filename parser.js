@@ -18,6 +18,7 @@ const {
   CLC,
   CLT,
   TEXT,
+  UNTEXT,
   Variable,
 } = require('./nodes');
 const exprToJS = require('./expr');
@@ -258,6 +259,21 @@ class Parser {
         }
 
         return new TEXT(this.lineno, x, y, text, size, color);
+      }
+
+      case 'UNTEXT': {
+        const x = this.expectExpr({
+          stopOnComma: true,
+          errStr: 'Expected a value for the X axis for TEXT',
+        });
+        this.expectOperation(',');
+
+        const y = this.expectExpr({
+          stopOnComma: true,
+          errStr: 'Expected a value for Y axis for TEXT'
+        });
+
+        return new UNTEXT(this.lineno, x, y);
       }
 
       case 'CLS':
