@@ -279,6 +279,16 @@ class Basic {
     }
   }
 
+  context(x, y, text, size, color) {
+    this.assertDisplay();
+    this.display.text(x, y, text, size, color);
+
+    if (typeof window !== 'undefined') {
+      this.halt();
+      requestAnimationFrame(() => this.execute());
+    }
+  }
+
   color(x, y) {
     this.assertDisplay();
     return this.display.color(x, y);

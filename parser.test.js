@@ -288,6 +288,15 @@ t('100 PLOT 1, 2, "RED"', {
   color: '"RED"'
 });
 
+t('100 TEXT 1, 2, 12, "RED"', {
+  type: 'TEXT',
+  lineno: 100,
+  x: '1',
+  y: '2',
+  size: 12,
+  color: '"RED"'
+});
+
 const tErr = (line, errorString) => {
   test('err: ' + line, () => {
     try {

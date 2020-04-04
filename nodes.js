@@ -188,6 +188,26 @@ class PLOT extends Node {
   }
 }
 
+class TEXT extends Node {
+  constructor(lineno, x, y, text, size = 12, color = "black") {
+    super(lineno, 'TEXT');
+    this.x = x;
+    this.y = y;
+    this.text = text;
+    this.size = size;
+    this.color = color;
+  }
+
+  run(context) {
+    context.text(
+      context.evaluate(this.x),
+      context.evaluate(this.y),
+      context.evaluate(this.size),
+      context.evaluate(this.color),
+    );
+  }
+}
+
 class END extends Node {
   run(context) {
     context.end();
@@ -220,7 +240,7 @@ class GOSUB extends Node {
   run(context) {
     const lineno = context.evaluate(this.expr);
 
-    this.assert(typeof lineno === 'number', 'GOSUB argument should be a number');          
+    this.assert(typeof lineno === 'number', 'GOSUB argument should be a number');
 
     context.gosub(lineno);
   }

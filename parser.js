@@ -17,6 +17,7 @@ const {
   CLS,
   CLC,
   CLT,
+  TEXT,
   Variable,
 } = require('./nodes');
 const exprToJS = require('./expr');
@@ -221,6 +222,37 @@ class Parser {
         });
 
         return new PLOT(this.lineno, x, y, color);
+
+      case 'TEXT': {
+        const x = this.expectExpr({
+          stopOnComma: true,
+          errStr: 'Expected a value for the X axis for PLOT',
+        });
+        this.expectOperation(',');
+
+        const y = this.expectExpr({
+          stopOnComma: true,
+          errStr: 'Expected a value for Y axis for PLOT'
+        });
+        this.expectOperation(',');
+
+        let size, color;
+        if (this.tokenizer.peek() !== Tokenize.eof) {
+          size = this.expectExpr({
+            stopOnComma: true,
+            errStr: 'Expected a value for size for PLOT'
+          });
+          this.expectOperation(',');
+          if (this.tokenizer.peek() !== Tokenize.eof) {
+            color = this.expectExpr({
+              stopOnComma: true,
+              errStr: 'Expected a value for color after PLOT X, Y,',
+            });
+          }
+        }
+
+        return new TEXT(this.lineno, x, y, size, color);
+      }
 
       case 'CLS':
         return new CLS(this.lineno);
