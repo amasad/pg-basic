@@ -59,7 +59,7 @@ const QUOTE = /^"((\\.|[^"\\])*)"\s*/;
 const KEY = new RegExp('^(' + KEYWORDS.join('|') + ')\\s*', 'i');
 const FUN = new RegExp('^(' + Object.keys(Functions).join('|') + ')\\s*', 'i');
 const CONST = new RegExp('^(' + CONSTANTS.join('|') + ')\\s*', 'i');
-const VAR = /^([a-z][0-9]*)\$?\s*/i;
+const VAR = /^([a-z][\w$]*)\s*/i;
 const NUM = /^(\d+(\.\d+)?)\s*/i;
 const OP = /^(<>|>=|<=|[,\+\-\*\/%=<>\(\)\]\[])\s*/i;
 const LOGIC = /^(AND|OR)\s*/i;
@@ -122,6 +122,7 @@ class Tokenizer {
     if (this.index === 0) return 0;
     return --this.index;    
   }
+
   tokenize() {
     const linem = this.stmnt.match(LINE);
 

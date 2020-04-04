@@ -331,7 +331,6 @@ describe('Parse errors', () => {
 
   describe('PRINT', () => {
     tErr('1 PRINT', lerr('Expected value after PRINT'));
-    tErr('1 PRINT XXX', lerr('Variables should be single letter'));
   });
 
   describe('LET', () => {
