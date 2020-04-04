@@ -279,7 +279,7 @@ class Basic {
     }
   }
 
-  context(x, y, text, size, color) {
+  text(x, y, text, size, color) {
     this.assertDisplay();
     this.display.text(x, y, text, size, color);
 
