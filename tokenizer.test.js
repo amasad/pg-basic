@@ -1,176 +1,216 @@
 const Tokenizer = require('./tokenizer');
 
-test('keyword string', () => {
+const t = (line, arr) => {
+  test(line, () => {
+    const t = new Tokenizer(line, { debug: true });
+    t.tokenize();
+    const tokens = [];
+    while (t.peek() !== Tokenizer.eof) {
+      tokens.push(t.next().toJSON());
+    }
+    expect(tokens).toEqual(arr);
+  });
+};
 
-  const t = new Tokenizer('100 PRINT "hello"', { debug: true });
-  t.tokenize();
-
-  expect(t.next().toJSON()).toEqual({
+t('100 PRINT "hello"', [
+  {
     type: 'lineno',
     lexeme: 100,
-  });
-
-  expect(t.next().toJSON()).toEqual({
+  },
+  {
     type: 'keyword',
     lexeme: 'PRINT'
-  });
-
-  expect(t.next().toJSON()).toEqual({
+  },
+  {
     type: 'string',
     lexeme: '"hello"'
-  });
-});
+  }
+]);
 
-test('function', () => {
-  const t = new Tokenizer('100 PRINT ABS(-3)', { debug: true });
-  t.tokenize();
-
-  expect(t.next().toJSON()).toEqual({
+t('100 PRINT ABS(-3)', [
+  {
     type: 'lineno',
     lexeme: 100,
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'keyword',
     lexeme: 'PRINT'
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'function',
     lexeme: 'ABS'
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'operation',
     lexeme: '('
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'operation',
     lexeme: '-'
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'number',
     lexeme: 3,
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'operation',
     lexeme: ')'
-  });
-});
+  },
+]);
 
-test('var', () => {
-  const t = new Tokenizer('100 LET x = 1', {
-    debug: true,
-  })
 
-  t.tokenize();
-
-  expect(t.next().toJSON()).toEqual({
+t('100 LET x = 1', [
+  {
     type: 'lineno',
     lexeme: 100,
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'keyword',
     lexeme: 'LET',
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'variable',
     lexeme: 'X',
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'operation',
     lexeme: '=',
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'number',
     lexeme: 1,
-  });
-});
+  },
+]);
 
-test('ARR', () => {
-  const t = new Tokenizer('100 LET X[N+1] = 1', {
-    debug: true,
-  })
-
-  t.tokenize();
-
-  expect(t.next().toJSON()).toEqual({
+t('100 LET X$ = 1', [
+  {
     type: 'lineno',
     lexeme: 100,
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'keyword',
     lexeme: 'LET',
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
+    type: 'variable',
+    lexeme: 'X$',
+  },
+
+  {
+    type: 'operation',
+    lexeme: '=',
+  },
+
+  {
+    type: 'number',
+    lexeme: 1,
+  },
+]);
+
+t('100 LET XX_ = 1', [
+  {
+    type: 'lineno',
+    lexeme: 100,
+  },
+
+  {
+    type: 'keyword',
+    lexeme: 'LET',
+  },
+
+  {
+    type: 'variable',
+    lexeme: 'XX_',
+  },
+
+  {
+    type: 'operation',
+    lexeme: '=',
+  },
+
+  {
+    type: 'number',
+    lexeme: 1,
+  },
+]);
+
+t('100 LET X[N+1] = 1', [
+  {
+    type: 'lineno',
+    lexeme: 100,
+  },
+
+  {
+    type: 'keyword',
+    lexeme: 'LET',
+  },
+
+  {
     type: 'variable',
     lexeme: 'X',
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'operation',
     lexeme: '[',
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'variable',
     lexeme: 'N',
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'operation',
     lexeme: '+',
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'number',
     lexeme: 1,
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'operation',
     lexeme: ']',
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'operation',
     lexeme: '=',
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'number',
     lexeme: 1,
-  });
-});
+  },
+]);
 
-test('CONSTANT', () => {
-  const t = new Tokenizer('100 PRINT PI', {
-    debug: true,
-  })
-
-  t.tokenize();
-
-  expect(t.next().toJSON()).toEqual({
+t('100 PRINT PI', [
+  {
     type: 'lineno',
     lexeme: 100,
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'keyword',
     lexeme: 'PRINT',
-  });
+  },
 
-  expect(t.next().toJSON()).toEqual({
+  {
     type: 'constant',
     lexeme: 'PI',
-  });
-});
+  },
+]);

@@ -40,6 +40,18 @@ t('100 LET x = 1', {
   expr: '1',
 });
 
+// infer let
+t('100 x = 1', {
+  type: 'LET',
+  lineno: 100,
+  variable: {
+    lineno: 100,
+    type: 'variable',
+    name: 'X',
+    array: false,
+  },
+  expr: '1',
+});
 
 t('100 LET x[10] = 1', {
   type: 'LET',
@@ -54,21 +66,19 @@ t('100 LET x[10] = 1', {
   expr: "1",
 });
 
-// t('100 GOTO 200', {
-//   type: 'GOTO',
-//   expr: {
-//     type: 'literal',
-//     value: 200,
-//   }
-// });
-
-// t('100 GOSUB 200', {
-//   type: 'GOSUB',
-//   expr: {
-//     type: 'literal',
-//     value: 200,
-//   }
-// });
+// infer let
+t('100 x[10] = 1', {
+  type: 'LET',
+  lineno: 100,
+  variable: {
+    lineno: 100,
+    type: 'variable',
+    name: 'X',
+    array: true,
+    subscript: "10",
+  },
+  expr: "1",
+});
 
 
 t('100 REM lol lawl', {
@@ -278,6 +288,36 @@ t('100 PLOT 1, 2, "RED"', {
   color: '"RED"'
 });
 
+t('100 TEXT 1, 2, "hello", 15, "RED"', {
+  type: 'TEXT',
+  lineno: 100,
+  x: '1',
+  y: '2',
+  size: '15',
+  text: '"hello"',
+  color: '"RED"'
+});
+
+t('100 TEXT 1, 2, "hello"', {
+  type: 'TEXT',
+  lineno: 100,
+  x: '1',
+  y: '2',
+  size: '12',
+  text: '"hello"',
+  color: '"BLACK"'
+});
+
+t('100 TEXT 1, 2, "hello", 13', {
+  type: 'TEXT',
+  lineno: 100,
+  x: '1',
+  y: '2',
+  size: '13',
+  text: '"hello"',
+  color: '"BLACK"'
+});
+
 const tErr = (line, errorString) => {
   test('err: ' + line, () => {
     try {
@@ -312,7 +352,6 @@ describe('Parse errors', () => {
 
   describe('PRINT', () => {
     tErr('1 PRINT', lerr('Expected value after PRINT'));
-    tErr('1 PRINT XXX', lerr('Variables should be single letter'));
   });
 
   describe('LET', () => {

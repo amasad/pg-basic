@@ -17,6 +17,7 @@ const {
   CLS,
   CLC,
   CLT,
+  TEXT,
   Variable,
 } = require('./nodes');
 const exprToJS = require('./expr');
@@ -98,7 +99,14 @@ class Parser {
   }
 
   parse() {
-    const top = this.tokenizer.next();
+    let top = this.tokenizer.next();
+
+    // If top is a variable we assume it's an assignment shorthand `x = 1`
+    if (top.type !== 'keyword' && top.type === 'variable') {
+      this.tokenizer.reverse();
+      top = new Tokenizer.Token('keyword', 'LET');
+    }
+
     this.assertType(top, 'keyword');
 
     switch (top.lexeme) {
@@ -214,6 +222,43 @@ class Parser {
         });
 
         return new PLOT(this.lineno, x, y, color);
+
+      case 'TEXT': {
+        const x = this.expectExpr({
+          stopOnComma: true,
+          errStr: 'Expected a value for the X axis for TEXT',
+        });
+        this.expectOperation(',');
+
+        const y = this.expectExpr({
+          stopOnComma: true,
+          errStr: 'Expected a value for Y axis for TEXT'
+        });
+        this.expectOperation(',');
+
+        const text = this.expectExpr({
+          stopOnComma: true,
+          errStr: 'Expected a text value for TEXT'
+        });
+
+        let size, color;
+        if (this.tokenizer.peek() !== Tokenizer.eof) {
+          this.expectOperation(',');
+          size = this.expectExpr({
+            stopOnComma: true,
+            errStr: 'Expected a value for size for TEXT'
+          });
+          if (this.tokenizer.peek() !== Tokenizer.eof) {
+            this.expectOperation(',');
+            color = this.expectExpr({
+              stopOnComma: true,
+              errStr: 'Expected a value for color for TEXT',
+            });
+          }
+        }
+
+        return new TEXT(this.lineno, x, y, text, size, color);
+      }
 
       case 'CLS':
         return new CLS(this.lineno);

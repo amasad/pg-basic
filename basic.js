@@ -224,6 +224,13 @@ class Basic {
     this.debug(`jumping to loop ${name}`);
 
     const loop = this.loops[name];
+    if (!loop) {
+      return this.end(new RuntimeError(
+        this.lineno,
+        'No loop to return from. Did you forget to write a for?'
+      ));
+    }
+
     loop.value += loop.increment;
     this.set(loop.variable, loop.value);
 
@@ -265,6 +272,16 @@ class Basic {
   plot(x, y, color) {
     this.assertDisplay();
     this.display.plot(x, y, color);
+
+    if (typeof window !== 'undefined') {
+      this.halt();
+      requestAnimationFrame(() => this.execute());
+    }
+  }
+
+  context(x, y, text, size, color) {
+    this.assertDisplay();
+    this.display.text(x, y, text, size, color);
 
     if (typeof window !== 'undefined') {
       this.halt();
