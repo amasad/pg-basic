@@ -226,32 +226,38 @@ class Parser {
       case 'TEXT': {
         const x = this.expectExpr({
           stopOnComma: true,
-          errStr: 'Expected a value for the X axis for PLOT',
+          errStr: 'Expected a value for the X axis for TEXT',
         });
         this.expectOperation(',');
 
         const y = this.expectExpr({
           stopOnComma: true,
-          errStr: 'Expected a value for Y axis for PLOT'
+          errStr: 'Expected a value for Y axis for TEXT'
         });
         this.expectOperation(',');
 
+        const text = this.expectExpr({
+          stopOnComma: true,
+          errStr: 'Expected a text value for TEXT'
+        });
+
         let size, color;
-        if (this.tokenizer.peek() !== Tokenize.eof) {
+        if (this.tokenizer.peek() !== Tokenizer.eof) {
+          this.expectOperation(',');
           size = this.expectExpr({
             stopOnComma: true,
-            errStr: 'Expected a value for size for PLOT'
+            errStr: 'Expected a value for size for TEXT'
           });
-          this.expectOperation(',');
-          if (this.tokenizer.peek() !== Tokenize.eof) {
+          if (this.tokenizer.peek() !== Tokenizer.eof) {
+            this.expectOperation(',');
             color = this.expectExpr({
               stopOnComma: true,
-              errStr: 'Expected a value for color after PLOT X, Y,',
+              errStr: 'Expected a value for color for TEXT',
             });
           }
         }
 
-        return new TEXT(this.lineno, x, y, size, color);
+        return new TEXT(this.lineno, x, y, text, size, color);
       }
 
       case 'CLS':

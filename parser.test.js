@@ -288,13 +288,34 @@ t('100 PLOT 1, 2, "RED"', {
   color: '"RED"'
 });
 
-t('100 TEXT 1, 2, 12, "RED"', {
+t('100 TEXT 1, 2, "hello", 15, "RED"', {
   type: 'TEXT',
   lineno: 100,
   x: '1',
   y: '2',
-  size: 12,
+  size: '15',
+  text: '"hello"',
   color: '"RED"'
+});
+
+t('100 TEXT 1, 2, "hello"', {
+  type: 'TEXT',
+  lineno: 100,
+  x: '1',
+  y: '2',
+  size: '12',
+  text: '"hello"',
+  color: '"BLACK"'
+});
+
+t('100 TEXT 1, 2, "hello", 13', {
+  type: 'TEXT',
+  lineno: 100,
+  x: '1',
+  y: '2',
+  size: '13',
+  text: '"hello"',
+  color: '"BLACK"'
 });
 
 const tErr = (line, errorString) => {

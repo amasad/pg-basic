@@ -189,7 +189,7 @@ class PLOT extends Node {
 }
 
 class TEXT extends Node {
-  constructor(lineno, x, y, text, size = 12, color = "black") {
+  constructor(lineno, x, y, text, size = '12', color = '"BLACK"') {    
     super(lineno, 'TEXT');
     this.x = x;
     this.y = y;
@@ -300,5 +300,6 @@ module.exports = {
   CLS,
   CLT,
   CLC,
+  TEXT,
   Variable,
 };
