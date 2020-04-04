@@ -37,6 +37,7 @@ const KEYWORDS = [
   'END',
   'PRINT',
   'PLOT',
+  'TEXT',
   'DRAW',
   'UNDRAW',
   'ARRAY',
