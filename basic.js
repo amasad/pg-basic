@@ -66,6 +66,8 @@ class Basic {
   }
 
   execute() {
+    if (this.ended) return;
+    
     this.halted = false;
     for (let i = 0; i < 20; i++) {
       this.step();
@@ -279,7 +281,7 @@ class Basic {
     }
   }
 
-  text(x, y, text, size, color) {
+  text(x, y, text, size, color) {    
     this.assertDisplay();
     this.display.text(x, y, text, size, color);
 

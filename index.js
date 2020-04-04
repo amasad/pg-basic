@@ -12,6 +12,10 @@ const display = {
     return colors[`${x}${y}`];
   },
 
+  text(x, y, text, size, color) {
+    console.log(text, x, y, text, size, color);
+  },
+
   clear() {
     console.log('display cleared');
   },
@@ -19,6 +23,7 @@ const display = {
   getChar() {
     return keyQueue.pop();
   },
+
 };
 
 const cnsle = {
@@ -37,7 +42,7 @@ const interp = new Basic({
 interp
   .run(
     `
-10 next i
+10 text 1,1, "ok"
 `,
   )
   .then(
@@ -50,7 +55,7 @@ interp
     },
   );
 
-  interp.end();
+interp.end();
 
 // interp.run(`
 // 1000 REM Snake and Dots

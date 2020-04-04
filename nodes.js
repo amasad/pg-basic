@@ -202,6 +202,7 @@ class TEXT extends Node {
     context.text(
       context.evaluate(this.x),
       context.evaluate(this.y),
+      context.evaluate(this.text),
       context.evaluate(this.size),
       context.evaluate(this.color),
     );
