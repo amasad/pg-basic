@@ -160,8 +160,8 @@ class Basic {
     this.variables[vari][sub] = value;
   }
 
-  array(name) {
-    this.variables[name] = new BasicArray();
+  array(name, dim) {
+    this.variables[name] = new BasicArray(dim);
   }
 
   fun(name) {
@@ -330,6 +330,9 @@ class Basic {
 }
 
 class BasicArray {
+  constructor(dim) {
+    this.dim = dim;
+  }
   toString() {
     let s = '';
     for (let prop in this) {

@@ -269,13 +269,14 @@ class RETURN extends Node {
 }
 
 class ARRAY extends Node {
-  constructor(lineno, variable) {
+  constructor(lineno, variable, dim) {
     super(lineno, 'ARRAY');
     this.variable = variable;
+    this.dim = dim;
   }
 
   run(context) {
-    context.array(this.variable.name);
+    context.array(this.variable.name, context.evaluate(this.dim));
   }
 }
 

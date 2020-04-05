@@ -325,6 +325,34 @@ t('100 UNTEXT 1, 2', {
   y: '2',
 });
 
+t('100 ARRAY X', {
+  type: 'ARRAY',
+  variable: {
+    // This is silly but what it's saying is that there is no
+    // subscript.
+    array: false,
+    lineno: 100,
+    name: 'X',
+    type: 'variable',
+  },
+  dim: "1",
+  lineno: 100,
+});
+
+t('100 ARRAY X, 2', {
+  type: 'ARRAY',
+  variable: {
+    // This is silly but what it's saying is that there is no
+    // subscript.
+    array: false,
+    lineno: 100,
+    name: 'X',
+    type: 'variable',
+  },
+  dim: "2",
+  lineno: 100,
+});
+
 const tErr = (line, errorString) => {
   test('err: ' + line, () => {
     try {

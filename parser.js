@@ -206,8 +206,20 @@ class Parser {
       case 'RETURN':
         return new RETURN(this.lineno);
 
-      case 'ARRAY':
-        return new ARRAY(this.lineno, this.expectVariable());
+      case 'ARRAY': {
+        const vari = this.expectVariable();
+
+        let dim = "1";
+        if (this.tokenizer.peek() !== Tokenizer.eof) {
+          this.expectOperation(',');
+          dim = this.expectExpr({
+            stopOnComma: true,
+            errStr: 'Expected a value for size for TEXT'
+          });
+        }
+
+        return new ARRAY(this.lineno, vari, dim);
+      }
 
       case 'PLOT':
         const x = this.expectExpr({
