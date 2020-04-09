@@ -42,7 +42,12 @@ const interp = new Basic({
 interp
   .run(
     `
-10 text 1,1, "ok"
+  10 ARRAY x, 4
+  20 x[0][0] = "red"
+  25 x[0][1] = "yello"
+  26 x[0][2] = "blue"
+  27 x[1][0] = "blah"
+  30 print x
 `,
   )
   .then(

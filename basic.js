@@ -67,7 +67,7 @@ class Basic {
 
   execute() {
     if (this.ended) return;
-    
+
     this.halted = false;
     for (let i = 0; i < 20; i++) {
       this.step();
@@ -151,13 +151,28 @@ class Basic {
     this.variables[vari] = value;
   }
 
-  setArray(vari, sub, value) {
+  setArray(vari, subscripts, value) {
     if (!(this.variables[vari] instanceof BasicArray)) {
       return this.end(
         new RuntimeError(this.lineno, `${vari} is not an array, did you call ARRAY?`),
       );
     }
-    this.variables[vari][sub] = value;
+
+    let v = this.variables[vari];
+    let dim = v.dim;
+    
+    if (subscripts.length !== dim) {
+      return this.end(
+        new RuntimeError(this.lineno, `${vari} is a an array of ${dim} dimensions and expects ${dim} subscripts "[x]"`)
+      );
+    }
+
+    for (let i = 0; i < dim - 1; i++) {
+      v = v.get(this.evaluate(subscripts[i]))
+    }
+
+    const s = this.evaluate(subscripts[subscripts.length - 1]);
+    v.set(s, value);
   }
 
   array(name, dim) {
@@ -184,7 +199,8 @@ class Basic {
   }
 
   get(vari) {
-    return this.variables[vari] || 0;
+    return typeof this.variables[vari] === 'undefined'
+      ? 0 : this.variables[vari];
   }
 
   getConst(constant) {
@@ -281,7 +297,7 @@ class Basic {
     }
   }
 
-  text(x, y, text, size, color) {    
+  text(x, y, text, size, color) {
     this.assertDisplay();
     this.display.text(x, y, text, size, color);
 
@@ -332,12 +348,33 @@ class Basic {
 class BasicArray {
   constructor(dim) {
     this.dim = dim;
+    this.data = {};
   }
+
+  set(prop, value) {
+    this.data[prop] = value;
+  }
+
+  get(prop) {
+    const isUndefined = typeof this.data[prop] === 'undefined';
+
+    if (isUndefined && this.dim > 1) {
+      return this.data[prop] = new BasicArray(this.dim - 1);
+    }
+
+    return isUndefined ? 0 : this.data[prop];
+  }
+
   toString() {
     let s = '';
-    for (let prop in this) {
-      if (this.hasOwnProperty(prop)) {
-        s += `${prop}, `;
+    for (let prop in this.data) {
+      if (this.data.hasOwnProperty(prop)) {
+        s += `${prop}: `;
+        if (this.data[prop] instanceof BasicArray) {
+          s += `[${this.data[prop]}], `;
+        } else {
+          s += `${this.data[prop]}, `
+        }
       }
     }
     return s.replace(/,\s$/, '');

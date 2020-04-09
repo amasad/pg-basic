@@ -40,30 +40,28 @@ const createBasic = () => {
   }
 };
 
-test('if', (done) => {
+test('if', async () => {
   const { interp, output } = createBasic();
-  let i = 0;
   output.write = (str) => {
+    if (!str.trim()) return;    
     expect(str).toBe("1");
-    done();
   };
 
-  interp.run(`
+  await interp.run(`
   10 if 1 then 30
   15 print "never"
   30 print "1"  
   `);
 });
 
-test('if else', (done) => {
+test('if else', async () => {
   const { interp, output } = createBasic();
-  let i = 0;
   output.write = (str) => {
+    if (!str.trim()) return;
     expect(str).toBe("1");
-    done();
   };
 
-  interp.run(`
+  await interp.run(`
   10 if 0 then 20 else 30
   20 print "never"
   30 print "1"  
@@ -71,8 +69,7 @@ test('if else', (done) => {
 });
 
 test('js runtime errors w/ line numbers', async () => {
-  const { interp, output } = createBasic();
-  let i = 0;
+  const { interp } = createBasic();
 
   let error;
   try {
@@ -97,5 +94,60 @@ test('next without for should give a good error', async () => {
   } catch (e) {
     error = e;
   }
-  expect(error.message).toMatch(/did you forget to write a for/i);  
+  expect(error.message).toMatch(/did you forget to write a for/i);
+});
+
+test('multi dimensional array', async () => {
+  const { interp, output } = createBasic();
+  output.write = (str) => {
+    if (str.trim()) expect(str).toBe("red");    
+  };
+
+  await interp.run(`
+  10 array arr, 2
+  20 arr[0][0] = "red"
+  30 print arr[0][0]
+  `);
+});
+
+test('multi dimensional array without setting', async () => {
+  const { interp, output } = createBasic();
+  output.write = (str) => {
+    if (str.trim()) expect(str).toBe("0");
+  };
+
+  await interp.run(`
+  10 array arr, 2  
+  30 print arr[0][0]
+  `);
+});
+
+test('error on mismatching dimensionality', async () => {
+  const { interp } = createBasic();
+
+  let error;
+
+  try {
+    await interp.run(`
+  10 array arr, 4
+  20 arr[0][0] = "red"  
+  `);
+  } catch (e) {    
+    error = e;  
+  }
+
+  expect(error.message).toMatch(/array of 4 dimensions/i);
+});
+
+test('multi multi dimensional array', async () => {
+  const { interp, output } = createBasic();
+  output.write = (str) => {
+    if (str.trim()) expect(str).toBe("red");    
+  };
+
+  await interp.run(`
+  10 array arr, 4
+  20 arr[0][0][0][0] = "red"
+  30 print arr[0][0][0][0]
+  `);
 });

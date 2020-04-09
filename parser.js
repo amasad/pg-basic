@@ -416,15 +416,17 @@ class Parser {
   }
 
   acceptSubscript() {
-    if (this.tokenizer.peek().lexeme !== '[') return null;
+    const exprs = [];
 
-    this.assertType(this.tokenizer.next(), 'operation', '[');
+    while (this.tokenizer.peek().lexeme === '[') {
+      this.assertType(this.tokenizer.next(), 'operation', '[');
+      exprs.push(
+        this.expectExpr({ errStr: 'Expected expression after [' })
+      );
+      this.assertType(this.tokenizer.next(), 'operation', ']');
+    }
 
-    const expr = this.expectExpr({ errStr: 'Expected expression after [' });
-
-    this.assertType(this.tokenizer.next(), 'operation', ']');
-
-    return expr;
+    return exprs;
   }
 
   assertType(token, expected, value = null) {

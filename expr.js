@@ -39,6 +39,16 @@ function exprToJS(expr) {
         jsExpr += '==';
         continue;
       }
+
+      if (t.lexeme === '[') {
+        jsExpr += '.get('
+        continue;
+      }
+
+      if (t.lexeme === ']') {
+        jsExpr += ')';
+        continue;
+      }
     }
 
     jsExpr += t.lexeme;

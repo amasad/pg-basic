@@ -22,14 +22,14 @@ class Node {
 }
 
 class Variable extends Node {
-  constructor(lineno, name, subscript) {
+  constructor(lineno, name, subscripts) {
     super(lineno, 'variable');
     this.name = name;
-    if (subscript == null) {
+    if (!subscripts.length) {
       this.array = false;
-    } else {
+    } else {      
       this.array = true;
-      this.subscript = subscript;
+      this.subscripts = subscripts;
     }
   }
 }
@@ -86,9 +86,8 @@ class LET extends Node {
   run(context) {
     const value = context.evaluate(this.expr);
 
-    if (this.variable.array) {
-      const sub = context.evaluate(this.variable.subscript)
-      context.setArray(this.variable.name, sub, value);
+    if (this.variable.array) {      
+      context.setArray(this.variable.name, this.variable.subscripts, value);
     } else {
       context.set(this.variable.name, value);
     }

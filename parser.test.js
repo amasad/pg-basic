@@ -61,7 +61,7 @@ t('100 LET x[10] = 1', {
     type: 'variable',
     name: 'X',
     array: true,
-    subscript: "10",
+    subscripts: ["10"],
   },
   expr: "1",
 });
@@ -75,11 +75,23 @@ t('100 x[10] = 1', {
     type: 'variable',
     name: 'X',
     array: true,
-    subscript: "10",
+    subscripts: ["10"],
   },
   expr: "1",
 });
 
+t('100 LET x[1][1] = 1', {
+  type: 'LET',
+  lineno: 100,
+  variable: {
+    lineno: 100,
+    type: 'variable',
+    name: 'X',
+    array: true,
+    subscripts: ["1", "1"],
+  },
+  expr: "1",
+});
 
 t('100 REM lol lawl', {
   type: 'REM',
