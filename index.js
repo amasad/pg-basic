@@ -42,7 +42,7 @@ const interp = new Basic({
 interp
   .run(
     `
-10 let z = 3 if n = 5 then goto 200
+10 let z = 3 xxx
 `,
   )
   .then(

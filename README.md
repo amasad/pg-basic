@@ -14,9 +14,10 @@
 - Runtime library `basic.js` handles execution, debugging, and context
 - AST nodes run themsleves
 
-## Known Issues
+## TODO
 
-- lack of booleans
+- Fix booleans
+- Strinct expression parsing (e.g. `3 XX` should not be acceptable)
 
 ## Syntax
 
