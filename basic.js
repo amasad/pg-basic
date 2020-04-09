@@ -137,6 +137,8 @@ class Basic {
   }
 
   evaluate(code) {
+    this.debug(`evaluating ${code}`);
+    
     try {
       return this.context.evaluate(code);
     } catch (e) {

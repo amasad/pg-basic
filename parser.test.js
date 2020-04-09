@@ -435,7 +435,7 @@ describe('Parse errors', () => {
     tErr('1 GOTO', lerr('Expected a value after GOTO'))
   });
 
-  describe('END', () => {});
+  describe('END', () => { });
 
   describe('IF..ELSE', () => {
     tErr('1 IF', lerr('Expected a condition after IF'));
@@ -454,5 +454,9 @@ describe('Parse errors', () => {
     tErr('1 PLOT 1', lerr('Expected a , after 1 but got a end of line'));
     tErr('1 PLOT 1, 2', lerr('Expected a , after 2 but got a end of line'));
     tErr('1 PLOT 1, 2,', lerr('Expected a value for color after PLOT X, Y,'));
-  })
+  });
+
+  describe('extra tokens', () => {
+    tErr('1 let z = 3 if n = 5 then goto 200', lerr('Saw an extra token at the end of the line IF'));
+  });
 });

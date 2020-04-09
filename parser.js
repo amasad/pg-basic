@@ -91,7 +91,16 @@ class Parser {
 
     const p = new Parser(t);
 
-    return p.parse();
+    const parsed = p.parse();
+
+    if (t.peek() !== Tokenizer.eof) {
+      throw new ParseError(
+        p.lineno,
+        `Saw an extra token at the end of the line ${t.next().lexeme}`
+      );
+    }
+
+    return parsed;
   }
 
   constructor(tokenizer) {
@@ -290,9 +299,9 @@ class Parser {
       }
 
       case 'DRAW': {
-        const array = this.expectExpr({          
+        const array = this.expectExpr({
           errStr: 'Draw requires an array',
-        });       
+        });
 
         return new DRAW(this.lineno, array);
       }
@@ -387,16 +396,6 @@ class Parser {
 
       if (t.lexeme === ']' || t.lexeme === ')') {
         brackets--;
-      }
-
-      // Multiple variables in a row usually means users are trying
-      // to use multi-letter variables
-      if (
-        expr[expr.length - 1] &&
-        t.type === 'variable' &&
-        expr[expr.length - 1].type === 'variable'
-      ) {
-        throw new ParseError(this.lineno, 'Variables should be single letter');
       }
 
       expr.push(t);
