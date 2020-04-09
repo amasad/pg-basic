@@ -160,7 +160,7 @@ class Basic {
 
     let v = this.variables[vari];
     let dim = v.dim;
-    
+
     if (subscripts.length !== dim) {
       return this.end(
         new RuntimeError(this.lineno, `${vari} is a an array of ${dim} dimensions and expects ${dim} subscripts "[x]"`)
@@ -297,6 +297,26 @@ class Basic {
     }
   }
 
+  draw(array) {
+    this.assertDisplay();
+
+    if (!(array instanceof BasicArray) || array.dim !== 2) {
+      return this.end(
+        new RuntimeError(
+          this.lineno,
+          'DRAW requires a two dimensional array of colors'
+        )
+      );
+    }
+
+    this.display.draw(array.toJSON());
+
+    if (typeof window !== 'undefined') {
+      this.halt();
+      requestAnimationFrame(() => this.execute());
+    }
+  }
+
   text(x, y, text, size, color) {
     this.assertDisplay();
     this.display.text(x, y, text, size, color);
@@ -378,6 +398,16 @@ class BasicArray {
       }
     }
     return s.replace(/,\s$/, '');
+  }
+
+  toJSON() {
+    const ret = {};
+    for (let prop in this.data) {
+      ret[prop] = this.dim > 1
+        ? this.data[prop].toJSON() : this.data[prop];
+    }
+
+    return ret;
   }
 }
 

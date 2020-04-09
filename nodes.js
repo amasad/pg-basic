@@ -223,6 +223,17 @@ class UNTEXT extends Node {
   }
 }
 
+class DRAW extends Node {
+  constructor(lineno, array) {    
+    super(lineno, 'DRAW');
+    this.array = array;
+  }
+
+  run(context) {
+    context.draw(context.evaluate(this.array));
+  }
+}
+
 class END extends Node {
   run(context) {
     context.end();
@@ -318,5 +329,6 @@ module.exports = {
   CLC,
   TEXT,
   UNTEXT,
+  DRAW,
   Variable,
 };

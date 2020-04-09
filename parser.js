@@ -19,6 +19,7 @@ const {
   CLT,
   TEXT,
   UNTEXT,
+  DRAW,
   Variable,
 } = require('./nodes');
 const exprToJS = require('./expr');
@@ -286,6 +287,14 @@ class Parser {
         });
 
         return new UNTEXT(this.lineno, x, y);
+      }
+
+      case 'DRAW': {
+        const array = this.expectExpr({          
+          errStr: 'Draw requires an array',
+        });       
+
+        return new DRAW(this.lineno, array);
       }
 
       case 'CLS':

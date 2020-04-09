@@ -8,6 +8,15 @@ const createBasic = () => {
       console.log('plotting', x, y, color);
       colors[`${x}${y}`] = color;
     },
+
+    draw(table) {
+      for (let i in table) {
+        for (let j in table[i]) {
+          colors[`${i}${j}`] = table[i][j];
+        }
+      }
+    },
+
     color(x, y) {
       return colors[`${x}${y}`];
     },
@@ -43,7 +52,7 @@ const createBasic = () => {
 test('if', async () => {
   const { interp, output } = createBasic();
   output.write = (str) => {
-    if (!str.trim()) return;    
+    if (!str.trim()) return;
     expect(str).toBe("1");
   };
 
@@ -100,7 +109,7 @@ test('next without for should give a good error', async () => {
 test('multi dimensional array', async () => {
   const { interp, output } = createBasic();
   output.write = (str) => {
-    if (str.trim()) expect(str).toBe("red");    
+    if (str.trim()) expect(str).toBe("red");
   };
 
   await interp.run(`
@@ -132,8 +141,8 @@ test('error on mismatching dimensionality', async () => {
   10 array arr, 4
   20 arr[0][0] = "red"  
   `);
-  } catch (e) {    
-    error = e;  
+  } catch (e) {
+    error = e;
   }
 
   expect(error.message).toMatch(/array of 4 dimensions/i);
@@ -142,7 +151,7 @@ test('error on mismatching dimensionality', async () => {
 test('multi multi dimensional array', async () => {
   const { interp, output } = createBasic();
   output.write = (str) => {
-    if (str.trim()) expect(str).toBe("red");    
+    if (str.trim()) expect(str).toBe("red");
   };
 
   await interp.run(`
@@ -150,4 +159,30 @@ test('multi multi dimensional array', async () => {
   20 arr[0][0][0][0] = "red"
   30 print arr[0][0][0][0]
   `);
+});
+
+test('draw', async () => {
+  const { interp, output } = createBasic();
+
+  let out = [];
+  output.write = (str) => {
+    if (str.trim()) out.push(str);
+  };
+
+  await interp.run(`
+  10 array a, 2
+  20 a[0][0] = "red"
+  30 a[10][12] = "green"
+  40 a[13][1] = "yellow"
+  50 draw a
+  60 print color(0, 0)
+  70 print color(10, 12)
+  80 print color(13, 1)
+  `);
+
+  expect(out).toEqual([
+    'red',
+    'green',
+    'yellow'
+  ])
 });
