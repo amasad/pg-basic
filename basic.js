@@ -3,7 +3,7 @@ const Parser = require('./parser');
 const Functions = require('./functions');
 const { ParseError, RuntimeError } = require('./errors');
 
-const MAX_STEPS = 10000;
+const MAX_STEPS = 2500;
 
 class Basic {
   constructor({ console, debugLevel, display }) {
