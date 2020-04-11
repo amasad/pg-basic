@@ -3,6 +3,8 @@ const Parser = require('./parser');
 const Functions = require('./functions');
 const { ParseError, RuntimeError } = require('./errors');
 
+const MAX_STEPS = 10000;
+
 class Basic {
   constructor({ console, debugLevel, display }) {
     this.debugLevel = debugLevel;
@@ -69,7 +71,7 @@ class Basic {
     if (this.ended) return;
 
     this.halted = false;
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < MAX_STEPS; i++) {
       this.step();
 
       if (this.ended) return;
@@ -138,7 +140,7 @@ class Basic {
 
   evaluate(code) {
     this.debug(`evaluating ${code}`);
-    
+
     try {
       return this.context.evaluate(code);
     } catch (e) {
@@ -289,14 +291,17 @@ class Basic {
     }
   }
 
-  plot(x, y, color) {
-    this.assertDisplay();
-    this.display.plot(x, y, color);
-
+  yield() {
     if (typeof window !== 'undefined') {
       this.halt();
       requestAnimationFrame(() => this.execute());
     }
+  }
+
+  plot(x, y, color) {
+    this.assertDisplay();
+    this.display.plot(x, y, color);
+    this.yield();
   }
 
   draw(array) {
@@ -312,21 +317,13 @@ class Basic {
     }
 
     this.display.draw(array.toJSON());
-
-    if (typeof window !== 'undefined') {
-      this.halt();
-      requestAnimationFrame(() => this.execute());
-    }
+    this.yield();
   }
 
   text(x, y, text, size, color) {
     this.assertDisplay();
     this.display.text(x, y, text, size, color);
-
-    if (typeof window !== 'undefined') {
-      this.halt();
-      requestAnimationFrame(() => this.execute());
-    }
+    this.yield();
   }
 
   color(x, y) {
@@ -337,19 +334,23 @@ class Basic {
   clearAll() {
     this.clearConsole();
     this.clearGraphics();
+    this.yield();
   }
 
   print(s) {
     this.console.write(s.toString());
+    this.yield();
   }
 
   clearConsole() {
     this.console.clear();
+    this.yield();
   }
 
   clearGraphics() {
     this.assertDisplay();
     this.display.clear();
+    this.yield();
   }
 
   getChar() {
