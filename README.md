@@ -225,6 +225,11 @@ Example:
 10 PRINT COS(1)
 ```
 
+Output:
+```
+0.5403023058681398
+```
+
 #### SIN
 
 `SIN` returns the trigonometric sine of a number.
@@ -232,6 +237,11 @@ Example:
 Example:
 ```
 10 PRINT SIN(1)
+```
+
+Output:
+```
+0.8414709848078965
 ```
 
 #### TAN
@@ -243,13 +253,23 @@ Example:
 10 PRINT TAN(1)
 ```
 
+Output:
+```
+1.5574077246549023
+```
+
 #### ATAN
 
 `ATAN` returns the trigonometric arctangent of a number.
 
 Example:
 ```
-10 PRINT TAN(1)
+10 PRINT ATAN(1)
+```
+
+Output:
+```
+0.7853981633974483
 ```
 
 #### EXP
@@ -259,6 +279,11 @@ Example:
 Example:
 ```
 10 PRINT EXP(2)
+```
+
+Output:
+```
+7.38905609893065
 ```
 
 #### INT
@@ -283,7 +308,7 @@ Alias: `FLOOR`
 
 Example:
 ```
-10 PRINT INT(2.6)
+10 PRINT ROUND(2.6)
 ```
 
 Output:
@@ -298,6 +323,11 @@ Output:
 Example:
 ```
 10 PRINT LOG(5)
+```
+
+Output:
+```
+1.6094379124341003
 ```
 
 #### SGN
@@ -322,9 +352,24 @@ Example:
 10 PRINT SQR(25)
 ```
 
+Output:
+```
+5
+```
+
 #### VAL
 
 `VAL` converts a string to a number, and `0` if it cannot be converted. 
+
+Example:
+```
+10 PRINT VAL("33")
+```
+
+Output:
+```
+33
+```
 
 #### RND
 
