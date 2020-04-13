@@ -42,7 +42,10 @@ const interp = new Basic({
 interp
   .run(
     `
-10 let z = 3 xxx
+20 print "ok"
+30 pause 1000
+40 print "shit"
+
 `,
   )
   .then(
@@ -55,5 +58,5 @@ interp
     },
   );
 
-interp.end();
+
 

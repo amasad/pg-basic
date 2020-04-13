@@ -5,6 +5,8 @@ const { ParseError, RuntimeError } = require('./errors');
 
 const MAX_STEPS = 2500;
 
+const raf = typeof window !== 'undefined' ? requestAnimationFrame : setImmediate;
+
 class Basic {
   constructor({ console, debugLevel, display }) {
     this.debugLevel = debugLevel;
@@ -292,10 +294,13 @@ class Basic {
   }
 
   yield() {
-    if (typeof window !== 'undefined') {
-      this.halt();
-      requestAnimationFrame(() => this.execute());
+    if (this.halted) {
+      // We already halted (probably two consequetive prints).
+      return;
     }
+
+    this.halt();
+    raf(() => this.execute());
   }
 
   // This doesn't yield (flush) to keep graphics fast, users need to
@@ -365,6 +370,11 @@ class Basic {
   }
 
   halt() {
+    if (this.halted) {
+      // Should never happen.
+      throw new Error('Basic already in halted state');
+    }
+
     this.debug('halted');
     this.halted = true;
   }

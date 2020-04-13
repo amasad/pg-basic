@@ -186,3 +186,27 @@ test('draw', async () => {
     'yellow'
   ])
 });
+
+test('pause/print', async () => {
+  const { interp, output } = createBasic();
+
+  let t;
+  output.write = (str) => {
+    if (str.trim() === "start") {
+      t = Date.now();
+      return;
+    }
+
+    if (str.trim() === "done") {
+      expect( Date.now() - t).toBeGreaterThanOrEqual(100);
+    }
+  };
+
+  await interp.run(`
+  10 print "start"
+  20 pause 100
+  30 print "done"
+  `);
+
+  expect(t).toBeTruthy();
+});
