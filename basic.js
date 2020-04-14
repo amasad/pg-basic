@@ -369,7 +369,13 @@ class Basic {
 
   getClick() {
     this.assertDisplay();
-    return this.display.getClick() || '';
+    const click = this.display.getClick();
+
+    if (!click) return '';
+    const arr = new BasicArray(1);
+    arr.set(0, click[0]);
+    arr.set(1, click[1]);
+    return arr;    
   }
 
   input(callback) {
