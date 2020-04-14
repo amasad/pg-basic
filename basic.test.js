@@ -3,6 +3,7 @@ const Basic = require('./basic');
 const createBasic = () => {
   const colors = {};
   const keyQueue = ['a', 'b', 'c'];
+  const clickQueue = [[2, 3], [25, 24], [23, 22]];
   const display = {
     plot(x, y, color) {
       console.log('plotting', x, y, color);
@@ -26,8 +27,12 @@ const createBasic = () => {
     },
 
     getChar() {
-      return keyQueue.pop();
+      return keyQueue.shift();
     },
+
+    getClick() {
+      return clickQueue.shift();
+    }
   };
 
   const cnsle = {
@@ -198,7 +203,7 @@ test('pause/print', async () => {
     }
 
     if (str.trim() === "done") {
-      expect( Date.now() - t).toBeGreaterThanOrEqual(100);
+      expect(Date.now() - t).toBeGreaterThanOrEqual(100);
     }
   };
 
@@ -209,4 +214,28 @@ test('pause/print', async () => {
   `);
 
   expect(t).toBeTruthy();
+});
+
+test('getclick', async () => {
+  const { interp, output } = createBasic();
+
+  let out = [];
+  output.write = (str) => {
+    if (str !== '\n') {
+      out.push(str);
+    }
+  };
+
+  await interp.run(`
+  10 print GETCLICK()
+  20 print GETCLICK()
+  30 print GETCLICK()
+  40 print GETCLICK()
+  `);
+  expect(out).toEqual([
+    '2,3',
+    '25,24',
+    '23,22',
+    '',
+  ])  
 });

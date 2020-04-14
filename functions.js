@@ -108,6 +108,11 @@ const Functions = {
     throw new Error('Unimplemented');
   },
 
+  GETCLICK() {
+    // This is just a stub. This gets injected.
+    throw new Error('Unimplemented');
+  },
+  
   UPPERCASE(str) {
     return str.toUpperCase();
   },

@@ -198,6 +198,8 @@ class Basic {
         return this.color.bind(this);
       case 'getchar':
         return this.getChar.bind(this);
+      case 'getclick':
+        return this.getClick.bind(this);
     }
 
     // Internal utils
@@ -363,6 +365,11 @@ class Basic {
   getChar() {
     this.assertDisplay();
     return this.display.getChar() || '';
+  }
+
+  getClick() {
+    this.assertDisplay();
+    return this.display.getClick() || '';
   }
 
   input(callback) {
