@@ -227,6 +227,33 @@ Example:
 30 PRINT "end"
 ```
 
+#### CLS
+
+`CLS` clears the console and the display.
+
+Example:
+```
+10 CLS
+```
+
+#### CLT
+
+`CLT` clears the console.
+
+Example:
+```
+10 CLT
+```
+
+#### CLC
+
+`CLC` clears the display.
+
+Example:
+```
+10 CLC
+```
+
 ### Functions
 
 You can think of functions as builtin subroutines you can call. It's important to differentiate between functions and commands. Lines should start with commands, while functions can be used as part of other commands but not on their own. 
