@@ -216,6 +216,29 @@ Example:
 
 Colors can be any of the these [colors](https://www.w3schools.com/cssref/css_colors.asp).
 
+#### DRAW
+
+`DRAW` is like `PLOT` excepts it lights up multiple pixels on the display. It takes a two-dimensional array of colors.
+
+Example:
+```
+10 ARRAY a, 2
+20 a[0][0] = "red"
+30 a[25][25] = "yellow"
+40 DRAW a
+```
+
+#### TEXT
+
+`TEXT` draws text on the display at an x,y coordinates. Optional text size and color parameters can be passed in.
+
+Example:
+```
+10 TEXT 0, 0, "hello world", 25, "red"
+```
+
+Colors can be any of the these [colors](https://www.w3schools.com/cssref/css_colors.asp).
+
 #### PAUSE
 
 `PAUSE` pauses the program for a number of milliseconds. Milliseconds are 1/1000 of a second.
