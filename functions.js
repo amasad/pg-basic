@@ -120,6 +120,10 @@ const Functions = {
   LOWERCASE(str) {
     return str.toLowerCase();
   },
+
+  TIME() {
+    return Date.now()
+  }
 };
 
 const aliases = {
