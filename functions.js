@@ -117,7 +117,7 @@ const Functions = {
   },
 
   TIME() {
-      return Date.now()
+    return Date.now()
   }
 };
 
