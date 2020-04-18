@@ -60,6 +60,36 @@ Example using a string:
 20 PRINT X
 ```
 
+#### ARRAY
+
+`ARRAY` also lets us declare an array. Arrays can be thought of as lists of values. 
+
+Example:
+```
+10 ARRAY a
+20 a[0] = "car"
+30 a[1] = "bus"
+40 a[2] = "bike"
+50 print a
+```
+
+If we want to create a multi-dimensional array, which is an array of arrays, we can declare the array with a dimension:
+```
+10 ARRAY a, 2
+
+15 REM the first array is ground transportation
+20 a[0][0] = "car"
+30 a[0][1] = "bus"
+40 a[0][2] = "bike"
+
+45 REM the second array aerial transportation
+50 a[1][0] = "plane"
+60 a[1][1] = "helicopter"
+70 a[1][2] = "jetpack"
+
+80 print a
+```
+
 #### INPUT
 
 `INPUT` lets you communicate with the program by typing into the console. Whatever you typed will be stored into a variable that you can then use in your program. 
