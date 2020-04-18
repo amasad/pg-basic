@@ -517,7 +517,7 @@ BASIC
 
 Example: 
 ```
-10 PRINT UPPERCASE("BASIC")
+10 PRINT LOWERCASE("BASIC")
 ```
 
 Output:
