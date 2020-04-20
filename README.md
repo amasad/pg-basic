@@ -629,3 +629,17 @@ Example:
 10 LET I = GETCHAR()
 20 IF I = "" THEN PRINT "no input" else PRINT "input: " + I
 ```
+
+#### TIME
+
+`TIME` returns the current milliseconds elapsed since the UNIX epoch.
+
+Example:
+```
+10 PRINT TIME()
+```
+
+Output:
+```
+1587345235623
+```
