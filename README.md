@@ -66,6 +66,36 @@ Example using a string:
 20 PRINT X
 ```
 
+#### ARRAY
+
+`ARRAY` also lets us declare an array. Arrays can be thought of as lists of values. 
+
+Example:
+```
+10 ARRAY a
+20 a[0] = "car"
+30 a[1] = "bus"
+40 a[2] = "bike"
+50 print a
+```
+
+If we want to create a multi-dimensional array, which is an array of arrays, we can declare the array with a dimension:
+```
+10 ARRAY a, 2
+
+15 REM the first array is ground transportation
+20 a[0][0] = "car"
+30 a[0][1] = "bus"
+40 a[0][2] = "bike"
+
+45 REM the second array aerial transportation
+50 a[1][0] = "plane"
+60 a[1][1] = "helicopter"
+70 a[1][2] = "jetpack"
+
+80 print a
+```
+
 #### INPUT
 
 `INPUT` lets you communicate with the program by typing into the console. Whatever you typed will be stored into a variable that you can then use in your program. 
@@ -231,6 +261,11 @@ Example:
 10 PRINT COS(1)
 ```
 
+Output:
+```
+0.5403023058681398
+```
+
 #### SIN
 
 `SIN` returns the trigonometric sine of a number.
@@ -238,6 +273,11 @@ Example:
 Example:
 ```
 10 PRINT SIN(1)
+```
+
+Output:
+```
+0.8414709848078965
 ```
 
 #### TAN
@@ -249,13 +289,23 @@ Example:
 10 PRINT TAN(1)
 ```
 
+Output:
+```
+1.5574077246549023
+```
+
 #### ATAN
 
 `ATAN` returns the trigonometric arctangent of a number.
 
 Example:
 ```
-10 PRINT TAN(1)
+10 PRINT ATAN(1)
+```
+
+Output:
+```
+0.7853981633974483
 ```
 
 #### EXP
@@ -265,6 +315,11 @@ Example:
 Example:
 ```
 10 PRINT EXP(2)
+```
+
+Output:
+```
+7.38905609893065
 ```
 
 #### INT
@@ -289,7 +344,7 @@ Alias: `FLOOR`
 
 Example:
 ```
-10 PRINT INT(2.6)
+10 PRINT ROUND(2.6)
 ```
 
 Output:
@@ -304,6 +359,11 @@ Output:
 Example:
 ```
 10 PRINT LOG(5)
+```
+
+Output:
+```
+1.6094379124341003
 ```
 
 #### SGN
@@ -328,9 +388,24 @@ Example:
 10 PRINT SQR(25)
 ```
 
+Output:
+```
+5
+```
+
 #### VAL
 
 `VAL` converts a string to a number, and `0` if it cannot be converted. 
+
+Example:
+```
+10 PRINT VAL("33")
+```
+
+Output:
+```
+33
+```
 
 #### RND
 
@@ -478,7 +553,7 @@ BASIC
 
 Example: 
 ```
-10 PRINT UPPERCASE("BASIC")
+10 PRINT LOWERCASE("BASIC")
 ```
 
 Output:
