@@ -40,29 +40,66 @@ const createBasic = () => {
     clear: () => console.log('console cleared'),
     input: callback => {
       setTimeout(() => callback('foo'));
-    },
+    }
   };
   const interp = new Basic({
     console: cnsle,
-    display,
+    display
   });
 
   return {
     interp,
     output: cnsle,
-    display,
-  }
+    display
+  };
 };
 
-test('if', async () => {
+test('no line numbers', async () => {
   const { interp, output } = createBasic();
-  output.write = (str) => {
+  output.write = str => {
     if (!str.trim()) return;
-    expect(str).toBe("1");
+    expect(str).toBe('1');
   };
 
   await interp.run(`
-  10 if 1 then 30
+print 1
+end
+`);
+});
+
+test('optional line numbers', async () => {
+  const { interp, output } = createBasic();
+  let i = 0;
+  output.write = str => {
+    if (!str.trim()) return;
+    if (!i) {
+      expect(str).toBe('1');
+    } else {
+      expect(str).toBe('2')
+    }
+    i++;
+  };
+
+  await interp.run(`
+goto 1000
+print "never"
+2000 print 2
+end
+1000 print 1
+goto 2000
+end
+`);
+});
+
+test('if', async () => {
+  const { interp, output } = createBasic();
+  output.write = str => {
+    if (!str.trim()) return;
+    expect(str).toBe('1');
+  };
+
+  await interp.run(`
+  if 1 then 30
   15 print "never"
   30 print "1"  
   `);
@@ -70,9 +107,9 @@ test('if', async () => {
 
 test('if else', async () => {
   const { interp, output } = createBasic();
-  output.write = (str) => {
+  output.write = str => {
     if (!str.trim()) return;
-    expect(str).toBe("1");
+    expect(str).toBe('1');
   };
 
   await interp.run(`
@@ -89,13 +126,12 @@ test('js runtime errors w/ line numbers', async () => {
   try {
     await interp.run(`
   10 let a = a()
-  `)
+  `);
   } catch (e) {
     error = e;
   }
   expect(error.message).toMatch(/Error on line/);
 });
-
 
 test('next without for should give a good error', async () => {
   const { interp } = createBasic();
@@ -104,7 +140,7 @@ test('next without for should give a good error', async () => {
   try {
     await interp.run(`
       10 next i
-  `)
+  `);
   } catch (e) {
     error = e;
   }
@@ -113,8 +149,8 @@ test('next without for should give a good error', async () => {
 
 test('multi dimensional array', async () => {
   const { interp, output } = createBasic();
-  output.write = (str) => {
-    if (str.trim()) expect(str).toBe("red");
+  output.write = str => {
+    if (str.trim()) expect(str).toBe('red');
   };
 
   await interp.run(`
@@ -126,8 +162,8 @@ test('multi dimensional array', async () => {
 
 test('multi dimensional array without setting', async () => {
   const { interp, output } = createBasic();
-  output.write = (str) => {
-    if (str.trim()) expect(str).toBe("0");
+  output.write = str => {
+    if (str.trim()) expect(str).toBe('0');
   };
 
   await interp.run(`
@@ -155,8 +191,8 @@ test('error on mismatching dimensionality', async () => {
 
 test('multi multi dimensional array', async () => {
   const { interp, output } = createBasic();
-  output.write = (str) => {
-    if (str.trim()) expect(str).toBe("red");
+  output.write = str => {
+    if (str.trim()) expect(str).toBe('red');
   };
 
   await interp.run(`
@@ -170,39 +206,35 @@ test('draw', async () => {
   const { interp, output } = createBasic();
 
   let out = [];
-  output.write = (str) => {
+  output.write = str => {
     if (str.trim()) out.push(str);
   };
 
   await interp.run(`
-  10 array a, 2
-  20 a[0][0] = "red"
-  30 a[10][12] = "green"
-  40 a[13][1] = "yellow"
+   array a, 2
+   a[0][0] = "red"
+   a[10][12] = "green"
+   a[13][1] = "yellow"
   50 draw a
-  60 print color(0, 0)
-  70 print color(10, 12)
-  80 print color(13, 1)
+   print color(0, 0)
+   print color(10, 12)
+  30 print color(13, 1)
   `);
 
-  expect(out).toEqual([
-    'red',
-    'green',
-    'yellow'
-  ])
+  expect(out).toEqual(['red', 'green', 'yellow']);
 });
 
 test('pause/print', async () => {
   const { interp, output } = createBasic();
 
   let t;
-  output.write = (str) => {
-    if (str.trim() === "start") {
+  output.write = str => {
+    if (str.trim() === 'start') {
       t = Date.now();
       return;
     }
 
-    if (str.trim() === "done") {
+    if (str.trim() === 'done') {
       expect(Date.now() - t).toBeGreaterThanOrEqual(100);
     }
   };
@@ -220,7 +252,7 @@ test('getclick', async () => {
   const { interp, output } = createBasic();
 
   let out = [];
-  output.write = (str) => {
+  output.write = str => {
     if (str !== '\n') {
       out.push(str);
     }
@@ -232,10 +264,5 @@ test('getclick', async () => {
   30 print GETCLICK()
   40 print GETCLICK()
   `);
-  expect(out).toEqual([
-    '0: 2, 1: 3',
-    '0: 25, 1: 24',
-    '0: 23, 1: 22',
-    '',
-  ])  
+  expect(out).toEqual(['0: 2, 1: 3', '0: 25, 1: 24', '0: 23, 1: 22', '']);
 });

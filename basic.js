@@ -45,10 +45,12 @@ class Basic {
         return this.end();
       }
 
+      let lineno = 0;
       for (let l of lines) {
+        lineno++;
         let line;
         try {
-          line = Parser.parseLine(l);
+          line = Parser.parseLine(l, { lineno });
         } catch (e) {
           return this.end(e);
         }
@@ -60,8 +62,6 @@ class Basic {
         seen[line.lineno] = true;
         this.program.push(line);
       }
-
-      this.program.sort((a, b) => a.lineno - b.lineno);
 
       this.lineno = this.program[0].lineno;
 
@@ -375,7 +375,7 @@ class Basic {
     const arr = new BasicArray(1);
     arr.set(0, click[0]);
     arr.set(1, click[1]);
-    return arr;    
+    return arr;
   }
 
   input(callback) {

@@ -17,7 +17,13 @@
 ## TODO
 
 - Fix booleans
+- Add `NOT` operator
 - Strinct expression parsing (e.g. `3 XX` should not be acceptable)
+- Nonsense errors: `SQRT`, `a[0]` 
+- pass rgb array to plot
+- line numbers optional
+- line numbers on their own
+- display command
 
 ## Syntax
 

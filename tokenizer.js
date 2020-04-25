@@ -10,7 +10,7 @@ class Token {
   toJSON() {
     return {
       type: this.type,
-      lexeme: this.lexeme,
+      lexeme: this.lexeme
     };
   }
 }
@@ -38,7 +38,7 @@ const KEYWORDS = [
   'PRINT',
   'PLOT',
   'TEXT',
-  'UNTEXT',  
+  'UNTEXT',
   'DRAW',
   'UNDRAW',
   'ARRAY',
@@ -47,13 +47,10 @@ const KEYWORDS = [
   'READ',
   'REM',
   'PAUSE',
-  'STOP',
+  'STOP'
 ];
 
-const CONSTANTS = [
-  'LEVEL',
-  'PI',
-];
+const CONSTANTS = ['LEVEL', 'PI'];
 
 const LINE = /^\s*(\d+)\s*/;
 const QUOTE = /^"((\\.|[^"\\])*)"\s*/;
@@ -75,7 +72,7 @@ class Tokenizer {
       'number',
       'variable',
       'logic',
-      'constant',
+      'constant'
     ];
   }
 
@@ -89,12 +86,12 @@ class Tokenizer {
     return t.tokens;
   }
 
-  constructor(stmnt) {
-    this.stmnt = stmnt;
+  constructor(stmnt, options = {}) {
+    this.stmnt = stmnt.trim();
     this.tokens = [];
     this.index = 0;
     this.tokenized = false;
-    this.lineno = -1;
+    this.lineno = options.lineno || -1;
   }
 
   assertTokenized() {
@@ -121,25 +118,21 @@ class Tokenizer {
 
   reverse() {
     if (this.index === 0) return 0;
-    return --this.index;    
+    return --this.index;
   }
 
   tokenize() {
     const linem = this.stmnt.match(LINE);
 
-    if (!linem) {
-      throw new ParseError(this.lineno, 'Every line must start with a line number');
+    if (linem) {
+      this.lineno = parseInt(linem[1]);
+      this.tokens.push(new Token('lineno', this.lineno));
+      this.stmnt = this.stmnt.slice(linem[0].length);
     }
 
-    this.lineno = parseInt(linem[1]);
-
-    // First token is always line number.
-    this.tokens.push(new Token('lineno', this.lineno));
-
-    this.stmnt = this.stmnt.slice(linem[0].length);
-
     while (this.stmnt.length) {
-      const eaten = this.eatKeyword() ||
+      const eaten =
+        this.eatKeyword() ||
         this.eatQuote() ||
         this.eatLogic() ||
         this.eatFunction() ||
@@ -150,7 +143,10 @@ class Tokenizer {
         this.eatLineMod();
 
       if (!eaten) {
-        throw new ParseError(this.lineno, `Invalid syntax near: '${this.stmnt}'`);
+        throw new ParseError(
+          this.lineno,
+          `Invalid syntax near: '${this.stmnt}'`
+        );
       }
 
       this.stmnt = this.stmnt.slice(eaten.length);

@@ -42,9 +42,9 @@ const interp = new Basic({
 interp
   .run(
     `
-20 print "ok"
-30 pause 1000
-40 print "shit"
+print "ok"
+pause 1000
+print "shit"
 
 `,
   )

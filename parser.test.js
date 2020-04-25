@@ -14,6 +14,13 @@ t('100 PRINT "hello"', {
   expr: '"hello"'
 });
 
+t('PRINT "hello"', {
+  type: 'PRINT',
+  lineno: 1,
+  newline: true,
+  expr: '"hello"'
+});
+
 t('100 PRINT "hello" + " " + "world"', {
   type: 'PRINT',
   lineno: 100,
@@ -380,6 +387,7 @@ const tErr = (line, errorString) => {
 };
 const lerr = (errorString) => `Parse error on line 1: ${errorString}`
 
+
 describe('Parse errors', () => {
   describe('Bracket matching', () => {
     // extra closing
@@ -391,10 +399,6 @@ describe('Parse errors', () => {
     test('1 Ignores brackets in strings', () => {
       expect(() => Parser.parseLine('1 PRINT ("a" + ")")')).not.toThrow()
     });
-  });
-
-  describe('lineno', () => {
-    tErr('PRINT "HI"', 'Parse error on line -1: Every line must start with a line number');
   });
 
   describe('PRINT', () => {
