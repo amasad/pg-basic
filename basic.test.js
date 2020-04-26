@@ -92,6 +92,32 @@ end
 `);
 });
 
+test('line numbers on their own', async () => {
+  const { interp, output } = createBasic();
+  let i = 0;
+  output.write = str => {
+    if (!str.trim()) return;
+    if (!i) {
+      expect(str).toBe('1');
+    } else {
+      expect(str).toBe('2')
+    }
+    i++;
+  };
+
+  await interp.run(`
+goto 1000
+print "never"
+2000 
+print 2
+end
+1000
+print 1
+goto 2000
+end
+`);
+});
+
 test('if', async () => {
   const { interp, output } = createBasic();
   output.write = str => {
