@@ -24,6 +24,8 @@
 - line numbers optional
 - line numbers on their own
 - display command
+- implement mouse getpos
+- test/fix repl
 
 ## Docs
 

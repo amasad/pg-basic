@@ -42,6 +42,7 @@ const createBasic = () => {
       setTimeout(() => callback('foo'));
     }
   };
+  
   const interp = new Basic({
     console: cnsle,
     display
@@ -265,4 +266,21 @@ test('getclick', async () => {
   40 print GETCLICK()
   `);
   expect(out).toEqual(['0: 2, 1: 3', '0: 25, 1: 24', '0: 23, 1: 22', '']);
+});
+
+test('input', async () => {
+  const { interp, output } = createBasic();
+
+  let out = [];
+  output.write = str => {
+    if (str !== '\n') {
+      out.push(str);
+    }
+  };
+
+  await interp.run(`
+  10 INPUT "name?"; N
+  20 PRINT "hello, " + N
+  `);
+  expect(out).toEqual(['name?', 'hello, foo']);
 });

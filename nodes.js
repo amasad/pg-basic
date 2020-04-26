@@ -122,7 +122,7 @@ class INPUT extends Node {
     context.print(prompt);
 
     // Yield.
-    context.halt();
+    context.yield();
     context.input((value) => {
       if (this.variable.array) {
         const sub = context.evaluate(this.variable.subscript);
