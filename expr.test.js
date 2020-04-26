@@ -19,6 +19,14 @@ test('arithmetic', () => {
   expect(eval(toJs('(10 + 1) * 2'))).toBe(22);
 });
 
+test('unary', () => {
+  expect(eval(toJs('+2'))).toBe(+2);
+  expect(eval(toJs('-2'))).toBe(-2);
+  expect(eval(toJs('not true'))).toBe(false);
+  expect(eval(toJs('not false'))).toBe(true);
+  expect(eval(toJs('not 1'))).toBe(false);
+});
+
 test('var', () => {
   expect(toJs('A')).toBe(`__pgb.get("A")`);
   expect(toJs('A$')).toBe(`__pgb.get("A$")`);

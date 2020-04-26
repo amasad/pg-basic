@@ -60,7 +60,7 @@ const CONST = new RegExp('^(' + CONSTANTS.join('|') + ')\\s*', 'i');
 const VAR = /^([a-z][\w$]*)\s*/i;
 const NUM = /^(\d+(\.\d+)?)\s*/i;
 const OP = /^(<>|>=|<=|[,\+\-\*\/%=<>\(\)\]\[])\s*/i;
-const LOGIC = /^(AND|OR)\s*/i;
+const LOGIC = /^(AND|OR|NOT)\s*/i;
 const BOOL = /^(true|false)\s*/i;
 const LINEMOD = /^(;)\s*/i;
 

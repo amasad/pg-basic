@@ -42,7 +42,7 @@ const createBasic = () => {
       setTimeout(() => callback('foo'));
     }
   };
-  
+
   const interp = new Basic({
     console: cnsle,
     display
@@ -315,10 +315,10 @@ test('bools', async () => {
   const { interp, output } = createBasic();
   let out = [];
   output.write = str => {
-   if (str !== '\n') {
-   out.push(str);
-  }
-};
+    if (str !== '\n') {
+      out.push(str);
+    }
+  };
 
   await interp.run(`
 x = true
@@ -329,4 +329,22 @@ y = false
 if y = false then print "ok4"`);
 
   expect(out).toEqual(['ok', 'ok2', 'ok3', 'ok4']);
+});
+
+test('not', async () => {
+  const { interp, output } = createBasic();
+  let out = [];
+  output.write = str => {
+    if (str !== '\n') {
+      out.push(str);
+    }
+  };
+
+  await interp.run(`
+x = false
+if not x then print "ok"
+if x = not true then print "ok2"
+if not x = true then print "ok3"`);
+
+  expect(out).toEqual(['ok', 'ok2', 'ok3']);
 });

@@ -258,3 +258,30 @@ t('10 x = false', [
     lexeme: 'FALSE',
   },
 ]);
+
+t('10 x = not true', [
+ {
+    type: 'lineno',
+    lexeme: 10,
+  },
+
+  {
+    type: 'variable',
+    lexeme: 'X',
+  },
+
+  {
+    type: 'operation',
+    lexeme: '=',
+  },
+
+  {
+    type: 'logic',
+    lexeme: 'NOT',
+  },
+
+  {
+    type: 'boolean',
+    lexeme: 'TRUE',
+  },
+])

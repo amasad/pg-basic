@@ -25,12 +25,19 @@ function exprToJS(expr) {
     }
 
     if (t.type === 'logic') {
-      if (t.lexeme === 'AND') {
-        jsExpr += '&&';
-      } else if (t.lexeme === 'OR') {
-        jsExpr += '||';
+      switch (t.lexeme) {
+        case 'AND':
+          jsExpr += '&&';
+          break;
+        case 'OR':
+          jsExpr += '||';
+          break;
+        case 'NOT':
+          jsExpr += '!';
+          break;
+        default:
+          throw new Error('Unknown logic operator: ' + t.lexeme);    
       }
-
       continue;
     }
 
