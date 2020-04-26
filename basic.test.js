@@ -310,3 +310,23 @@ test('input', async () => {
   `);
   expect(out).toEqual(['name?', 'hello, foo']);
 });
+
+test('bools', async () => {
+  const { interp, output } = createBasic();
+  let out = [];
+  output.write = str => {
+   if (str !== '\n') {
+   out.push(str);
+  }
+};
+
+  await interp.run(`
+x = true
+if x then print "ok"
+if x = true then print "ok2"
+if x = false then print "no" else print "ok3"
+y = false
+if y = false then print "ok4"`);
+
+  expect(out).toEqual(['ok', 'ok2', 'ok3', 'ok4']);
+});

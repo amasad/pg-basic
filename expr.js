@@ -1,8 +1,13 @@
 function exprToJS(expr) {
-  let jsExpr = '';  
-  
+  let jsExpr = '';
+
   while (expr.length) {
     const t = expr.shift();
+
+    if (t.type === 'boolean') {
+      jsExpr += t.lexeme.toLowerCase();
+      continue;
+    }
 
     if (t.type === 'variable') {
       jsExpr += '__pgb.get("' + t.lexeme + '")';

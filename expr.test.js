@@ -33,3 +33,8 @@ test('constants', () => {
   expect(toJs('PI')).toBe('__pgb.getConst("PI")');
   expect(toJs('LEVEL')).toBe('__pgb.getConst("LEVEL")');
 });
+
+test('bool', () => {
+  expect(toJs('true')).toBe('true');
+  expect(toJs('false')).toBe('false');
+});

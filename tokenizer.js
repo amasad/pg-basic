@@ -61,6 +61,7 @@ const VAR = /^([a-z][\w$]*)\s*/i;
 const NUM = /^(\d+(\.\d+)?)\s*/i;
 const OP = /^(<>|>=|<=|[,\+\-\*\/%=<>\(\)\]\[])\s*/i;
 const LOGIC = /^(AND|OR)\s*/i;
+const BOOL = /^(true|false)\s*/i;
 const LINEMOD = /^(;)\s*/i;
 
 class Tokenizer {
@@ -72,7 +73,8 @@ class Tokenizer {
       'number',
       'variable',
       'logic',
-      'constant'
+      'constant',
+      'boolean'
     ];
   }
 
@@ -137,6 +139,7 @@ class Tokenizer {
         this.eatLogic() ||
         this.eatFunction() ||
         this.eatConstant() ||
+        this.eatBoolean() ||
         this.eatVariable() ||
         this.eatNumber() ||
         this.eatOperation() ||
@@ -197,6 +200,16 @@ class Tokenizer {
     if (m && m[0]) {
       const fun = m[1].toUpperCase();
       this.tokens.push(new Token('constant', fun));
+      return m[0];
+    }
+    return null;
+  }
+
+  eatBoolean() {
+    const m = this.stmnt.match(BOOL);
+    if (m && m[0]) {
+      const bool = m[1].toUpperCase();
+      this.tokens.push(new Token('boolean', bool));
       return m[0];
     }
     return null;

@@ -214,3 +214,47 @@ t('100 PRINT PI', [
     lexeme: 'PI',
   },
 ]);
+
+t('10 x = true', [
+  {
+    type: 'lineno',
+    lexeme: 10,
+  },
+
+  {
+    type: 'variable',
+    lexeme: 'X',
+  },
+
+  {
+    type: 'operation',
+    lexeme: '=',
+  },
+
+  {
+    type: 'boolean',
+    lexeme: 'TRUE',
+  },
+]);
+
+t('10 x = false', [
+  {
+    type: 'lineno',
+    lexeme: 10,
+  },
+
+  {
+    type: 'variable',
+    lexeme: 'X',
+  },
+
+  {
+    type: 'operation',
+    lexeme: '=',
+  },
+
+  {
+    type: 'boolean',
+    lexeme: 'FALSE',
+  },
+]);
