@@ -120,13 +120,14 @@ class Parser {
     Parser.checkBrackets(tokenizer, this.lineno);
   }
 
-  parse() {
+  parse(options = { required: false }) {
     let top = this.tokenizer.next();
 
-    if (top === Tokenizer.eof) {
+    if (!options.required && top === Tokenizer.eof) {
       // Empty lines are noop, which are equivalent to REMs
       return new REM(this.lineno, '');
     }
+
     // If top is a variable we assume it's an assignment shorthand `x = 1`
     if (top.type !== 'keyword' && top.type === 'variable') {
       this.tokenizer.reverse();
@@ -208,7 +209,7 @@ class Parser {
         if (this.tokenizer.peek().type === 'number') {
           then = new GOTO(this.lineno, this.expectExpr());
         } else {
-          then = this.parse();
+          then = this.parse({ required: true });
         }
 
         let elze = null;
@@ -216,7 +217,7 @@ class Parser {
           if (this.tokenizer.peek().type === 'number') {
             elze = new GOTO(this.lineno, this.expectExpr());
           } else {
-            elze = this.parse();
+            elze = this.parse({ required: true });
           }
         }
 
