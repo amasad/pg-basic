@@ -346,8 +346,12 @@ class Basic {
     this.yield();
   }
 
-  print(s) {
+  write(s) {
     this.console.write(s.toString());
+  }
+
+  print(s) {
+    this.write(s);
     this.yield();
   }
 
@@ -379,6 +383,7 @@ class Basic {
   }
 
   input(callback) {
+    this.halt();
     this.console.input(callback);
   }
 

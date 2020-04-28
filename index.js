@@ -30,21 +30,21 @@ const cnsle = {
   write: s => process.stdout.write(s),
   clear: () => console.log('console cleared'),
   input: callback => {
-    setTimeout(() => callback('foo'));
+    setTimeout(() => callback('foo'), 1000);
   },
 };
 const interp = new Basic({
   console: cnsle,
   display,
-  debugLevel: 99,
+  //debugLevel: 99,
 });
 
 interp
   .run(
     `
-print "ok"
-pause 1000
-print "shit"
+input "s"; a
+print "lol"
+print a
 
 `,
   )

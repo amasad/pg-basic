@@ -27,7 +27,7 @@ class Variable extends Node {
     this.name = name;
     if (!subscripts.length) {
       this.array = false;
-    } else {      
+    } else {
       this.array = true;
       this.subscripts = subscripts;
     }
@@ -86,7 +86,7 @@ class LET extends Node {
   run(context) {
     const value = context.evaluate(this.expr);
 
-    if (this.variable.array) {      
+    if (this.variable.array) {
       context.setArray(this.variable.name, this.variable.subscripts, value);
     } else {
       context.set(this.variable.name, value);
@@ -119,11 +119,8 @@ class INPUT extends Node {
   run(context) {
     const prompt = context.evaluate(this.expr);
 
-    context.print(prompt);
-
-    // Yield.
-    context.yield();
-    context.input((value) => {
+    context.write(prompt);
+    context.input((value) => {      
       if (this.variable.array) {
         const sub = context.evaluate(this.variable.subscript);
         context.setArray(this.variable.name, sub, value);
@@ -188,7 +185,7 @@ class PLOT extends Node {
 }
 
 class TEXT extends Node {
-  constructor(lineno, x, y, text, size = '12', color = '"BLACK"') {    
+  constructor(lineno, x, y, text, size = '12', color = '"BLACK"') {
     super(lineno, 'TEXT');
     this.x = x;
     this.y = y;
@@ -209,7 +206,7 @@ class TEXT extends Node {
 }
 
 class UNTEXT extends Node {
-  constructor(lineno, x, y) {    
+  constructor(lineno, x, y) {
     super(lineno, 'UNTEXT');
     this.x = x;
     this.y = y;
@@ -224,7 +221,7 @@ class UNTEXT extends Node {
 }
 
 class DRAW extends Node {
-  constructor(lineno, array) {    
+  constructor(lineno, array) {
     super(lineno, 'DRAW');
     this.array = array;
   }

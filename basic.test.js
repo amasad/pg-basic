@@ -39,7 +39,7 @@ const createBasic = () => {
     write: s => process.stdout.write(s),
     clear: () => console.log('console cleared'),
     input: callback => {
-      setTimeout(() => callback('foo'));
+      setTimeout(() => callback('foo'), 100);
     }
   };
 
