@@ -64,6 +64,43 @@ t('100 PRINT ABS(-3)', [
   },
 ]);
 
+t('100 PRINT ABS (-3)', [
+  {
+    type: 'lineno',
+    lexeme: 100,
+  },
+
+  {
+    type: 'keyword',
+    lexeme: 'PRINT'
+  },
+
+  {
+    type: 'function',
+    lexeme: 'ABS'
+  },
+
+  {
+    type: 'operation',
+    lexeme: '('
+  },
+
+  {
+    type: 'operation',
+    lexeme: '-'
+  },
+
+  {
+    type: 'number',
+    lexeme: 3,
+  },
+
+  {
+    type: 'operation',
+    lexeme: ')'
+  },
+]);
+
 
 t('100 LET x = 1', [
   {
@@ -283,5 +320,159 @@ t('10 x = not true', [
   {
     type: 'boolean',
     lexeme: 'TRUE',
+  },
+])
+
+t('10 midx = 12', [
+ {
+    type: 'lineno',
+    lexeme: 10,
+  },
+
+  {
+    type: 'variable',
+    lexeme: 'MIDX',
+  },
+
+  {
+    type: 'operation',
+    lexeme: '=',
+  },
+
+  {
+    type: 'number',
+    lexeme: 12,
+  },
+])
+
+t('10 printx = 12', [
+ {
+    type: 'lineno',
+    lexeme: 10,
+  },
+
+  {
+    type: 'variable',
+    lexeme: 'PRINTX',
+  },
+
+  {
+    type: 'operation',
+    lexeme: '=',
+  },
+
+  {
+    type: 'number',
+    lexeme: 12,
+  },
+])
+
+t('10 printx = 12', [
+ {
+    type: 'lineno',
+    lexeme: 10,
+  },
+
+  {
+    type: 'variable',
+    lexeme: 'PRINTX',
+  },
+
+  {
+    type: 'operation',
+    lexeme: '=',
+  },
+
+  {
+    type: 'number',
+    lexeme: 12,
+  },
+])
+
+t('10 levelx = 12', [
+ {
+    type: 'lineno',
+    lexeme: 10,
+  },
+
+  {
+    type: 'variable',
+    lexeme: 'LEVELX',
+  },
+
+  {
+    type: 'operation',
+    lexeme: '=',
+  },
+
+  {
+    type: 'number',
+    lexeme: 12,
+  },
+])
+
+t('10 levelx = 12', [
+ {
+    type: 'lineno',
+    lexeme: 10,
+  },
+
+  {
+    type: 'variable',
+    lexeme: 'LEVELX',
+  },
+
+  {
+    type: 'operation',
+    lexeme: '=',
+  },
+
+  {
+    type: 'number',
+    lexeme: 12,
+  },
+])
+
+t('10 NOTX = 12', [
+ {
+    type: 'lineno',
+    lexeme: 10,
+  },
+
+  {
+    type: 'variable',
+    lexeme: 'NOTX',
+  },
+
+  {
+    type: 'operation',
+    lexeme: '=',
+  },
+
+  {
+    type: 'number',
+    lexeme: 12,
+  },
+])
+
+t('10 truex = 12', [
+ {
+    type: 'lineno',
+    lexeme: 10,
+  },
+
+  {
+    type: 'variable',
+    lexeme: 'TRUEX',
+  },
+
+  {
+    type: 'operation',
+    lexeme: '=',
+  },
+
+  {
+    type: 'number',
+    lexeme: 12,
   },
 ])

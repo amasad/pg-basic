@@ -22,6 +22,7 @@
 - display command
 - implement mouse getpos
 - test/fix repl
+- should round plot calls
 
 ## Docs
 

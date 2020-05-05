@@ -36,16 +36,13 @@ const cnsle = {
 const interp = new Basic({
   console: cnsle,
   display,
-  //debugLevel: 99,
+  debugLevel: 99,
 });
 
 interp
   .run(
     `
-input "s"; a
-print "lol"
-print a
-
+print 3 XX
 `,
   )
   .then(

@@ -54,14 +54,14 @@ const CONSTANTS = ['LEVEL', 'PI'];
 
 const LINE = /^\s*(\d+)\s*/;
 const QUOTE = /^"((\\.|[^"\\])*)"\s*/;
-const KEY = new RegExp('^(' + KEYWORDS.join('|') + ')\\s*', 'i');
-const FUN = new RegExp('^(' + Object.keys(Functions).join('|') + ')\\s*', 'i');
-const CONST = new RegExp('^(' + CONSTANTS.join('|') + ')\\s*', 'i');
+const KEY = new RegExp('^(' + KEYWORDS.join('|') + ')\\b', 'i');
+const FUN = new RegExp('^(' + Object.keys(Functions).join('|') + ')\\b', 'i');
+const CONST = new RegExp('^(' + CONSTANTS.join('|') + ')\\b', 'i');
 const VAR = /^([a-z][\w$]*)\s*/i;
 const NUM = /^(\d+(\.\d+)?)\s*/i;
 const OP = /^(<>|>=|<=|[,\+\-\*\/%=<>\(\)\]\[])\s*/i;
-const LOGIC = /^(AND|OR|NOT)\s*/i;
-const BOOL = /^(true|false)\s*/i;
+const LOGIC = /^(AND|OR|NOT)\b/i;
+const BOOL = /^(true|false)\b/i;
 const LINEMOD = /^(;)\s*/i;
 
 class Tokenizer {
@@ -152,7 +152,7 @@ class Tokenizer {
         );
       }
 
-      this.stmnt = this.stmnt.slice(eaten.length);
+      this.stmnt = this.stmnt.slice(eaten.length).trim();
     }
 
     this.tokenized = true;
@@ -176,7 +176,7 @@ class Tokenizer {
 
       // If the keyword is a comment then eat it up.
       if (keyword === 'REM') {
-        this.tokens.push(new Token('comment', this.stmnt.slice(m[0].length)));
+        this.tokens.push(new Token('comment', this.stmnt.slice(m[0].length).trim()));
         return this.stmnt;
       }
 
