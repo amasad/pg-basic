@@ -8,7 +8,7 @@ const MAX_STEPS = 2500;
 const raf = typeof window !== 'undefined' ? requestAnimationFrame : setImmediate;
 
 class Basic {
-  constructor({ console, debugLevel, display }) {
+  constructor({ console, debugLevel, createDisplay }) {
     this.debugLevel = debugLevel;
     this.console = console;
     this.context = new Context({
@@ -20,7 +20,8 @@ class Basic {
     this.loops = {};
     this.stack = [];
     this.jumped = false;
-    this.display = display;
+    this.display = null;
+    this.createDisplay = createDisplay;
     this.constants = {
       PI: Math.PI,
       LEVEL: 1,
@@ -33,8 +34,12 @@ class Basic {
     }
   }
 
-  run(program) {
+  run(program) {    
     return new Promise((resolve, reject) => {
+      if (this.createDisplay) {
+        this.display = this.createDisplay();
+      }
+      
       this.onEnd = { resolve, reject };
       this.ended = false;
       this.program = [];

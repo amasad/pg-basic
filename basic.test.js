@@ -4,7 +4,7 @@ const createBasic = () => {
   const colors = {};
   const keyQueue = ['a', 'b', 'c'];
   const clickQueue = [[2, 3], [25, 24], [23, 22]];
-  const display = {
+  const createDisplay = () => ({
     plot(x, y, color) {
       console.log('plotting', x, y, color);
       colors[`${x}${y}`] = color;
@@ -33,7 +33,7 @@ const createBasic = () => {
     getClick() {
       return clickQueue.shift();
     }
-  };
+  });
 
   const cnsle = {
     write: s => process.stdout.write(s),
@@ -45,13 +45,12 @@ const createBasic = () => {
 
   const interp = new Basic({
     console: cnsle,
-    display
+    createDisplay,
   });
 
   return {
     interp,
     output: cnsle,
-    display
   };
 };
 
