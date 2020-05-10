@@ -372,6 +372,22 @@ t('100 ARRAY X, 2', {
   lineno: 100,
 });
 
+t('100 DISPLAY 10, 10', {
+  type: 'DISPLAY',
+  rows: '10',
+  cols: '10',
+  hasBorder: 'true',
+  lineno: 100,
+});
+
+t('100 DISPLAY 10, 10, false', {
+  type: 'DISPLAY',
+  rows: '10',
+  cols: '10',
+  hasBorder: 'false',
+  lineno: 100,
+});
+
 const tErr = (line, errorString) => {
   test('err: ' + line, () => {
     try {

@@ -25,6 +25,8 @@ class Basic {
     this.constants = {
       PI: Math.PI,
       LEVEL: 1,
+      ROWS: 50,
+      COLUMNS: 50,
     };
   }
 
@@ -32,6 +34,24 @@ class Basic {
     if (this.debugLevel >= level) {
       console.log(`Debug ${this.lineno}:`, str);
     }
+  }
+
+  recreateDisplay({
+    rows,
+    columns,
+    hasBorder,
+  }) {
+    if (!this.createDisplay) {
+      throw new RuntimeError(this.lineno, 'No display attached');
+    }
+    
+    this.constants.ROWS = rows;
+    this.constants.COLUMNS = columns;
+    this.display = this.createDisplay({
+      rows,
+      columns,
+      borderWidth: hasBorder ? 1 : 0,
+    });
   }
 
   run(program) {    

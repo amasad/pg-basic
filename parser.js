@@ -20,6 +20,7 @@ const {
   TEXT,
   UNTEXT,
   DRAW,
+  DISPLAY,
   Variable
 } = require('./nodes');
 const exprToJS = require('./expr');
@@ -328,6 +329,27 @@ class Parser {
         return new CLC(this.lineno);
       case 'CLT':
         return new CLT(this.lineno);
+        
+      case 'DISPLAY': {        
+        const rows = this.expectExpr({
+          stopOnComma: true,
+          errStr: 'DISPLAY requires rows'
+        });
+        this.expectOperation(',');
+        const cols = this.expectExpr({
+          stopOnComma: true,
+          errStr: 'DISPLAY requires columns'
+        });
+        let hasBorder = undefined;
+        if (this.tokenizer.peek() !== Tokenizer.eof) {
+          this.expectOperation(',');
+          hasBorder = this.expectExpr({
+            stopOnComma: true,
+            errStr: 'DISPLAY border argument'
+          });
+        }
+        return new DISPLAY(this.lineno, rows, cols, hasBorder);
+      }        
     }
 
     throw new ParseError(this.lineno, `Unexpected token ${top.lexeme}`);

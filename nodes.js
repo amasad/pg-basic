@@ -305,6 +305,23 @@ class CLC extends Node {
   }
 }
 
+class DISPLAY extends Node {
+  constructor(lineno, rows, cols, hasBorder = 'true') {
+    super(lineno, 'DISPLAY');
+    this.rows = rows;
+    this.cols = cols;
+    this.hasBorder = hasBorder;
+  }
+
+  run(context) {
+    context.recreateDisplay({
+      rows: context.evaluate(this.rows),
+      columns: context.evaluate(this.cols),
+      hasBorder: context.evaluate(this.hasBorder),
+    })
+  }
+};
+
 module.exports = {
   Node,
   PRINT,
@@ -327,5 +344,6 @@ module.exports = {
   TEXT,
   UNTEXT,
   DRAW,
+  DISPLAY,
   Variable,
 };

@@ -476,3 +476,64 @@ t('10 truex = 12', [
     lexeme: 12,
   },
 ])
+
+t('10 display 10, 10', [
+  {
+    type: 'lineno',
+    lexeme: 10,
+  },
+
+  {
+    type: 'keyword',
+    lexeme: 'DISPLAY',
+  },
+
+  {
+    type: 'number',
+    lexeme: 10,
+  },
+
+  {
+    type: 'operation',
+    lexeme: ',',
+  },
+
+  {
+    type: 'number',
+    lexeme: 10,
+  },  
+]);
+
+t('10 print COLUMNS', [
+  {
+    type: 'lineno',
+    lexeme: 10,
+  },
+
+  {
+    type: 'keyword',
+    lexeme: 'PRINT',
+  },
+
+  {
+    type: 'constant',
+    lexeme: 'COLUMNS'
+  },
+]);
+
+t('10 print ROWS', [
+  {
+    type: 'lineno',
+    lexeme: 10,
+  },
+
+  {
+    type: 'keyword',
+    lexeme: 'PRINT',
+  },
+
+  {
+    type: 'constant',
+    lexeme: 'ROWS'
+  },
+]);

@@ -347,3 +347,24 @@ if not x = true then print "ok3"`);
 
   expect(out).toEqual(['ok', 'ok2', 'ok3']);
 });
+
+test('display', async () => {
+  const { interp, output } = createBasic();
+  let out = [];
+  output.write = str => {
+    if (str !== '\n') {
+      out.push(str);
+    }
+  };
+
+  await interp.run(`
+print ROWS
+print COLUMNS
+DISPLAY 10, 10
+print ROWS
+print COLUMNS
+`);
+
+  expect(out).toEqual(['50', '50', '10', '10']);
+});
+

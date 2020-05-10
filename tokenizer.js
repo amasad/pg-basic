@@ -47,10 +47,11 @@ const KEYWORDS = [
   'READ',
   'REM',
   'PAUSE',
-  'STOP'
+  'STOP',
+  'DISPLAY',
 ];
 
-const CONSTANTS = ['LEVEL', 'PI'];
+const CONSTANTS = ['LEVEL', 'PI', 'COLUMNS', 'ROWS'];
 
 const LINE = /^\s*(\d+)\s*/;
 const QUOTE = /^"((\\.|[^"\\])*)"\s*/;
