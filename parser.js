@@ -17,9 +17,11 @@ const {
   CLS,
   CLC,
   CLT,
-  TEXT,  
+  TEXT,
   DRAW,
   DISPLAY,
+  SOUND,
+  PLAY,
   Variable
 } = require('./nodes');
 const exprToJS = require('./expr');
@@ -313,8 +315,8 @@ class Parser {
         return new CLC(this.lineno);
       case 'CLT':
         return new CLT(this.lineno);
-        
-      case 'DISPLAY': {        
+
+      case 'DISPLAY': {
         const rows = this.expectExpr({
           stopOnComma: true,
           errStr: 'DISPLAY requires rows'
@@ -333,7 +335,51 @@ class Parser {
           });
         }
         return new DISPLAY(this.lineno, rows, cols, hasBorder);
-      }        
+      }
+
+      case 'SOUND': {
+        const freq = this.expectExpr({
+          stopOnComma: true,
+          errStr: 'SOUND requires a frequency'
+        });
+
+        let duration = undefined;
+        if (this.tokenizer.peek() !== Tokenizer.eof) {
+          this.expectOperation(',');
+          duration = this.expectExpr({
+            stopOnComma: true,
+            errStr: 'SOUND exepected a duration'
+          });
+        }
+        return new SOUND(this.lineno, freq, duration);
+      }
+
+      case 'PLAY': {
+        const note = this.expectExpr({
+          stopOnComma: true,
+          errStr: 'PLAY requires a note'
+        });
+
+        let octave = undefined;
+        let duration = undefined;
+        if (this.tokenizer.peek() !== Tokenizer.eof) {
+          this.expectOperation(',');
+          octave = this.expectExpr({
+            stopOnComma: true,
+            errStr: 'PLAY exepected a octave'
+          });
+
+          if (this.tokenizer.peek() !== Tokenizer.eof) {
+            this.expectOperation(',');
+            duration = this.expectExpr({
+              stopOnComma: true,
+              errStr: 'PLAY exepected a duration'
+            });
+          }
+        }
+
+        return new PLAY(this.lineno, note, octave, duration);
+      }
     }
 
     throw new ParseError(this.lineno, `Unexpected token ${top.lexeme}`);

@@ -48,6 +48,8 @@ const KEYWORDS = [
   'PAUSE',
   'STOP',
   'DISPLAY',
+  'PLAY',
+  'SOUND',
 ];
 
 const CONSTANTS = ['LEVEL', 'PI', 'COLUMNS', 'ROWS'];

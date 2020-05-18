@@ -35,6 +35,11 @@ const createBasic = () => {
     }
   });
 
+  const sound = {
+    play: jest.fn(),
+    sound: jest.fn(),
+  };
+
   const cnsle = {
     write: s => process.stdout.write(s),
     clear: () => console.log('console cleared'),
@@ -46,11 +51,13 @@ const createBasic = () => {
   const interp = new Basic({
     console: cnsle,
     createDisplay,
+    sound,
   });
 
   return {
     interp,
     output: cnsle,
+    sound,
   };
 };
 
@@ -368,3 +375,28 @@ print COLUMNS
   expect(out).toEqual(['50', '50', '10', '10']);
 });
 
+test('play', async () => {
+  const { interp, sound } = createBasic();
+
+  await interp.run(`
+  PLAY "C"
+  PLAY "C", 4
+  PLAY "C", 4, 2  
+  `);
+  
+  expect(sound.play.mock.calls[0]).toEqual(['C', 2, 1]);
+  expect(sound.play.mock.calls[1]).toEqual(['C', 4, 1]);
+  expect(sound.play.mock.calls[2]).toEqual(['C', 4, 2]);  
+});
+
+test('sound', async () => {
+  const { interp, sound } = createBasic();
+
+  await interp.run(`
+  sound 9
+  sound 8, 2
+  `);
+  
+  expect(sound.sound.mock.calls[0]).toEqual([9, 1]);
+  expect(sound.sound.mock.calls[1]).toEqual([8, 2]);  
+});

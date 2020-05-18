@@ -1,2 +1,2 @@
 language="nodejs"
-run="jest tokenizer."
+run="jest"

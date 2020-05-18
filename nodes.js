@@ -307,6 +307,40 @@ class DISPLAY extends Node {
   }
 };
 
+class SOUND extends Node {
+  constructor(lineno, freq, duration = '1') {
+    super(lineno, 'SOUND');
+    this.lineno = lineno;
+    this.frequency = freq;
+    this.duration = duration;
+  }
+
+  run(context) {
+    context.sound(
+      context.evaluate(this.frequency),
+      context.evaluate(this.duration)
+    );
+  }
+}
+
+class PLAY extends Node {
+  constructor(lineno, note, octave = '2', duration = '1') {
+    super(lineno, 'SOUND');
+    this.lineno = lineno;
+    this.note = note;
+    this.octave = octave;
+    this.duration = duration;
+  }
+
+  run(context) {
+    context.play(
+      context.evaluate(this.note),
+      context.evaluate(this.octave),
+      context.evaluate(this.duration),
+    );
+  }
+}
+
 module.exports = {
   Node,
   PRINT,
@@ -326,8 +360,10 @@ module.exports = {
   CLS,
   CLT,
   CLC,
-  TEXT,  
+  TEXT,
   DRAW,
   DISPLAY,
+  SOUND,
+  PLAY,
   Variable,
 };

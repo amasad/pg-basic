@@ -381,6 +381,44 @@ t('100 DISPLAY 10, 10, false', {
   lineno: 100,
 });
 
+t('100 sound 10', {
+  type: 'SOUND',
+  lineno: 100,
+  frequency: "10",
+  duration: "1",
+});
+
+t('100 sound 8, 2', {
+  type: 'SOUND',
+  lineno: 100,
+  frequency: "8",
+  duration: "2",
+});
+
+t('100 play "C"', {
+  type: 'SOUND',
+  lineno: 100,
+  note: '"C"',
+  octave: "2",
+  duration: "1",
+});
+
+t('100 play "C", 4', {
+  type: 'SOUND',
+  lineno: 100,
+  note: '"C"',
+  octave: "4",
+  duration: "1",
+});
+
+t('100 play "C", 5, 3', {
+  type: 'SOUND',
+  lineno: 100,
+  note: '"C"',
+  octave: "5",
+  duration: "3",
+});
+
 const tErr = (line, errorString) => {
   test('err: ' + line, () => {
     try {

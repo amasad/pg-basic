@@ -8,7 +8,7 @@ const MAX_STEPS = 2500;
 const raf = typeof window !== 'undefined' ? requestAnimationFrame : setImmediate;
 
 class Basic {
-  constructor({ console, debugLevel, createDisplay }) {
+  constructor({ console, debugLevel, createDisplay, sound }) {
     this.debugLevel = debugLevel;
     this.console = console;
     this.context = new Context({
@@ -22,6 +22,7 @@ class Basic {
     this.jumped = false;
     this.display = null;
     this.createDisplay = createDisplay;
+    this._sound = sound;
     this.constants = {
       PI: Math.PI,
       LEVEL: 1,
@@ -44,7 +45,7 @@ class Basic {
     if (!this.createDisplay) {
       throw new RuntimeError(this.lineno, 'No display attached');
     }
-    
+
     this.constants.ROWS = rows;
     this.constants.COLUMNS = columns;
     this.display = this.createDisplay({
@@ -54,12 +55,12 @@ class Basic {
     });
   }
 
-  run(program) {    
+  run(program) {
     return new Promise((resolve, reject) => {
       if (this.createDisplay) {
         this.display = this.createDisplay();
       }
-      
+
       this.onEnd = { resolve, reject };
       this.ended = false;
       this.program = [];
@@ -320,6 +321,12 @@ class Basic {
     }
   }
 
+  assertSound() {
+    if (!this._sound) {
+      return this.end(new RuntimeError(this.lineno, 'No sound found'));
+    }
+  }
+
   yield() {
     if (this.halted) {
       // We already halted (probably two consequetive prints).
@@ -332,13 +339,13 @@ class Basic {
 
   // This doesn't yield (flush) to keep graphics fast, users need to
   // use pause to create an animation effect.
-  plot(x, y, color) {   
+  plot(x, y, color) {
     this.assertDisplay();
     this.display.plot(x, y, color);
   }
 
 
-  
+
 
   // This yields (flush) since it's meant to update an entire "scene"
   draw(array) {
@@ -361,6 +368,15 @@ class Basic {
     this.assertDisplay();
     this.display.text(x, y, text, size, color);
     this.yield();
+  }
+
+  sound(freq, duration) {
+    this.assertSound();
+    this._sound.sound(freq, duration);
+  }
+
+  play(note, octave, duration) {
+    this._sound.play(note, octave, duration);
   }
 
   color(x, y) {

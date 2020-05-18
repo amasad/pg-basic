@@ -537,3 +537,37 @@ t('10 print ROWS', [
     lexeme: 'ROWS'
   },
 ]);
+
+t('10 play "s"', [
+  {
+    type: 'lineno',
+    lexeme: 10,
+  },
+
+  {
+    type: 'keyword',
+    lexeme: 'PLAY',
+  },
+
+  {
+    type: 'string',
+    lexeme: '"s"',
+  }
+]);
+
+t('10 sound "s"', [
+  {
+    type: 'lineno',
+    lexeme: 10,
+  },
+
+  {
+    type: 'keyword',
+    lexeme: 'SOUND',
+  },
+
+  {
+    type: 'string',
+    lexeme: '"s"',
+  }
+]);
