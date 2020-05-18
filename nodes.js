@@ -316,10 +316,16 @@ class SOUND extends Node {
   }
 
   run(context) {
+    const d = context.evaluate(this.duration);
     context.sound(
       context.evaluate(this.frequency),
-      context.evaluate(this.duration)
+      d
     );
+    
+    if (typeof d === 'number' && d > 0) {
+      // pause until we play sound
+      context.pause(d);
+    }
   }
 }
 
@@ -333,11 +339,17 @@ class PLAY extends Node {
   }
 
   run(context) {
+    const d = context.evaluate(this.duration);
     context.play(
       context.evaluate(this.note),
       context.evaluate(this.octave),
-      context.evaluate(this.duration),
+      d
     );
+
+    if (typeof d === 'number' && d > 0) {
+      // pause until we play sound
+      context.pause(d);
+    }
   }
 }
 
