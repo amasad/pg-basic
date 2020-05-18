@@ -332,10 +332,13 @@ class Basic {
 
   // This doesn't yield (flush) to keep graphics fast, users need to
   // use pause to create an animation effect.
-  plot(x, y, color) {
+  plot(x, y, color) {   
     this.assertDisplay();
     this.display.plot(x, y, color);
   }
+
+
+  
 
   // This yields (flush) since it's meant to update an entire "scene"
   draw(array) {

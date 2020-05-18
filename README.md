@@ -19,10 +19,10 @@
 - Strinct expression parsing (e.g. `3 XX` should not be acceptable)
 - Nonsense errors: `SQRT`, `a[0]` 
 - pass rgb array to plot
-- display command
 - implement mouse getpos
 - test/fix repl
 - should round plot calls
+- don't queue keys while paused
 
 ## Docs
 

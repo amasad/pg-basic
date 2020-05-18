@@ -337,13 +337,6 @@ t('100 TEXT 1, 2, "hello", 13', {
   color: '"BLACK"'
 });
 
-t('100 UNTEXT 1, 2', {
-  type: 'UNTEXT',
-  lineno: 100,
-  x: '1',
-  y: '2',
-});
-
 t('100 ARRAY X', {
   type: 'ARRAY',
   variable: {

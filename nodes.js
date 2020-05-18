@@ -205,21 +205,6 @@ class TEXT extends Node {
   }
 }
 
-class UNTEXT extends Node {
-  constructor(lineno, x, y) {
-    super(lineno, 'UNTEXT');
-    this.x = x;
-    this.y = y;
-  }
-
-  run(context) {
-    context.text(
-      context.evaluate(this.x),
-      context.evaluate(this.y),
-    );
-  }
-}
-
 class DRAW extends Node {
   constructor(lineno, array) {
     super(lineno, 'DRAW');
@@ -341,8 +326,7 @@ module.exports = {
   CLS,
   CLT,
   CLC,
-  TEXT,
-  UNTEXT,
+  TEXT,  
   DRAW,
   DISPLAY,
   Variable,
