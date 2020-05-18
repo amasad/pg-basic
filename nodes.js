@@ -321,10 +321,10 @@ class SOUND extends Node {
       context.evaluate(this.frequency),
       d
     );
-    
+
     if (typeof d === 'number' && d > 0) {
       // pause until we play sound
-      context.pause(d);
+      context.pause(d * 1000);
     }
   }
 }
@@ -348,7 +348,7 @@ class PLAY extends Node {
 
     if (typeof d === 'number' && d > 0) {
       // pause until we play sound
-      context.pause(d);
+      context.pause(d * 1000);
     }
   }
 }
