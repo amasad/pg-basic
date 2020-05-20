@@ -330,7 +330,7 @@ class SOUND extends Node {
 }
 
 class PLAY extends Node {
-  constructor(lineno, note, octave = '2', duration = '1') {
+  constructor(lineno, note, octave = '4', duration = '1') {
     super(lineno, 'SOUND');
     this.lineno = lineno;
     this.note = note;
