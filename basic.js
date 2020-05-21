@@ -9,21 +9,21 @@ const raf = typeof window !== 'undefined' ? requestAnimationFrame : setImmediate
 
 class Basic {
   constructor({ console, debugLevel, createDisplay, sound }) {
-    this.debugLevel = debugLevel;
-    this.console = console;
-    this.context = new Context({
+    this._debugLevel = debugLevel;
+    this._console = console;
+    this._context = new Context({
       __pgb: this,
     });
-    this.variables = {};
-    this.lineno = -1;
-    this.program = [];
-    this.loops = {};
-    this.stack = [];
-    this.jumped = false;
-    this.display = null;
-    this.createDisplay = createDisplay;
+    this._variables = {};
+    this._lineno = -1;
+    this._program = [];
+    this._loops = {};
+    this._stack = [];
+    this._jumped = false;
+    this._display = null;
+    this._createDisplay = createDisplay;
     this._sound = sound;
-    this.constants = {
+    this._constants = {
       PI: Math.PI,
       LEVEL: 1,
       ROWS: 50,
@@ -31,9 +31,9 @@ class Basic {
     };
   }
 
-  debug(str, level = 1) {
-    if (this.debugLevel >= level) {
-      console.log(`Debug ${this.lineno}:`, str);
+  _debug(str, level = 1) {
+    if (this._debugLevel >= level) {
+      console.log(`Debug ${this._lineno}:`, str);
     }
   }
 
@@ -42,13 +42,13 @@ class Basic {
     columns,
     hasBorder,
   }) {
-    if (!this.createDisplay) {
-      throw new RuntimeError(this.lineno, 'No display attached');
+    if (!this._createDisplay) {
+      throw new RuntimeError(this._lineno, 'No display attached');
     }
 
-    this.constants.ROWS = rows;
-    this.constants.COLUMNS = columns;
-    this.display = this.createDisplay({
+    this._constants.ROWS = rows;
+    this._constants.COLUMNS = columns;
+    this._display = this._createDisplay({
       rows,
       columns,
       borderWidth: hasBorder ? 1 : 0,
@@ -57,13 +57,13 @@ class Basic {
 
   run(program) {
     return new Promise((resolve, reject) => {
-      if (this.createDisplay) {
-        this.display = this.createDisplay();
+      if (this._createDisplay) {
+        this._display = this._createDisplay();
       }
 
       this.onEnd = { resolve, reject };
       this.ended = false;
-      this.program = [];
+      this._program = [];
 
       const seen = {};
       const lines = program.split('\n').filter(l => l.trim() !== '');
@@ -86,10 +86,10 @@ class Basic {
         }
 
         seen[line.lineno] = true;
-        this.program.push(line);
+        this._program.push(line);
       }
 
-      this.lineno = this.program[0].lineno;
+      this._lineno = this._program[0].lineno;
 
       this.execute();
     });
@@ -100,20 +100,20 @@ class Basic {
 
     this.halted = false;
     for (let i = 0; i < MAX_STEPS; i++) {
-      this.step();
+      this._step();
 
       if (this.ended) return;
 
-      if (!this.jumped) {
-        const next = this.getNextLine();
+      if (!this._jumped) {
+        const next = this._getNextLine();
 
         if (!next) {
           return this.end();
         }
 
-        this.lineno = next.lineno;
+        this._lineno = next.lineno;
       } else {
-        this.jumped = false;
+        this._jumped = false;
       }
 
       if (this.halted) {
@@ -127,25 +127,25 @@ class Basic {
     }
   }
 
-  getCurLine() {
-    return this.program.find(({ lineno }) => lineno === this.lineno);
+  _getCurLine() {
+    return this._program.find(({ lineno }) => lineno === this._lineno);
   }
 
-  getNextLine() {
-    return this.program[this.program.indexOf(this.getCurLine()) + 1];
+  _getNextLine() {
+    return this._program[this._program.indexOf(this._getCurLine()) + 1];
   }
 
-  step() {
-    const node = this.getCurLine();
+  _step() {
+    const node = this._getCurLine();
 
     if (!node) {
       return this.end(
-        new RuntimeError(this.lineno, `Cannot find line ${this.lineno} 🤦‍♂️`),
+        new RuntimeError(this._lineno, `Cannot find line ${this._lineno} 🤦‍♂️`),
       );
     }
 
-    this.debug('step', 1);
-    this.debug(node.toJSON(), 2);
+    this._debug('step', 1);
+    this._debug(node.toJSON(), 2);
 
     try {
       node.run(this);
@@ -158,44 +158,44 @@ class Basic {
     this.ended = true;
 
     if (error) {
-      this.debug(`program ended with error: ${error.message}`);
+      this._debug(`program ended with error: ${error.message}`);
       this.onEnd.reject(error);
     } else {
-      this.debug('program ended');
+      this._debug('program ended');
       this.onEnd.resolve();
     }
   }
 
   evaluate(code) {
-    this.debug(`evaluating ${code}`);
+    this._debug(`evaluating ${code}`);
 
     try {
-      return this.context.evaluate(code);
+      return this._context.evaluate(code);
     } catch (e) {
       // This is a terrible experience and should basically never
       // happen.
-      this.end(new RuntimeError(this.lineno, `Error evaluating ${code}`))
+      this.end(new RuntimeError(this._lineno, `Error evaluating ${code}`))
       throw e;
     }
   }
 
   set(vari, value) {
-    this.variables[vari] = value;
+    this._variables[vari] = value;
   }
 
   setArray(vari, subscripts, value) {
-    if (!(this.variables[vari] instanceof BasicArray)) {
+    if (!(this._variables[vari] instanceof BasicArray)) {
       return this.end(
-        new RuntimeError(this.lineno, `${vari} is not an array, did you call ARRAY?`),
+        new RuntimeError(this._lineno, `${vari} is not an array, did you call ARRAY?`),
       );
     }
 
-    let v = this.variables[vari];
+    let v = this._variables[vari];
     let dim = v.dim;
 
     if (subscripts.length !== dim) {
       return this.end(
-        new RuntimeError(this.lineno, `${vari} is a an array of ${dim} dimensions and expects ${dim} subscripts "[x]"`)
+        new RuntimeError(this._lineno, `${vari} is a an array of ${dim} dimensions and expects ${dim} subscripts "[x]"`)
       );
     }
 
@@ -208,13 +208,13 @@ class Basic {
   }
 
   array(name, dim) {
-    this.variables[name] = new BasicArray(dim);
+    this._variables[name] = new BasicArray(dim);
   }
 
   fun(name) {
     if (!Functions[name]) {
       return this.end(
-        new RuntimeError(this.lineno, `Function ${name} does not exist ☹️`),
+        new RuntimeError(this._lineno, `Function ${name} does not exist ☹️`),
       );
     }
 
@@ -233,37 +233,37 @@ class Basic {
   }
 
   get(vari) {
-    return typeof this.variables[vari] === 'undefined'
-      ? 0 : this.variables[vari];
+    return typeof this._variables[vari] === 'undefined'
+      ? 0 : this._variables[vari];
   }
 
   getConst(constant) {
-    if (this.constants.hasOwnProperty(constant)) {
-      return this.constants[constant];
+    if (this._constants.hasOwnProperty(constant)) {
+      return this._constants[constant];
     }
-    this.end(new RuntimeError(this.lineno, `Constant ${constant} is undefined`));
+    this.end(new RuntimeError(this._lineno, `Constant ${constant} is undefined`));
   }
 
   pause(millis) {
-    this.debug(`pause ${millis}`);
+    this._debug(`pause ${millis}`);
     this.halt();
     setTimeout(() => this.execute(), millis);
   }
 
   goto(lineno) {
-    this.debug(`goto ${lineno}`);
-    this.lineno = lineno;
-    this.jumped = true;
+    this._debug(`goto ${lineno}`);
+    this._lineno = lineno;
+    this._jumped = true;
   }
 
   loopStart({ variable, value, increment, max }) {
-    this.debug(`marking loop ${variable}`);
+    this._debug(`marking loop ${variable}`);
 
     this.set(variable, value);
-    const next = this.getNextLine();
+    const next = this._getNextLine();
     if (!next) return this.end();
 
-    this.loops[variable] = {
+    this._loops[variable] = {
       variable,
       value,
       increment,
@@ -273,12 +273,12 @@ class Basic {
   }
 
   loopJump(name) {
-    this.debug(`jumping to loop ${name}`);
+    this._debug(`jumping to loop ${name}`);
 
-    const loop = this.loops[name];
+    const loop = this._loops[name];
     if (!loop) {
       return this.end(new RuntimeError(
-        this.lineno,
+        this._lineno,
         'No loop to return from. Did you forget to write a for?'
       ));
     }
@@ -296,38 +296,38 @@ class Basic {
   }
 
   gosub(lineno) {
-    const next = this.getNextLine();
+    const next = this._getNextLine();
     if (next) {
-      this.stack.push(next.lineno);
+      this._stack.push(next.lineno);
     } else {
-      this.stack.push(this.lineno + 1);
+      this._stack.push(this._lineno + 1);
     }
     this.goto(lineno);
   }
 
   return() {
-    if (this.stack.length === 0) {
+    if (this._stack.length === 0) {
       return this.end(
-        new RuntimeError(this.lineno, `There are no function calls to return from 🤷`),
+        new RuntimeError(this._lineno, `There are no function calls to return from 🤷`),
       );
     }
-    const lineno = this.stack.pop();
+    const lineno = this._stack.pop();
     this.goto(lineno);
   }
 
-  assertDisplay() {
-    if (!this.display) {
-      return this.end(new RuntimeError(this.lineno, 'No display found'));
+  _assertDisplay() {
+    if (!this._display) {
+      return this.end(new RuntimeError(this._lineno, 'No display found'));
     }
   }
 
-  assertSound() {
+  _assertSound() {
     if (!this._sound) {
-      return this.end(new RuntimeError(this.lineno, 'No sound found'));
+      return this.end(new RuntimeError(this._lineno, 'No sound found'));
     }
   }
 
-  yield() {
+  _yield() {
     if (this.halted) {
       // We already halted (probably two consequetive prints).
       return;
@@ -340,38 +340,35 @@ class Basic {
   // This doesn't yield (flush) to keep graphics fast, users need to
   // use pause to create an animation effect.
   plot(x, y, color) {
-    this.assertDisplay();
-    this.display.plot(x, y, color);
+    this._assertDisplay();
+    this._display.plot(x, y, color);
   }
-
-
-
 
   // This yields (flush) since it's meant to update an entire "scene"
   draw(array) {
-    this.assertDisplay();
+    this._assertDisplay();
 
     if (!(array instanceof BasicArray) || array.dim !== 2) {
       return this.end(
         new RuntimeError(
-          this.lineno,
+          this._lineno,
           'DRAW requires a two dimensional array of colors'
         )
       );
     }
 
-    this.display.draw(array.toJSON());
-    this.yield();
+    this._display.draw(array.toJSON());
+    this._yield();
   }
 
   text(x, y, text, size, color) {
-    this.assertDisplay();
-    this.display.text(x, y, text, size, color);
-    this.yield();
+    this._assertDisplay();
+    this._display.text(x, y, text, size, color);
+    this._yield();
   }
 
   sound(freq, duration) {
-    this.assertSound();
+    this._assertSound();
     this._sound.sound(freq, duration);
   }
 
@@ -380,44 +377,44 @@ class Basic {
   }
 
   color(x, y) {
-    this.assertDisplay();
-    return this.display.color(x, y);
+    this._assertDisplay();
+    return this._display.color(x, y);
   }
 
   clearAll() {
     this.clearConsole();
     this.clearGraphics();
-    this.yield();
+    this._yield();
   }
 
   write(s) {
-    this.console.write(s.toString());
+    this._console.write(s.toString());
   }
 
   print(s) {
     this.write(s);
-    this.yield();
+    this._yield();
   }
 
   clearConsole() {
-    this.console.clear();
-    this.yield();
+    this._console.clear();
+    this._yield();
   }
 
   clearGraphics() {
-    this.assertDisplay();
-    this.display.clear();
-    this.yield();
+    this._assertDisplay();
+    this._display.clear();
+    this._yield();
   }
 
   getChar() {
-    this.assertDisplay();
-    return this.display.getChar() || '';
+    this._assertDisplay();
+    return this._display.getChar() || '';
   }
 
   getClick() {
-    this.assertDisplay();
-    const click = this.display.getClick();
+    this._assertDisplay();
+    const click = this._display.getClick();
 
     if (!click) return '';
     const arr = new BasicArray(1);
@@ -428,7 +425,7 @@ class Basic {
 
   input(callback) {
     this.halt();
-    this.console.input(callback);
+    this._console.input(callback);
   }
 
   halt() {
@@ -437,7 +434,7 @@ class Basic {
       throw new Error('Basic already in halted state');
     }
 
-    this.debug('halted');
+    this._debug('halted');
     this.halted = true;
   }
 }

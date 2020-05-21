@@ -380,13 +380,13 @@ test('play', async () => {
 
   await interp.run(`
   PLAY "C"
-  PLAY "C", 4
-  PLAY "C", 4, 2  
+  PLAY "C", 2
+  PLAY "C", 2, 2  
   `);
   
-  expect(sound.play.mock.calls[0]).toEqual(['C', 2, 1]);
-  expect(sound.play.mock.calls[1]).toEqual(['C', 4, 1]);
-  expect(sound.play.mock.calls[2]).toEqual(['C', 4, 2]);  
+  expect(sound.play.mock.calls[0]).toEqual(['C', 4, 1]);
+  expect(sound.play.mock.calls[1]).toEqual(['C', 2, 1]);
+  expect(sound.play.mock.calls[2]).toEqual(['C', 2, 2]);  
 });
 
 test('sound', async () => {
