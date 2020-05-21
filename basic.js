@@ -8,6 +8,15 @@ const MAX_STEPS = 2500;
 const raf = typeof window !== 'undefined' ? requestAnimationFrame : setImmediate;
 
 class Basic {
+  /**
+   * Create a new instance of Basic.
+   * 
+   * @param {Object} config - config for Basic instance
+   * @param {Object} config.console - I/O functions
+   * @param {number} config.debugLevel - debug level
+   * @param {function} config.createDisplay - function to create a display
+   * @param {Object} config.sound - sound functions
+   */
   constructor({ console, debugLevel, createDisplay, sound }) {
     this._debugLevel = debugLevel;
     this._console = console;
@@ -55,6 +64,12 @@ class Basic {
     });
   }
 
+  /**
+   * Evaluates program, modifying the state of the Basic instance.
+   * 
+   * @param {string} program - The Basic program, as a multiline string.
+   * @returns {Promise} - Promise resolves if program executes successfully, rejects otherwise.
+   */
   run(program) {
     return new Promise((resolve, reject) => {
       if (this._createDisplay) {

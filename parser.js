@@ -93,6 +93,13 @@ class Parser {
     }
   }
 
+  /**
+   * Tokenizes and parses a line of Basic code.
+   * 
+   * @param {string} line - The line being parsed
+   * @param {Object} options - configuration for the Parser/Tokenizer
+   * @returns {Node} - An AST Node representing the parsed line.
+   */
   static parseLine(line, options = {}) {
     options.lineno = options.lineno || 1;
     const t = new Tokenizer(line, options);
@@ -112,6 +119,15 @@ class Parser {
     return parsed;
   }
 
+  /**
+   * Initializes a Parser from tokenized basic. 
+   * 
+   * Assigns a line number. Verifies brakets.
+   * 
+   * @param {Tokenizer} tokenizer - A tokenizer containing Basic tokens
+   * @param {Object} options - Parser configuration
+   * @param {number} options.lineno - The Basic line number
+   */
   constructor(tokenizer, options = {}) {
     this.tokenizer = tokenizer;
     if (tokenizer.peek().type != "lineno") {
@@ -122,6 +138,13 @@ class Parser {
     Parser.checkBrackets(tokenizer, this.lineno);
   }
 
+  /**
+   * Parses the (tokenized) line to a Basic AST Node.
+   * 
+   * @param {Object} options - Parser config
+   * @param {boolean} required - If line is required.
+   * @returns {Node} A Basic AST Node (if successfully parsed)
+   */
   parse(options = { required: false }) {
     let top = this.tokenizer.next();
 
