@@ -399,15 +399,15 @@ t('100 play "C"', {
   type: 'SOUND',
   lineno: 100,
   note: '"C"',
-  octave: "2",
+  octave: "4",
   duration: "1",
 });
 
-t('100 play "C", 4', {
+t('100 play "C", 5', {
   type: 'SOUND',
   lineno: 100,
   note: '"C"',
-  octave: "4",
+  octave: "5",
   duration: "1",
 });
 
