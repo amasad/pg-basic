@@ -39,18 +39,20 @@ const interp = new Basic({
   debugLevel: 99,
 });
 
-interp
-  .run(
-    `
-print 3 XX
-`,
-  )
-  .then(
-    () => {
-      console.log('done');
-    },
-    err => {
-      console.error('error:');
-      console.error(err);
-    },
-  );
+async function repl() {
+  while (true) {
+    let code = prompt('pg-basic');
+    try {
+      await interp.run(code);
+    } catch (e) {
+      console.error(e.stack);
+    }
+  }
+};
+
+process.on('SIGINT', function() {  
+  process.exit(1);
+});
+
+setTimeout(() => repl().catch(console.error), 0);
+undefined;

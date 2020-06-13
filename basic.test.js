@@ -74,7 +74,7 @@ end
 `);
 });
 
-test('optional line numbers', async () => {
+test.only('optional line numbers', async () => {
   const { interp, output } = createBasic();
   let i = 0;
   output.write = str => {

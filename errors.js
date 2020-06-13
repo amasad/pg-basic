@@ -7,8 +7,9 @@ class ParseError extends Error {
 }
 
 class RuntimeError extends Error {
-  constructor(lineno, message) {
+  constructor(pc, message) {
     super();
+    const lineno = pc + 1;
     this.message = `Error on line ${lineno}: ${message}`;
     this.name = 'RuntimeError';    
   }

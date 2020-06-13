@@ -15,7 +15,7 @@ class Basic {
       __pgb: this,
     });
     this._variables = {};
-    this._lineno = -1;
+    this._pc = 0;
     this._program = [];
     this._loops = {};
     this._stack = [];
@@ -33,7 +33,7 @@ class Basic {
 
   _debug(str, level = 1) {
     if (this._debugLevel >= level) {
-      console.log(`Debug ${this._lineno}:`, str);
+      console.log(`Debug ${this._pc}:`, str);
     }
   }
 
@@ -43,7 +43,7 @@ class Basic {
     hasBorder,
   }) {
     if (!this._createDisplay) {
-      throw new RuntimeError(this._lineno, 'No display attached');
+      throw new RuntimeError(this._pc, 'No display attached');
     }
 
     this._constants.ROWS = rows;
@@ -63,16 +63,17 @@ class Basic {
 
       this.onEnd = { resolve, reject };
       this.ended = false;
-      this._program = [];
 
       const seen = {};
-      const lines = program.split('\n').filter(l => l.trim() !== '');
+      const lines = program.split('\n').map(l => l.trim() === '' ? 'REM' : l);
+      
       if (lines.length === 0) {
         return this.end();
       }
 
-      let lineno = 0;
+      let lineno = this._pc;
       for (let l of lines) {
+        // User-facing line numbers are 1-indexed
         lineno++;
         let line;
         try {
@@ -80,16 +81,14 @@ class Basic {
         } catch (e) {
           return this.end(e);
         }
-
+       
         if (seen[line.lineno]) {
-          return this.end(new ParseError(line.lineno, `Line with number ${line.lineno} repeated`));
+          console.log(`Warning: replacing line ${line.lineno}\n`);
         }
 
         seen[line.lineno] = true;
         this._program.push(line);
       }
-
-      this._lineno = this._program[0].lineno;
 
       this.execute();
     });
@@ -105,13 +104,12 @@ class Basic {
       if (this.ended) return;
 
       if (!this._jumped) {
-        const next = this._getNextLine();
+        this._pc++;
+        const next = this._getCurLine();
 
         if (!next) {
           return this.end();
         }
-
-        this._lineno = next.lineno;
       } else {
         this._jumped = false;
       }
@@ -128,11 +126,7 @@ class Basic {
   }
 
   _getCurLine() {
-    return this._program.find(({ lineno }) => lineno === this._lineno);
-  }
-
-  _getNextLine() {
-    return this._program[this._program.indexOf(this._getCurLine()) + 1];
+    return this._program[this._pc];
   }
 
   _step() {
@@ -140,7 +134,7 @@ class Basic {
 
     if (!node) {
       return this.end(
-        new RuntimeError(this._lineno, `Cannot find line ${this._lineno} 🤦‍♂️`),
+        new RuntimeError(this._pc, `Cannot find line ${this._pc} 🤦‍♂️`),
       );
     }
 
@@ -174,7 +168,7 @@ class Basic {
     } catch (e) {
       // This is a terrible experience and should basically never
       // happen.
-      this.end(new RuntimeError(this._lineno, `Error evaluating ${code}`))
+      this.end(new RuntimeError(this._pc, `Error evaluating ${code}`))
       throw e;
     }
   }
@@ -186,7 +180,7 @@ class Basic {
   setArray(vari, subscripts, value) {
     if (!(this._variables[vari] instanceof BasicArray)) {
       return this.end(
-        new RuntimeError(this._lineno, `${vari} is not an array, did you call ARRAY?`),
+        new RuntimeError(this._pc, `${vari} is not an array, did you call ARRAY?`),
       );
     }
 
@@ -195,7 +189,7 @@ class Basic {
 
     if (subscripts.length !== dim) {
       return this.end(
-        new RuntimeError(this._lineno, `${vari} is a an array of ${dim} dimensions and expects ${dim} subscripts "[x]"`)
+        new RuntimeError(this._pc, `${vari} is a an array of ${dim} dimensions and expects ${dim} subscripts "[x]"`)
       );
     }
 
@@ -214,7 +208,7 @@ class Basic {
   fun(name) {
     if (!Functions[name]) {
       return this.end(
-        new RuntimeError(this._lineno, `Function ${name} does not exist ☹️`),
+        new RuntimeError(this._pc, `Function ${name} does not exist ☹️`),
       );
     }
 
@@ -241,7 +235,7 @@ class Basic {
     if (this._constants.hasOwnProperty(constant)) {
       return this._constants[constant];
     }
-    this.end(new RuntimeError(this._lineno, `Constant ${constant} is undefined`));
+    this.end(new RuntimeError(this._pc, `Constant ${constant} is undefined`));
   }
 
   pause(millis) {
@@ -252,7 +246,13 @@ class Basic {
 
   goto(lineno) {
     this._debug(`goto ${lineno}`);
-    this._lineno = lineno;
+    const line = this._program.find(({ lineno: l }) => l === lineno);
+    const pc = this._program.indexOf(line);
+    if (pc === -1) {
+      this.end(new RuntimeError(this._pc, `Cannot find line with number ${lineno}`));
+      return;
+    }
+    this._pc = pc;
     this._jumped = true;
   }
 
@@ -260,7 +260,7 @@ class Basic {
     this._debug(`marking loop ${variable}`);
 
     this.set(variable, value);
-    const next = this._getNextLine();
+    const next = this._program[this._pc + 1];
     if (!next) return this.end();
 
     this._loops[variable] = {
@@ -278,7 +278,7 @@ class Basic {
     const loop = this._loops[name];
     if (!loop) {
       return this.end(new RuntimeError(
-        this._lineno,
+        this._pc,
         'No loop to return from. Did you forget to write a for?'
       ));
     }
@@ -296,19 +296,14 @@ class Basic {
   }
 
   gosub(lineno) {
-    const next = this._getNextLine();
-    if (next) {
-      this._stack.push(next.lineno);
-    } else {
-      this._stack.push(this._lineno + 1);
-    }
+    this._stack.push(this._pc + 1);
     this.goto(lineno);
   }
 
   return() {
     if (this._stack.length === 0) {
       return this.end(
-        new RuntimeError(this._lineno, `There are no function calls to return from 🤷`),
+        new RuntimeError(this._pc, `There are no function calls to return from 🤷`),
       );
     }
     const lineno = this._stack.pop();
@@ -317,13 +312,13 @@ class Basic {
 
   _assertDisplay() {
     if (!this._display) {
-      return this.end(new RuntimeError(this._lineno, 'No display found'));
+      return this.end(new RuntimeError(this._pc, 'No display found'));
     }
   }
 
   _assertSound() {
     if (!this._sound) {
-      return this.end(new RuntimeError(this._lineno, 'No sound found'));
+      return this.end(new RuntimeError(this._pc, 'No sound found'));
     }
   }
 
@@ -351,7 +346,7 @@ class Basic {
     if (!(array instanceof BasicArray) || array.dim !== 2) {
       return this.end(
         new RuntimeError(
-          this._lineno,
+          this._pc,
           'DRAW requires a two dimensional array of colors'
         )
       );
