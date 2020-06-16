@@ -109,16 +109,21 @@ class Parser {
       );
     }
 
+    if (p.label) {
+      parsed.label = p.label;
+    }
+
     return parsed;
   }
 
   constructor(tokenizer, options = {}) {
     this.tokenizer = tokenizer;
-    if (tokenizer.peek().type != "lineno") {
-      this.lineno = options.lineno;
-    } else {
-      this.lineno = tokenizer.next().lexeme;
+    this.lineno = options.lineno || 1;
+  
+    if (tokenizer.peek().type === 'label') {
+      this.label = tokenizer.next().lexeme;
     }
+
     Parser.checkBrackets(tokenizer, this.lineno);
   }
 

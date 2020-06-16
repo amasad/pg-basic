@@ -29,6 +29,7 @@ class Basic {
       ROWS: 50,
       COLUMNS: 50,
     };
+    this._labels = {};
   }
 
   _debug(str, level = 1) {
@@ -64,7 +65,6 @@ class Basic {
       this.onEnd = { resolve, reject };
       this.ended = false;
 
-      const seen = {};
       const lines = program.split('\n').map(l => l.trim() === '' ? 'REM' : l);
       
       if (lines.length === 0) {
@@ -82,11 +82,11 @@ class Basic {
           return this.end(e);
         }
        
-        if (seen[line.lineno]) {
-          console.log(`Warning: replacing line ${line.lineno}\n`);
+        if (this._labels[line.label]) {
+          console.log(`Warning: replacing line ${line.label}\n`);
         }
 
-        seen[line.lineno] = true;
+        this._labels[line.label || line.lineno] = line;
         this._program.push(line);
       }
 
@@ -244,9 +244,9 @@ class Basic {
     setTimeout(() => this.execute(), millis);
   }
 
-  goto(lineno) {
-    this._debug(`goto ${lineno}`);
-    const line = this._program.find(({ lineno: l }) => l === lineno);
+  goto(label) {
+    this._debug(`goto ${label}`);
+    const line = this._labels[label];
     const pc = this._program.indexOf(line);
     if (pc === -1) {
       this.end(new RuntimeError(this._pc, `Cannot find line with number ${lineno}`));

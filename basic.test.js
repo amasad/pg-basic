@@ -51,7 +51,7 @@ const createBasic = () => {
   const interp = new Basic({
     console: cnsle,
     createDisplay,
-    sound,
+    sound
   });
 
   return {
@@ -74,7 +74,7 @@ end
 `);
 });
 
-test.only('optional line numbers', async () => {
+test('optional line numbers', async () => {
   const { interp, output } = createBasic();
   let i = 0;
   output.write = str => {
@@ -135,6 +135,19 @@ test('if', async () => {
   if 1 then 30
   15 print "never"
   30 print "1"  
+  `);
+});
+
+test('implied line numbers', async () => {
+  const { interp, output } = createBasic();
+  output.write = str => {
+    if (!str.trim()) return;
+    expect(str).toBe('1');
+  };
+
+  await interp.run(`if 1 then 3
+  print "never"
+  print "1"  
   `);
 });
 

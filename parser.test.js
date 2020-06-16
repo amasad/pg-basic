@@ -9,7 +9,8 @@ const t = (line, ast) => {
 
 t('100 PRINT "hello"', {
   type: 'PRINT',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   newline: true,
   expr: '"hello"'
 });
@@ -23,23 +24,26 @@ t('PRINT "hello"', {
 
 t('100 PRINT "hello" + " " + "world"', {
   type: 'PRINT',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   newline: true,
   expr: '"hello"+" "+"world"',
 });
 
 t('100 PRINT "hello";', {
   type: 'PRINT',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   newline: false,
   expr: '"hello"'
 });
 
 t('100 LET x = 1', {
   type: 'LET',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   variable: {
-    lineno: 100,
+    lineno: 1,
     type: 'variable',
     name: 'X',
     array: false,
@@ -50,9 +54,10 @@ t('100 LET x = 1', {
 // infer let
 t('100 x = 1', {
   type: 'LET',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   variable: {
-    lineno: 100,
+    lineno: 1,
     type: 'variable',
     name: 'X',
     array: false,
@@ -62,9 +67,10 @@ t('100 x = 1', {
 
 t('100 LET x[10] = 1', {
   type: 'LET',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   variable: {
-    lineno: 100,
+    lineno: 1,
     type: 'variable',
     name: 'X',
     array: true,
@@ -76,9 +82,10 @@ t('100 LET x[10] = 1', {
 // infer let
 t('100 x[10] = 1', {
   type: 'LET',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   variable: {
-    lineno: 100,
+    lineno: 1,
     type: 'variable',
     name: 'X',
     array: true,
@@ -89,9 +96,10 @@ t('100 x[10] = 1', {
 
 t('100 LET x[1][1] = 1', {
   type: 'LET',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   variable: {
-    lineno: 100,
+    lineno: 1,
     type: 'variable',
     name: 'X',
     array: true,
@@ -102,37 +110,42 @@ t('100 LET x[1][1] = 1', {
 
 t('100 REM lol lawl', {
   type: 'REM',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   comment: 'lol lawl',
 });
 
 t('100 REM', {
   type: 'REM',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   comment: '',
 });
 
 t('100 PAUSE 100', {
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   type: 'PAUSE',
   expr: '100'
 });
 
 t('100 PAUSE 100 * 10', {
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   type: 'PAUSE',
   expr: '100*10'
 });
 
 t('100 INPUT "what up"; X', {
   type: 'INPUT',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   expr: '"what up"',
   variable: {
     type: 'variable',
     name: 'X',
     array: false,
-    lineno: 100,
+    lineno: 1,    
   }
 });
 
@@ -140,29 +153,31 @@ t('100 INPUT "what up"; X', {
 t('100 IF X = Y THEN GOTO 100', {
   type: 'IF',
   condition: '__pgb.get("X")==__pgb.get("Y")',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   elze: null,
   then: {
     type: 'GOTO',
     expr: '100',
-    lineno: 100,
+    lineno: 1,
   }
 });
 
 t('100 IF X = Y THEN GOTO 100 ELSE GOTO 200', {
   type: 'IF',
   condition: '__pgb.get("X")==__pgb.get("Y")',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   elze: null,
   then: {
     type: 'GOTO',
     expr: '100',
-    lineno: 100,
+    lineno: 1,
   },
   elze: {
     type: 'GOTO',
     expr: '200',
-    lineno: 100,
+    lineno: 1,
   }
 });
 
@@ -171,27 +186,29 @@ t('100 IF X = Y THEN 100', {
   type: 'IF',
   condition: '__pgb.get("X")==__pgb.get("Y")',
   elze: null,
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   then: {
     type: 'GOTO',
     expr: '100',
-    lineno: 100,
+    lineno: 1,
   },
 });
 
 t('100 IF X = Y THEN 100 ELSE 200', {
   type: 'IF',
   condition: '__pgb.get("X")==__pgb.get("Y")',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   then: {
     type: 'GOTO',
     expr: '100',
-    lineno: 100,
+    lineno: 1,    
   },
   elze: {
     type: 'GOTO',
     expr: '200',
-    lineno: 100,
+    lineno: 1,
   },
 });
 
@@ -199,11 +216,12 @@ t('100 IF P > 24 OR P < 0 AND Q < 0 THEN GOTO 7000', {
   type: 'IF',
   condition: '__pgb.get("P")>24||__pgb.get("P")<0&&__pgb.get("Q")<0',
   elze: null,
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   then: {
     type: 'GOTO',
     expr: '7000',
-    lineno: 100,
+    lineno: 1,    
   },
 });
 
@@ -211,11 +229,12 @@ t('100 IF (P > 24 OR P < 0) AND Q < 0 THEN GOTO 7000', {
   type: 'IF',
   condition: '(__pgb.get("P")>24||__pgb.get("P")<0)&&__pgb.get("Q")<0',
   elze: null,
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   then: {
     type: 'GOTO',
     expr: '7000',
-    lineno: 100,
+    lineno: 1,    
   },
 });
 
@@ -224,20 +243,22 @@ t('100 IF X = PI THEN GOTO 7000', {
   type: 'IF',
   condition: '__pgb.get("X")==__pgb.getConst("PI")',
   elze: null,
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   then: {
     type: 'GOTO',
     expr: '7000',
-    lineno: 100,
+    lineno: 1,    
   },
 });
 
 t('100 FOR I = 0 to 10', {
   type: 'FOR',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   variable: {
     type: 'variable',
-    lineno: 100,
+    lineno: 1,        
     array: false,
     name: 'I',
   },
@@ -248,11 +269,12 @@ t('100 FOR I = 0 to 10', {
 
 t('99 FOR J = 0 to 10 STEP 2', {
   type: 'FOR',
-  lineno: 99,
+  label: 99,
+  lineno: 1,
   variable: {
     array: false,
     type: 'variable',
-    lineno: 99,
+    lineno: 1,
     name: 'J',
   },
   left: '0',
@@ -262,10 +284,11 @@ t('99 FOR J = 0 to 10 STEP 2', {
 
 t('99 FOR J = X to 10 * 10 STEP 20 * X', {
   type: 'FOR',
-  lineno: 99,
+  label: 99,
+  lineno: 1,
   variable: {
     type: 'variable',
-    lineno: 99,
+    lineno: 1,
     name: 'J',
     array: false,
   },
@@ -276,10 +299,11 @@ t('99 FOR J = X to 10 * 10 STEP 20 * X', {
 
 t('100 NEXT I', {
   type: 'NEXT',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   variable: {
     type: 'variable',
-    lineno: 100,
+    lineno: 1,
     array: false,
     name: 'I',
   },
@@ -287,21 +311,24 @@ t('100 NEXT I', {
 
 t('100 PRINT COS(10)', {
   type: 'PRINT',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   expr: '__pgb.fun("COS")(10)',
   newline: true,
 });
 
 t('100 PRINT COLOR(1, 1)', {
   type: 'PRINT',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   expr: '__pgb.fun("COLOR")(1,1)',
   newline: true,
 });
 
 t('100 PLOT 1, 2, "RED"', {
   type: 'PLOT',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   x: '1',
   y: '2',
   color: '"RED"'
@@ -309,7 +336,8 @@ t('100 PLOT 1, 2, "RED"', {
 
 t('100 TEXT 1, 2, "hello", 15, "RED"', {
   type: 'TEXT',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   x: '1',
   y: '2',
   size: '15',
@@ -319,7 +347,8 @@ t('100 TEXT 1, 2, "hello", 15, "RED"', {
 
 t('100 TEXT 1, 2, "hello"', {
   type: 'TEXT',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   x: '1',
   y: '2',
   size: '12',
@@ -329,7 +358,8 @@ t('100 TEXT 1, 2, "hello"', {
 
 t('100 TEXT 1, 2, "hello", 13', {
   type: 'TEXT',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   x: '1',
   y: '2',
   size: '13',
@@ -343,12 +373,13 @@ t('100 ARRAY X', {
     // This is silly but what it's saying is that there is no
     // subscript.
     array: false,
-    lineno: 100,
+    lineno: 1,
     name: 'X',
     type: 'variable',
   },
   dim: "1",
-  lineno: 100,
+  label: 100,
+  lineno: 1,
 });
 
 t('100 ARRAY X, 2', {
@@ -357,12 +388,13 @@ t('100 ARRAY X, 2', {
     // This is silly but what it's saying is that there is no
     // subscript.
     array: false,
-    lineno: 100,
+    lineno: 1,
     name: 'X',
     type: 'variable',
   },
   dim: "2",
-  lineno: 100,
+  label: 100,
+  lineno: 1,
 });
 
 t('100 DISPLAY 10, 10', {
@@ -370,7 +402,8 @@ t('100 DISPLAY 10, 10', {
   rows: '10',
   cols: '10',
   hasBorder: 'true',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
 });
 
 t('100 DISPLAY 10, 10, false', {
@@ -378,26 +411,30 @@ t('100 DISPLAY 10, 10, false', {
   rows: '10',
   cols: '10',
   hasBorder: 'false',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
 });
 
 t('100 sound 10', {
   type: 'SOUND',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   frequency: "10",
   duration: "1",
 });
 
 t('100 sound 8, 2', {
   type: 'SOUND',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   frequency: "8",
   duration: "2",
 });
 
 t('100 play "C"', {
   type: 'SOUND',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   note: '"C"',
   octave: "4",
   duration: "1",
@@ -405,7 +442,8 @@ t('100 play "C"', {
 
 t('100 play "C", 5', {
   type: 'SOUND',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   note: '"C"',
   octave: "5",
   duration: "1",
@@ -413,7 +451,8 @@ t('100 play "C", 5', {
 
 t('100 play "C", 5, 3', {
   type: 'SOUND',
-  lineno: 100,
+  label: 100,
+  lineno: 1,
   note: '"C"',
   octave: "5",
   duration: "3",

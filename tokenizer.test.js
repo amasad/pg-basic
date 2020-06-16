@@ -14,7 +14,7 @@ const t = (line, arr) => {
 
 t('100 PRINT "hello"', [
   {
-    type: 'lineno',
+    type: 'label',
     lexeme: 100,
   },
   {
@@ -29,7 +29,7 @@ t('100 PRINT "hello"', [
 
 t('100 PRINT ABS(-3)', [
   {
-    type: 'lineno',
+    type: 'label',
     lexeme: 100,
   },
 
@@ -66,7 +66,7 @@ t('100 PRINT ABS(-3)', [
 
 t('100 PRINT ABS (-3)', [
   {
-    type: 'lineno',
+    type: 'label',
     lexeme: 100,
   },
 
@@ -104,7 +104,7 @@ t('100 PRINT ABS (-3)', [
 
 t('100 LET x = 1', [
   {
-    type: 'lineno',
+    type: 'label',
     lexeme: 100,
   },
 
@@ -131,7 +131,7 @@ t('100 LET x = 1', [
 
 t('100 LET X$ = 1', [
   {
-    type: 'lineno',
+    type: 'label',
     lexeme: 100,
   },
 
@@ -158,7 +158,7 @@ t('100 LET X$ = 1', [
 
 t('100 LET XX_ = 1', [
   {
-    type: 'lineno',
+    type: 'label',
     lexeme: 100,
   },
 
@@ -185,7 +185,7 @@ t('100 LET XX_ = 1', [
 
 t('100 LET X[N+1] = 1', [
   {
-    type: 'lineno',
+    type: 'label',
     lexeme: 100,
   },
 
@@ -237,7 +237,7 @@ t('100 LET X[N+1] = 1', [
 
 t('100 PRINT PI', [
   {
-    type: 'lineno',
+    type: 'label',
     lexeme: 100,
   },
 
@@ -254,7 +254,7 @@ t('100 PRINT PI', [
 
 t('10 x = true', [
   {
-    type: 'lineno',
+    type: 'label',
     lexeme: 10,
   },
 
@@ -276,7 +276,7 @@ t('10 x = true', [
 
 t('10 x = false', [
   {
-    type: 'lineno',
+    type: 'label',
     lexeme: 10,
   },
 
@@ -298,7 +298,7 @@ t('10 x = false', [
 
 t('10 x = not true', [
  {
-    type: 'lineno',
+    type: 'label',
     lexeme: 10,
   },
 
@@ -325,7 +325,7 @@ t('10 x = not true', [
 
 t('10 midx = 12', [
  {
-    type: 'lineno',
+    type: 'label',
     lexeme: 10,
   },
 
@@ -347,7 +347,7 @@ t('10 midx = 12', [
 
 t('10 printx = 12', [
  {
-    type: 'lineno',
+    type: 'label',
     lexeme: 10,
   },
 
@@ -369,7 +369,7 @@ t('10 printx = 12', [
 
 t('10 printx = 12', [
  {
-    type: 'lineno',
+    type: 'label',
     lexeme: 10,
   },
 
@@ -391,7 +391,7 @@ t('10 printx = 12', [
 
 t('10 levelx = 12', [
  {
-    type: 'lineno',
+    type: 'label',
     lexeme: 10,
   },
 
@@ -413,7 +413,7 @@ t('10 levelx = 12', [
 
 t('10 levelx = 12', [
  {
-    type: 'lineno',
+    type: 'label',
     lexeme: 10,
   },
 
@@ -435,7 +435,7 @@ t('10 levelx = 12', [
 
 t('10 NOTX = 12', [
  {
-    type: 'lineno',
+    type: 'label',
     lexeme: 10,
   },
 
@@ -457,7 +457,7 @@ t('10 NOTX = 12', [
 
 t('10 truex = 12', [
  {
-    type: 'lineno',
+    type: 'label',
     lexeme: 10,
   },
 
@@ -479,7 +479,7 @@ t('10 truex = 12', [
 
 t('10 display 10, 10', [
   {
-    type: 'lineno',
+    type: 'label',
     lexeme: 10,
   },
 
@@ -506,7 +506,7 @@ t('10 display 10, 10', [
 
 t('10 print COLUMNS', [
   {
-    type: 'lineno',
+    type: 'label',
     lexeme: 10,
   },
 
@@ -523,7 +523,7 @@ t('10 print COLUMNS', [
 
 t('10 print ROWS', [
   {
-    type: 'lineno',
+    type: 'label',
     lexeme: 10,
   },
 
@@ -540,7 +540,7 @@ t('10 print ROWS', [
 
 t('10 play "s"', [
   {
-    type: 'lineno',
+    type: 'label',
     lexeme: 10,
   },
 
@@ -557,7 +557,7 @@ t('10 play "s"', [
 
 t('10 sound "s"', [
   {
-    type: 'lineno',
+    type: 'label',
     lexeme: 10,
   },
 
@@ -571,3 +571,33 @@ t('10 sound "s"', [
     lexeme: '"s"',
   }
 ]);
+
+t('test: play "s"', [
+  {
+    type: 'label',
+    lexeme: 'test',
+  },
+  {
+    type: 'keyword',
+    lexeme: 'PLAY',
+  },
+  {
+    type: 'string',
+    lexeme: '"s"',
+  }
+]);
+
+t(' test : play "s"', [
+  {
+    type: 'label',
+    lexeme: 'test',
+  },
+  {
+    type: 'keyword',
+    lexeme: 'PLAY',
+  },
+  {
+    type: 'string',
+    lexeme: '"s"',
+  }
+])

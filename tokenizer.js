@@ -55,6 +55,7 @@ const KEYWORDS = [
 const CONSTANTS = ['LEVEL', 'PI', 'COLUMNS', 'ROWS'];
 
 const LINE = /^\s*(\d+)\s*/;
+const LABEL = /^\s*([a-z][\w]*)\s*:\s*/i;
 const QUOTE = /^"((\\.|[^"\\])*)"\s*/;
 const KEY = new RegExp('^(' + KEYWORDS.join('|') + ')\\b', 'i');
 const FUN = new RegExp('^(' + Object.keys(Functions).join('|') + ')\\b', 'i');
@@ -127,11 +128,15 @@ class Tokenizer {
 
   tokenize() {
     const linem = this.stmnt.match(LINE);
+    const labelm = this.stmnt.match(LABEL);
 
     if (linem) {
-      this.lineno = parseInt(linem[1]);
-      this.tokens.push(new Token('lineno', this.lineno));
+      const label = parseInt(linem[1]);
+      this.tokens.push(new Token('label', label));
       this.stmnt = this.stmnt.slice(linem[0].length);
+    } else if (labelm) {
+      this.tokens.push(new Token('label', labelm[1]));
+      this.stmnt = this.stmnt.slice(labelm[0].length);
     }
 
     while (this.stmnt.length) {
