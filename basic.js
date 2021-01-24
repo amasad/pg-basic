@@ -287,9 +287,9 @@ class Basic {
     this.set(loop.variable, loop.value);
 
     if (loop.increment > 0) {
-      if (loop.value >= loop.max) return;
+      if (loop.value > loop.max) return;
     } else if (loop.increment < 0) {
-      if (loop.value <= loop.max) return;
+      if (loop.value < loop.max) return;
     }
 
     this.goto(loop.lineno);
