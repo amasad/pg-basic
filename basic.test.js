@@ -413,3 +413,39 @@ test('sound', async () => {
   expect(sound.sound.mock.calls[0]).toEqual([9, 1]);
   expect(sound.sound.mock.calls[1]).toEqual([8, 2]);  
 });
+
+test('for next loop', async () => {
+  const { interp, output } = createBasic();
+  let out = [];
+  output.write = str => {
+    if (str !== '\n') {
+      out.push(str);
+    }
+  };
+
+  await interp.run(`
+  for i = 1 to 3
+  print i
+  next i
+  `);
+  
+  expect(out).toEqual(['1', '2', '3']);
+});
+
+test('for next step loop', async () => {
+  const { interp, output } = createBasic();
+  let out = [];
+  output.write = str => {
+    if (str !== '\n') {
+      out.push(str);
+    }
+  };
+
+  await interp.run(`
+  for i = 3 to 1 step -1
+  print i
+  next i
+  `);
+  
+  expect(out).toEqual(['3', '2', '1']);
+});
