@@ -85,12 +85,24 @@ class Tokenizer {
     return eof;
   }
 
+  /**
+   * Initializes a Tokenizer, and tokenizes a line of code.
+   * @param {string} line - A line of Basic code.
+   * @return {any[]} - tokens
+   */
   static tokenizeLine(line) {
     const t = new Tokenizer(line);
     t.tokenize();
     return t.tokens;
   }
 
+  /**
+   * Initializes a Tokenizer instance
+   * 
+   * @param {string} stmnt - The statement to tokenize
+   * @param {Object} options - Tokenizer options
+   * @param {number} options.lineno - Basic Line number (default: -1)
+   */
   constructor(stmnt, options = {}) {
     this.stmnt = stmnt.trim();
     this.tokens = [];
@@ -105,6 +117,12 @@ class Tokenizer {
     }
   }
 
+  /**
+   * Returns the next (or nth next) token (without changing index)
+   * 
+   * @param {number} n - return 
+   * @returns {Token} The next (or nth next) token.
+   */
   peek(n = 0) {
     this.assertTokenized();
 
@@ -113,6 +131,10 @@ class Tokenizer {
     return this.tokens[this.index + n];
   }
 
+  /**
+   * Yields the next token. Returns EOF if there are no tokens left.
+   * @returns {Token} The next token.
+   */
   next() {
     this.assertTokenized();
 
@@ -121,11 +143,19 @@ class Tokenizer {
     return this.tokens[this.index++];
   }
 
+  /**
+   * Moves index back a step.
+   * @returns {number} The index of the previous token.
+   */
   reverse() {
     if (this.index === 0) return 0;
     return --this.index;
   }
 
+  /**
+   * Tokenizes the statement, and populates `this.tokens`. 
+   * Raises a ParseError upon failing to parse a token.
+   */
   tokenize() {
     const linem = this.stmnt.match(LINE);
     const labelm = this.stmnt.match(LABEL);
