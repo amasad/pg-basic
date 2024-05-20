@@ -1,5 +1,5 @@
 // To build hit up https://bundle-repl.amasad.repl.co/bundle/@amasad/pg-basic
-
+const readline = require('readline');
 const Basic = require('./basic');
 const colors = {};
 const keyQueue = ['a', 'b', 'c'];
@@ -38,10 +38,19 @@ const interp = new Basic({
   display,
   debugLevel: 99,
 });
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+function asyncInput(prompt) {
+  return new Promise(resolve => {
+    rl.question(prompt, resolve);
+  });
+}
 
 async function repl() {
   while (true) {
-    let code = prompt('pg-basic');
+    let code = await asyncInput('pg-basic> ');
     try {
       await interp.run(code);
     } catch (e) {
