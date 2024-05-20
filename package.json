@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "test": "jest --watch"
+    "test": "jest"
   },
   "main": "index.js",
   "dependencies": {
